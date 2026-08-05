@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注意配分検査</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #333;
+            user-select: none;
+            position: relative;
+        }
+
+        /* 画面左上の終了ボタン用コンテナ */
+        #top-left-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        /* 画面右上のやり直し・一時停止ボタン用コンテナ */
+        #top-right-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .top-btn {
+            padding: 6px 14px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #fff;
+            transition: opacity 0.2s;
+        }
+
+        .top-btn:hover {
+            opacity: 0.9;
+        }
+
+        #top-retry-btn {
+            background-color: #1976d2;
+        }
+
+        #top-exit-btn {
+            background-color: #555555; /* 暗い灰色に変更 */
+        }
+
+        #top-pause-btn {
+            background-color: #ff9800; /* 一時停止ボタン用 */
+            display: none; 
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+
+        #instruction {
+            font-size: 0.9rem;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+            line-height: 1.4;
+            white-space: nowrap;
+        }
+
+        /* 警告・メッセージ表示エリア */
+        #status-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 2em;
+            margin-bottom: 20px;
+        }
+
+        #warning-msg {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #d32f2f;
+            visibility: hidden; /* 通常時は非表示 */
+        }
+
+        #warning-msg span {
+            font-size: 1.4rem; /* 数字部分を少し大きく */
+        }
+
+        /* 7×7 碁盤の目グリッド */
+        #grid-container {
+            display: grid;
+            grid-template-columns: repeat(7, 50px);
+            grid-template-rows: repeat(7, 50px);
+            background-color: #000000; /* 罫線の色（黒） */
+            gap: 1px; /* 罫線の太さ */
+            border: 2px solid #000000;
+            margin-bottom: 20px;
+        }
+
+        .grid-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: #ffffff;
+            cursor: pointer;
+        }
+
+        .grid-item.disabled {
+            cursor: default;
+        }
+
+        /* 結果表示およびコントロールボタン */
+        #result-area {
+            display: none;
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            width: 100%;
+        }
+
+        #result-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2e7d32;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #fff;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        #retry-btn {
+            background-color: #1976d2;
+        }
+
+        #exit-btn {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 画面左上のボタン（終了） -->
+    <div id="top-left-controls">
+        <button id="top-exit-btn" class="top-btn" onclick="exitTest()">終了</button>
+    </div>
+
+    <!-- 画面右上のボタン（一時停止、やり直し） -->
+    <div id="top-right-controls">
+        <button id="top-pause-btn" class="top-btn" onclick="togglePause()">一時停止</button>
+        <button id="top-retry-btn" class="top-btn" onclick="retryTest()">やり直し</button>
+    </div>
+
+    <h1>注意配分検査</h1>
+    <div id="instruction">0から順に48までの数字を探してください。<br>指先で数字を探さず、押す度に枠外をタッチしてください。</div>
+    
+    <div id="status-container">
+        <div id="warning-msg"><span id="msg-text">計測中</span></div>
+    </div>
+
+    <div id="grid-container"></div>
+
+    <div id="result-area">
+        <div id="result-text">終了！ タイム: 0.00秒</div>
+        <div class="btn-group">
+            <button id="retry-btn" class="btn" onclick="retryTest()">再挑戦</button>
+            <button id="exit-btn" class="btn" onclick="exitTest()">終了</button>
+        </div>
+    </div>
+
+    <script>
+        const GRID_SIZE = 49; 
+        const CENTER_INDEX = 24; 
+        
+        let currentTarget = 0; 
+        let startTime = null;
+        let elapsedBeforePause = 0; 
+        let isStarted = false;
+        let isPaused = false;
+        let numbersArray = [];
+        let waitingForOutside = false; 
+
+        const gridContainer = document.getElementById('grid-container');
+        const warningMsg = document.getElementById('warning-msg');
+        const msgText = document.getElementById('msg-text');
+        const resultArea = document.getElementById('result-area');
+        const resultText = document.getElementById('result-text');
+        const topLeftControls = document.getElementById('top-left-controls');
+        const topRightControls = document.getElementById('top-right-controls');
+        const topPauseBtn = document.getElementById('top-pause-btn');
+
+        function initGrid() {
+            gridContainer.innerHTML = '';
+            resultArea.style.display = 'none';
+            gridContainer.style.display = 'grid';
+            topLeftControls.style.display = 'flex';
+            topRightControls.style.display = 'flex';
+            topPauseBtn.style.display = 'none'; 
+            
+            currentTarget = 0;
+            isStarted = false;
+            isPaused = false;
+            elapsedBeforePause = 0;
+            waitingForOutside = false;
+            warningMsg.style.visibility = 'hidden';
+            topPauseBtn.textContent = '一時停止';
+
+            let nums = [];
+            for (let i = 1; i <= 48; i++) {
+                nums.push(i);
+            }
+            shuffle(nums);
+
+            numbersArray = [];
+            let numIndex = 0;
+            for (let i = 0; i < GRID_SIZE; i++) {
+                if (i === CENTER_INDEX) {
+                    numbersArray.push(0);
+                } else {
+                    numbersArray.push(nums[numIndex++]);
+                }
+            }
+
+            numbersArray.forEach((num, index) => {
+                const item = document.createElement('div');
+                item.classList.add('grid-item');
+                item.textContent = num;
+                item.dataset.value = num;
+                item.dataset.index = index;
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation(); 
+                    if (isPaused) return; 
+                    handleCellClick(num, item);
+                });
+                gridContainer.appendChild(item);
+            });
+        }
+
+        // 枠外をクリックしたときの処理
+        document.body.addEventListener('click', () => {
+            if (isPaused) return; 
+            if (waitingForOutside) {
+                waitingForOutside = false;
+                // 枠外タッチ完了後も「計測中」を表示し続ける
+                if (isStarted) {
+                    msgText.style.color = '#2e7d32';
+                    msgText.innerHTML = '計測中';
+                    warningMsg.style.visibility = 'visible';
+                }
+            }
+        });
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // 一時停止 / 再開の切り替え
+        function togglePause() {
+            if (!isStarted) return; 
+
+            if (!isPaused) {
+                isPaused = true;
+                topPauseBtn.textContent = '再開';
+                
+                elapsedBeforePause += performance.now() - startTime;
+
+                // 「一時停止中」を赤文字で表示
+                msgText.innerHTML = '一時停止中';
+                msgText.style.color = '#d32f2f';
+                warningMsg.style.visibility = 'visible';
+            } else {
+                isPaused = false;
+                topPauseBtn.textContent = '一時停止';
+                
+                startTime = performance.now();
+
+                // 再開時は「計測中」を緑文字で表示
+                msgText.innerHTML = '計測中';
+                msgText.style.color = '#2e7d32';
+                warningMsg.style.visibility = 'visible';
+            }
+        }
+
+        function handleCellClick(num, element) {
+            if (isPaused) return;
+
+            // 枠外タッチをせずに連続で数字を選択した場合の警告
+            if (waitingForOutside) {
+                msgText.style.color = '#d32f2f'; 
+                msgText.innerHTML = '枠外をタッチしてください';
+                warningMsg.style.visibility = 'visible';
+                return;
+            }
+
+            // まだ始まっておらず、「0」が押された場合
+            if (!isStarted && num === 0) {
+                isStarted = true;
+                currentTarget = 1;
+                element.classList.add('disabled');
+                waitingForOutside = true; 
+                
+                // 測定開始に伴い、「計測中」を緑文字で表示、一時停止ボタンを表示
+                msgText.style.color = '#2e7d32';
+                msgText.innerHTML = '計測中';
+                warningMsg.style.visibility = 'visible';
+                topPauseBtn.style.display = 'inline-block';
+                
+                startTime = performance.now();
+                elapsedBeforePause = 0;
+                return;
+            }
+
+            // 計測中かつ、正しい次の数字を押した場合
+            if (isStarted && num === currentTarget) {
+                element.classList.add('disabled');
+                
+                if (currentTarget === 48) {
+                    const endTime = performance.now();
+                    const totalTime = ((elapsedBeforePause + (endTime - startTime)) / 1000).toFixed(2);
+                    
+                    gridContainer.style.display = 'none';
+                    warningMsg.style.display = 'none';
+                    topLeftControls.style.display = 'none'; 
+                    topRightControls.style.display = 'none'; 
+                    resultText.textContent = `終了！ タイム: ${totalTime} 秒`;
+                    resultArea.style.display = 'block';
+                } else {
+                    currentTarget++;
+                    waitingForOutside = true; 
+                    // 正解直後（枠外待ちの間）も「計測中」を緑文字で表示し続ける
+                    msgText.style.color = '#2e7d32';
+                    msgText.innerHTML = '計測中';
+                    warningMsg.style.visibility = 'visible';
+                }
+                return;
+            }
+
+            // 誤った数字を選択した場合（計測中または開始前）
+            if (isStarted && num !== currentTarget) {
+                msgText.style.color = '#d32f2f'; 
+                msgText.innerHTML = `次は<span style="font-size: 1.4rem; font-weight: bold;">${currentTarget}</span>です`;
+                warningMsg.style.visibility = 'visible';
+            }
+        }
+
+        function retryTest() {
+            warningMsg.style.display = 'block';
+            initGrid();
+        }
+
+        function exitTest() {
+            window.location.href = 'index.html';
+        }
+
+        window.onload = initGrid;
+    </script>
+</body>
+</html>
