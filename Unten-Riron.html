@@ -8,6 +8,9 @@
 :root {
     --primary-color: #1a73e8;
     --secondary-color: #e8f0fe;
+    --desc-bg: #e6f4ea;
+    --desc-border: #ceead6;
+    --desc-color: #137333;
     --success-color: #34a853;
     --error-color: #ea4335;
     --retry-success-bg: #fef7e0;
@@ -175,6 +178,11 @@ h1 {
     gap: 12px;
 }
 
+.settings-card.desc-settings {
+    background: var(--desc-bg);
+    border: 1px solid var(--desc-border);
+}
+
 .setting-row {
     display: flex;
     flex-direction: column;
@@ -330,10 +338,20 @@ h1 {
     text-align: center;
     -webkit-appearance: none;
     touch-action: manipulation;
+    text-decoration: none;
+    display: block;
+    box-sizing: border-box;
 }
 
 .btn:hover {
     background-color: #1557b0;
+}
+
+.btn-desc {
+    background-color: var(--desc-color);
+}
+.btn-desc:hover {
+    background-color: #0b5123;
 }
 
 .btn-next {
@@ -554,7 +572,7 @@ canvas {
         <button class="btn-exit" id="exitBtn" style="display: none;">終了</button>
     </div>
 
-    <details class="formula-summary">
+    <details class="formula-summary" id="formulaSummaryCard">
         <summary>公式一覧</summary>
         <p>
             <strong>1. 等速走行の距離：</strong>
@@ -579,7 +597,9 @@ canvas {
         </p>
     </details>
 
+    <!-- 計算問題の設定枠 -->
     <div class="settings-card" id="settingsCard">
+        <div style="font-weight: bold; color: var(--primary-color); border-bottom: 1px solid #dadce0; padding-bottom: 4px;">計算問題</div>
         <div class="setting-row">
             <div>
                 <label>モード選択：</label>
@@ -611,7 +631,12 @@ canvas {
                 </div>
             </div>
         </div>
-        <button class="btn" id="generateBtn">開始</button>
+        <button class="btn" id="generateBtn">計算問題 開始</button>
+    </div>
+
+    <!-- 記述問題の設定枠 -->
+    <div class="settings-card desc-settings" id="descSettingsCard">
+        <a href="Unten-Riron-Kijyutsu.html" class="btn btn-desc">記述問題</a>
     </div>
 
     <div class="question-box" id="questionText" style="display: none;">
@@ -653,7 +678,7 @@ canvas {
     <div class="result-box" id="resultBox">
         <div id="resultTitle" style="font-weight: bold; font-size: 1.05rem; margin-bottom: 6px;"></div>
         <div class="explanation" id="explanationText"></div>
-        <div class="canvas-container">
+        <div class="canvas-container" id="chartContainerWrapper">
             <canvas id="vtChart"></canvas>
         </div>
         <div style="display: flex; gap: 10px;">
@@ -672,7 +697,7 @@ canvas {
             <div id="detailUserAns" style="margin-bottom: 8px; font-size: 0.95rem;"></div>
             <div id="detailHistoryContainer"></div>
             <div class="explanation" id="detailExplanationText"></div>
-            <div class="canvas-container">
+            <div class="canvas-container" id="detailChartContainerWrapper">
                 <canvas id="vtChartPractice"></canvas>
             </div>
             <button class="btn btn-retry" id="detailRetryBtn" style="display: none;">この問題を再挑戦</button>
@@ -725,7 +750,7 @@ function updateGenerateButtonText() {
     if (isQuestionActive) {
         generateBtn.textContent = '問題生成';
     } else {
-        generateBtn.textContent = '開始';
+        generateBtn.textContent = '計算問題 開始';
     }
 }
 
@@ -738,14 +763,18 @@ function resetPlatformDisplay() {
     batchRetryQueue = [];
     batchRetryOriginalIndices = [];
     batchRetryCurrentStep = 0;
+    
     document.getElementById('questionText').style.display = 'none';
     document.getElementById('inputArea').style.display = 'none';
     document.getElementById('numpadArea').style.display = 'none';
     document.getElementById('resultBox').style.display = 'none';
     document.getElementById('summaryDashboard').style.display = 'none';
-    document.getElementById('settingsCard').style.display = 'flex';
-    document.getElementById('userAnswer').value = '';
     
+    document.getElementById('settingsCard').style.display = 'flex';
+    document.getElementById('descSettingsCard').style.display = 'flex';
+    document.getElementById('formulaSummaryCard').style.display = 'block';
+    document.getElementById('userAnswer').value = '';
+
     document.getElementById('subjectSelectBtn').style.display = 'inline-block';
     document.getElementById('exitBtn').style.display = 'none';
     updateGenerateButtonText();
@@ -757,7 +786,7 @@ function generateUniformDistanceProblem() {
     const exactVal = (v * t) / 3.6;
     const isExact = Math.abs(exactVal - Math.round(exactVal)) < 1e-5;
     const distance = isExact ? Math.round(exactVal) : Math.ceil(exactVal);
-    
+
     let calcAndAnswerHtml = '';
     if (isExact) {
         calcAndAnswerHtml = `<strong>【計算式】</strong><div class="math-block"><div class="calc-block"><div class="calc-row"><span class="calc-label">s</span><span class="calc-symbol">=</span><span class="calc-content">${createFractionHtml(v + ' &times; ' + t, '3.6')}</span></div><div class="calc-row"><span class="calc-label"></span><span class="calc-symbol">=</span><span class="calc-content">${distance} m</span></div></div></div><div style="margin-top:6px; font-weight:bold; color:var(--primary-color);">A: ${distance} m</div>`;
@@ -864,7 +893,7 @@ function generateEmergencyProblem() {
     let v1 = getRandomItem([75, 88, 90]);
     let t_idle = 1;
     let b = emergencyDecel;
-    
+
     let exactTotal = (v1 * t_idle / 3.6) + ((v1 * v1) / (7.2 * b));
     let totalDistRounded = Math.ceil(exactTotal);
 
@@ -949,14 +978,20 @@ function startPlatform() {
     document.getElementById('summaryDashboard').style.display = 'none';
     document.getElementById('resultBox').style.display = 'none';
     document.getElementById('settingsCard').style.display = 'none';
-    document.getElementById('questionText').style.display = 'block';
+    document.getElementById('descSettingsCard').style.display = 'none';
+    document.getElementById('formulaSummaryCard').style.display = 'block';
     
+    const qBox = document.getElementById('questionText');
+    qBox.style.display = 'block';
+    qBox.className = 'question-box';
+
     document.getElementById('subjectSelectBtn').style.display = 'none';
     document.getElementById('exitBtn').style.display = 'inline-block';
 
     if (currentMode === 'practice') {
         document.getElementById('inputArea').style.display = 'flex';
         document.getElementById('numpadArea').style.display = 'grid';
+        document.getElementById('chartContainerWrapper').style.display = 'block';
         isQuestionActive = true;
         isFreeRetrySession = false;
         isBatchRetrySession = false;
@@ -964,7 +999,7 @@ function startPlatform() {
         updateGenerateButtonText();
 
         currentProblem = createSingleProblemFromSelection();
-        document.getElementById('questionText').innerHTML = currentProblem.text;
+        qBox.innerHTML = currentProblem.text;
     } else {
         const count = getSelectedCount();
         practiceList = [];
@@ -976,6 +1011,7 @@ function startPlatform() {
 
         document.getElementById('inputArea').style.display = 'flex';
         document.getElementById('numpadArea').style.display = 'grid';
+        document.getElementById('chartContainerWrapper').style.display = 'block';
         isQuestionActive = true;
         isFreeRetrySession = false;
         isBatchRetrySession = false;
@@ -993,9 +1029,9 @@ function loadExamQuestion() {
 }
 
 function checkAnswer() {
-    const userAnsVal = document.getElementById('userAnswer').value;
-    if (userAnsVal === "答を入力してください。") {
-        alert("");
+    const userAnsVal = document.getElementById('userAnswer').value.trim();
+    if (userAnsVal === "") {
+        alert("答えを入力してください。");
         return;
     }
 
@@ -1016,7 +1052,8 @@ function checkAnswer() {
         const retrySameBtn = document.getElementById('retrySameBtn');
 
         resultBox.style.display = 'block';
-        
+        document.getElementById('chartContainerWrapper').style.display = 'block';
+
         let targetProb = isFreeRetrySession ? freeRetryProblem : currentProblem;
         let isCorrect = Math.abs(userAns - targetProb.answer) < 0.1;
 
@@ -1121,7 +1158,7 @@ function renderResultGrid() {
         const badge = document.createElement('div');
         let statusClass = res.isCorrect ? 'correct' : 'incorrect';
         let mark = res.isCorrect ? '◎' : '✕';
-        
+
         if (!res.isCorrect && res.retryCorrect === true) {
             statusClass = 'retry-correct';
             mark = '○';
@@ -1171,19 +1208,19 @@ function showExamDetail(idx) {
 
     document.getElementById('detailTitle').textContent = `第 ${idx + 1} 問 の詳細`;
     document.getElementById('detailQuestion').innerHTML = `問題： ${res.question.text}`;
-    
+
     let initialMark = res.isCorrect ? '◎' : '✕';
     let initialColor = res.isCorrect ? 'var(--success-color)' : 'var(--error-color)';
-    
+
     document.getElementById('detailUserAns').innerHTML = `あなたの回答: <strong>${res.userAns}</strong> - <span style="color:${initialColor}; font-weight:bold;">${initialMark}</span>`;
-    
+
     const historyContainer = document.getElementById('detailHistoryContainer');
     historyContainer.innerHTML = '';
     if (res.retryHistory && res.retryHistory.length > 0) {
         res.retryHistory.forEach((hItem, hIdx) => {
             let hMark = hItem.isCorrect ? '○' : '✕';
             let hColor = hItem.isCorrect ? 'var(--retry-success-color)' : 'var(--error-color)';
-            
+
             const historyDiv = document.createElement('div');
             historyDiv.style.marginTop = '8px';
             historyDiv.style.padding = '8px';
@@ -1363,7 +1400,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const typeButtons = document.querySelectorAll('#typeButtonGroup .select-btn');
     const allRangeBtn = document.querySelector('#typeButtonGroup .select-btn[data-type="all"]');
     const itemTypeButtons = document.querySelectorAll('#typeButtonGroup .select-btn:not([data-type="all"])');
-    
+
     const countButtons = document.querySelectorAll('#countButtonGroup .select-btn');
     const customCountInput = document.getElementById('customCountInput');
     const customCountWrapper = document.getElementById('customCountWrapper');
@@ -1526,18 +1563,18 @@ document.addEventListener('DOMContentLoaded', () => {
         detailRetryBtn.addEventListener('click', () => {
             if (currentDetailIndex === null) return;
             const res = practiceResults[currentDetailIndex];
-            
+
             document.getElementById('summaryDashboard').style.display = 'none';
             document.getElementById('questionText').style.display = 'block';
             document.getElementById('inputArea').style.display = 'flex';
             document.getElementById('numpadArea').style.display = 'grid';
             document.getElementById('resultBox').style.display = 'none';
             document.getElementById('exitBtn').style.display = 'inline-block';
-            
+
             isFreeRetrySession = true;
             freeRetryProblem = res.question;
             currentProblem = res.question;
-            
+
             document.getElementById('questionText').innerHTML = `<strong>【問題の再挑戦】</strong><br>` + res.question.text;
             userAnswerInput.value = '';
             document.getElementById('questionText').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1549,6 +1586,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('resultBox').style.display = 'none';
             userAnswerInput.value = '';
             isFreeRetrySession = false;
+            
             document.getElementById('questionText').innerHTML = currentProblem.text;
             document.getElementById('questionText').scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
@@ -1560,6 +1598,7 @@ document.addEventListener('DOMContentLoaded', () => {
             userAnswerInput.value = '';
             isFreeRetrySession = false;
             freeRetryProblem = null;
+
             currentProblem = createSingleProblemFromSelection();
             document.getElementById('questionText').innerHTML = currentProblem.text;
             document.getElementById('questionText').scrollIntoView({ behavior: 'smooth', block: 'start' });
