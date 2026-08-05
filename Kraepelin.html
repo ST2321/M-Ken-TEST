@@ -288,19 +288,19 @@
                 3. 1文字入力すると自動的に右のマスへカーソルが移動します。<br>
                 4. 残り10秒以下になると上のスペースに残秒数が表示されます。<br>
                 5. <strong>簡易モード</strong>：1行10秒 × 全5行<br>
-                6. <strong>普通モード</strong>：前半15分 ➔ 休憩5分 ➔ 後半15分（全34行）
+                6. <strong>本番モード</strong>：前半15分 ➔ 休憩5分 ➔ 後半15分（全34行）
             </div>
             <div class="mode-select-area">
                 <button class="btn" onclick="startTest('easy')">簡易モードで開始</button>
-                <button class="btn" onclick="startTest('normal')">普通モードで開始</button>
+                <button class="btn" onclick="startTest('normal')">本番モードで開始</button>
             </div>
         </div>
 
         <div id="break-view" class="break-screen">
-            <h2>前半戦が終了しました（休憩中）</h2>
+            <h2>前半が終了しました（休憩中）</h2>
             <p>5分間の休憩時間です。気持ちを落ち着かせてお待ちください。</p>
             <p id="break-timer" style="font-size: 1.3rem; font-weight: bold; color: #e74c3c;">残り休憩時間: 5:00</p>
-            <button class="btn" onclick="skipBreak()">すぐに後半戦を開始する</button>
+            <button class="btn" onclick="skipBreak()">すぐに後半を開始する</button>
         </div>
 
         <div id="test-view" style="display: none;">
