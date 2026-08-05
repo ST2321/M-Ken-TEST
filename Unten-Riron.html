@@ -837,7 +837,7 @@ function generateAccelProblem() {
         return {
             type: 'accel',
             isDecel: true,
-            text: `${v1} km/h で惰行中の電車が ${rateStr} km/h/s の減速度で制動をかけたところ、制動初速と制動距離を求めよ。`,
+            text: `${v1} km/h で走行中の電車が ${rateStr} km/h/s の減速度で制動をかけたときの制動距離を求めよ。`,
             answer: distance,
             v0: v1,
             v1: v2,
@@ -849,7 +849,7 @@ function generateAccelProblem() {
         return {
             type: 'accel',
             isDecel: false,
-            text: `${v1} km/h で惰行中の電車が ${rateStr} km/h/s の加速度で力行し、${v2} km/h に達した。この間の走行距離はいくらか。`,
+            text: `${v1} km/h で走行中の電車が ${rateStr} km/h/s の加速度で力行し、${v2} km/h に達した。この間の走行距離はいくらか。`,
             answer: distance,
             v0: v1,
             v1: v2,
@@ -890,7 +890,7 @@ function generateEmergencyProblem() {
 
     return {
         type: 'emergency',
-        text: `列車が平たん直線路上を ${v1} km/h で走行中、前方 ${targetPoint} m の地点に人影を発見し、直ちに非常ブレーキをかけた。列車は人影の地点から何 m 手前に停止するか。公式を示し、解は整数のこと。減速度は 4.5 km/h/s、空走時間は 1 秒、滑走はないものとする。`,
+        text: `列車が平たん直線路上を ${v1} km/h で走行中、前方 ${targetPoint} m の地点に人影を発見し、直ちに非常ブレーキをかけた。列車は人影の地点から何 m 手前に停止するか。解は整数のこと。減速度は 4.5 km/h/s、空走時間は 1 秒、滑走はないものとする。`,
         answer: remaining,
         v0: v1,
         targetPoint: targetPoint,
@@ -995,7 +995,7 @@ function loadExamQuestion() {
 function checkAnswer() {
     const userAnsVal = document.getElementById('userAnswer').value;
     if (userAnsVal === "") {
-        alert("数値を入力するか、計算結果を求めてください。");
+        alert("");
         return;
     }
 
