@@ -166,30 +166,136 @@ h1 {
     .setting-row {
         flex-direction: row;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start;
     }
 }
 
 .settings-card label {
     font-size: 0.9rem;
     font-weight: bold;
+    padding-top: 6px;
 }
 
-.settings-card select {
-    padding: 8px 12px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    background: #fff;
-    font-size: 1rem;
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
     width: 100%;
-    -webkit-appearance: none;
 }
 
 @media (min-width: 500px) {
-    .settings-card select {
+    .button-group {
         width: auto;
-        min-width: 180px;
+        justify-content: flex-end;
+        max-width: 450px;
     }
+}
+
+.select-btn {
+    background-color: #fff;
+    color: var(--text-color);
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-appearance: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    flex: 1;
+    text-align: center;
+    min-width: 120px;
+}
+
+.select-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    font-weight: bold;
+}
+
+.select-btn:disabled {
+    background-color: #e0e0e0;
+    color: #a0a0a0;
+    border-color: #d0d0d0;
+    cursor: not-allowed;
+}
+
+#typeButtonGroup {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    width: 100%;
+}
+
+@media (min-width: 500px) {
+    #typeButtonGroup {
+        width: 380px;
+    }
+}
+
+#typeButtonGroup .select-btn[data-type="all"] {
+    grid-column: span 2;
+    width: 100%;
+}
+
+#countButtonGroup {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    width: 100%;
+}
+
+@media (min-width: 500px) {
+    #countButtonGroup {
+        width: 380px;
+    }
+}
+
+.custom-count-wrapper {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0 8px;
+    flex: 1;
+    min-width: 120px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.custom-count-wrapper.active {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 1px var(--primary-color);
+    background-color: var(--primary-color);
+}
+
+.custom-count-wrapper input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 0.9rem;
+    padding: 8px 0;
+    text-align: center;
+    background: transparent;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.custom-count-wrapper.active input {
+    color: white;
+    font-weight: bold;
+    cursor: text;
+}
+
+.custom-count-wrapper input::placeholder {
+    color: #888;
+}
+
+.custom-count-wrapper.active input::placeholder {
+    color: #e0e0e0;
 }
 
 .btn {
@@ -455,29 +561,32 @@ canvas {
 
     <div class="settings-card" id="settingsCard">
         <div class="setting-row">
-            <label for="modeSelect">モード選択：</label>
-            <select id="modeSelect">
-                <option value="free">フリーモード</option>
-                <option value="practice">練習モード</option>
-            </select>
+            <label>モード選択：</label>
+            <div class="button-group" id="modeButtonGroup">
+                <button type="button" class="select-btn active" data-mode="practice">練習モード</button>
+                <button type="button" class="select-btn" data-mode="exam">試験モード</button>
+            </div>
         </div>
         <div class="setting-row">
-            <label for="questionType">出題形式：</label>
-            <select id="questionType">
-                <option value="all" selected>ランダム（全種類）</option>
-                <option value="distance_uniform">等速走行距離</option>
-                <option value="speed_uniform">等速速度計算</option>
-                <option value="accel">加減速距離</option>
-                <option value="emergency">非常制動停止距離</option>
-            </select>
+            <label>出題形式：</label>
+            <div class="button-group" id="typeButtonGroup">
+                <button type="button" class="select-btn active" data-type="all">全範囲</button>
+                <button type="button" class="select-btn" data-type="distance_uniform">等速走行距離</button>
+                <button type="button" class="select-btn" data-type="speed_uniform">等速速度計算</button>
+                <button type="button" class="select-btn" data-type="accel">加減速距離</button>
+                <button type="button" class="select-btn" data-type="emergency">非常制動停止距離</button>
+            </div>
         </div>
-        <div class="setting-row" id="countRow" style="display: none;">
-            <label for="questionCount">問題数：</label>
-            <select id="questionCount">
-                <option value="3">3問</option>
-                <option value="5" selected>5問</option>
-                <option value="10">10問</option>
-            </select>
+        <div class="setting-row" id="countRow">
+            <label>問題数：</label>
+            <div class="button-group" id="countButtonGroup">
+                <button type="button" class="select-btn" data-count="3">3問</button>
+                <button type="button" class="select-btn active" data-count="5">5問</button>
+                <button type="button" class="select-btn" data-count="10">10問</button>
+                <div class="custom-count-wrapper" id="customCountWrapper">
+                    <input type="number" id="customCountInput" min="1" max="100" placeholder="問題数指定">
+                </div>
+            </div>
         </div>
         <button class="btn" id="generateBtn">開始</button>
     </div>
@@ -556,7 +665,7 @@ canvas {
 const allowedSpeeds = [15, 25, 45, 60, 75, 90];
 const emergencyDecel = 4.5;
 
-let currentMode = 'free';
+let currentMode = 'practice';
 let currentProblem = null;
 let isQuestionActive = false;
 
@@ -735,14 +844,11 @@ function generateIntegerEmergencyProblem() {
     let t_idle = 1;
     let b = emergencyDecel;
     
-    // 総停止距離の正確な値と切り上げ整数
     let exactTotal = (v1 * t_idle / 3.6) + ((v1 * v1) / (7.2 * b));
     let totalDistRounded = Math.ceil(exactTotal);
 
     let addExtra = getRandomItem([25, 35, 45, 55, 65, 75, 85]);
     let targetPoint = totalDistRounded + addExtra;
-    
-    // 支障箇所までの距離（整数）から、切り上げた総停止距離（整数）を引く
     let remaining = targetPoint - totalDistRounded;
 
     let decTotal = formatDecimalString(exactTotal);
@@ -773,9 +879,23 @@ function generateIntegerEmergencyProblem() {
     };
 }
 
-function createSingleProblem(typeSelect) {
-    let types = ['distance_uniform', 'speed_uniform', 'accel', 'emergency'];
-    let selectedType = typeSelect === 'all' ? getRandomItem(types) : typeSelect;
+function getSelectedTypes() {
+    const typeButtons = document.querySelectorAll('#typeButtonGroup .select-btn');
+    let selected = [];
+    typeButtons.forEach(btn => {
+        if (btn.classList.contains('active') && btn.getAttribute('data-type') !== 'all') {
+            selected.push(btn.getAttribute('data-type'));
+        }
+    });
+    return selected;
+}
+
+function createSingleProblemFromSelection() {
+    let selectedTypes = getSelectedTypes();
+    if (selectedTypes.length === 0) {
+        selectedTypes = ['distance_uniform', 'speed_uniform', 'accel', 'emergency'];
+    }
+    let selectedType = getRandomItem(selectedTypes);
 
     switch (selectedType) {
         case 'distance_uniform':
@@ -789,48 +909,64 @@ function createSingleProblem(typeSelect) {
     }
 }
 
+function getSelectedCount() {
+    const activeCountBtn = document.querySelector('#countButtonGroup .select-btn.active');
+    if (activeCountBtn) {
+        return parseInt(activeCountBtn.getAttribute('data-count'), 10);
+    }
+    const customInput = document.getElementById('customCountInput');
+    let val = parseInt(customInput.value, 10);
+    if (isNaN(val) || val <= 0) {
+        return 5;
+    }
+    return val;
+}
+
 function startPlatform() {
-    currentMode = document.getElementById('modeSelect').value;
-    const typeSelect = document.getElementById('questionType').value;
+    currentMode = document.querySelector('#modeButtonGroup .select-btn.active').getAttribute('data-mode');
 
     document.getElementById('summaryDashboard').style.display = 'none';
     document.getElementById('resultBox').style.display = 'none';
     document.getElementById('settingsCard').style.display = 'none';
     document.getElementById('questionText').style.display = 'block';
-    document.getElementById('inputArea').style.display = 'flex';
-    document.getElementById('numpadArea').style.display = 'grid';
-    document.getElementById('userAnswer').value = '';
-    document.getElementById('exitBtn').style.display = 'block';
+    
+    if (currentMode === 'practice') {
+        document.getElementById('inputArea').style.display = 'flex';
+        document.getElementById('numpadArea').style.display = 'grid';
+        document.getElementById('exitBtn').style.display = 'block';
+        isQuestionActive = true;
+        isFreeRetrySession = false;
+        isBatchRetrySession = false;
+        freeRetryProblem = null;
+        updateGenerateButtonText();
 
-    isQuestionActive = true;
-    isFreeRetrySession = false;
-    isBatchRetrySession = false;
-    freeRetryProblem = null;
-    updateGenerateButtonText();
-
-    if (currentMode === 'free') {
-        currentProblem = createSingleProblem(typeSelect);
+        currentProblem = createSingleProblemFromSelection();
         document.getElementById('questionText').innerHTML = currentProblem.text;
     } else {
-        const count = parseInt(document.getElementById('questionCount').value, 10);
+        const count = getSelectedCount();
         practiceList = [];
         for (let i = 0; i < count; i++) {
-            practiceList.push(createSingleProblem(typeSelect));
+            practiceList.push(createSingleProblemFromSelection());
         }
         practiceIndex = 0;
         practiceResults = [];
-        loadPracticeQuestion();
+
+        document.getElementById('inputArea').style.display = 'flex';
+        document.getElementById('numpadArea').style.display = 'grid';
+        document.getElementById('exitBtn').style.display = 'block';
+        isQuestionActive = true;
+        isFreeRetrySession = false;
+        isBatchRetrySession = false;
+        freeRetryProblem = null;
+        updateGenerateButtonText();
+
+        loadExamQuestion();
     }
 }
 
-function loadPracticeQuestion() {
-    if (isBatchRetrySession) {
-        currentProblem = batchRetryQueue[batchRetryCurrentStep];
-        document.getElementById('questionText').innerHTML = `<strong>【誤答の再挑戦：第 ${batchRetryCurrentStep + 1} 問 / 全 ${batchRetryQueue.length} 問】</strong><br>` + currentProblem.text;
-    } else {
-        currentProblem = practiceList[practiceIndex];
-        document.getElementById('questionText').innerHTML = `<strong>【第 ${practiceIndex + 1} 問 / 全 ${practiceList.length} 問】</strong><br>` + currentProblem.text;
-    }
+function loadExamQuestion() {
+    currentProblem = practiceList[practiceIndex];
+    document.getElementById('questionText').innerHTML = `<strong>【第 ${practiceIndex + 1} 問 / 全 ${practiceList.length} 問】</strong><br>` + currentProblem.text;
     document.getElementById('userAnswer').value = '';
 }
 
@@ -850,7 +986,7 @@ function checkAnswer() {
         return;
     }
 
-    if (currentMode === 'free') {
+    if (currentMode === 'practice') {
         const resultBox = document.getElementById('resultBox');
         const resultTitle = document.getElementById('resultTitle');
         const explanationText = document.getElementById('explanationText');
@@ -868,21 +1004,21 @@ function checkAnswer() {
                 resultBox.style.backgroundColor = 'var(--retry-success-bg)';
                 resultBox.style.color = 'var(--retry-success-color)';
                 resultBox.style.border = '1px solid var(--retry-success-border)';
-                resultTitle.textContent = '再挑戦：○';
+                resultTitle.textContent = '再挑戦：○ 正解';
             } else {
                 resultBox.className = 'result-box incorrect';
                 resultBox.style.backgroundColor = '';
                 resultBox.style.color = '';
                 resultBox.style.border = '';
-                resultTitle.textContent = '再挑戦：✕';
+                resultTitle.textContent = '再挑戦：✕ 不正解';
             }
         } else {
             if (isCorrect) {
                 resultBox.className = 'result-box correct';
-                resultTitle.textContent = '◎';
+                resultTitle.textContent = '◎ 正解';
             } else {
                 resultBox.className = 'result-box incorrect';
-                resultTitle.textContent = '✕';
+                resultTitle.textContent = '✕ 不正解';
             }
         }
 
@@ -925,10 +1061,10 @@ function checkAnswer() {
 
             batchRetryCurrentStep++;
             if (batchRetryCurrentStep < batchRetryQueue.length) {
-                loadPracticeQuestion();
+                loadExamQuestion();
             } else {
                 isBatchRetrySession = false;
-                showPracticeSummary();
+                showExamSummary();
             }
         } else {
             practiceResults.push({
@@ -941,9 +1077,9 @@ function checkAnswer() {
 
             practiceIndex++;
             if (practiceIndex < practiceList.length) {
-                loadPracticeQuestion();
+                loadExamQuestion();
             } else {
-                showPracticeSummary();
+                showExamSummary();
             }
         }
     }
@@ -963,30 +1099,32 @@ function renderResultGrid() {
         const badge = document.createElement('div');
         let statusClass = res.isCorrect ? 'correct' : 'incorrect';
         let mark = res.isCorrect ? '◎' : '✕';
+        
         if (!res.isCorrect && res.retryCorrect === true) {
             statusClass = 'retry-correct';
             mark = '○';
         } else if (!res.isCorrect && res.retryCorrect === false) {
             mark = '✕';
         }
+
         badge.className = `result-item-badge ${statusClass}`;
         badge.textContent = `${idx + 1}問 [${mark}]`;
         badge.addEventListener('click', () => {
-            showPracticeDetail(idx);
+            showExamDetail(idx);
         });
         grid.appendChild(badge);
     });
 
     const retryWrongBtn = document.getElementById('retryWrongBtn');
     const hasIncorrect = practiceResults.some(r => !r.isCorrect && r.retryCorrect !== true);
-    if (hasIncorrect) {
+    if (hasIncorrect && currentMode === 'exam') {
         retryWrongBtn.style.display = 'block';
     } else {
         retryWrongBtn.style.display = 'none';
     }
 }
 
-function showPracticeSummary() {
+function showExamSummary() {
     document.getElementById('questionText').style.display = 'none';
     document.getElementById('inputArea').style.display = 'none';
     document.getElementById('numpadArea').style.display = 'none';
@@ -998,11 +1136,11 @@ function showPracticeSummary() {
 
     updateScoreCard();
     renderResultGrid();
-    showPracticeDetail(0);
+    showExamDetail(0);
     dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function showPracticeDetail(idx) {
+function showExamDetail(idx) {
     currentDetailIndex = idx;
     const res = practiceResults[idx];
     const detailCard = document.getElementById('detailViewCard');
@@ -1051,7 +1189,7 @@ function showPracticeDetail(idx) {
     });
 
     const detailRetryBtn = document.getElementById('detailRetryBtn');
-    if (!res.isCorrect && res.retryCorrect !== true) {
+    if (!res.isCorrect && res.retryCorrect !== true && currentMode === 'exam') {
         detailRetryBtn.style.display = 'block';
     } else {
         detailRetryBtn.style.display = 'none';
@@ -1198,8 +1336,16 @@ function drawChart(canvasId, prob) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const modeSelect = document.getElementById('modeSelect');
+    const modeButtons = document.querySelectorAll('#modeButtonGroup .select-btn');
+    const typeButtons = document.querySelectorAll('#typeButtonGroup .select-btn');
+    const allRangeBtn = document.querySelector('#typeButtonGroup .select-btn[data-type="all"]');
+    const itemTypeButtons = document.querySelectorAll('#typeButtonGroup .select-btn:not([data-type="all"])');
+    
+    const countButtons = document.querySelectorAll('#countButtonGroup .select-btn');
+    const customCountInput = document.getElementById('customCountInput');
+    const customCountWrapper = document.getElementById('customCountWrapper');
     const countRow = document.getElementById('countRow');
+
     const generateBtn = document.getElementById('generateBtn');
     const submitBtn = document.getElementById('submitBtn');
     const nextBtn = document.getElementById('nextBtn');
@@ -1214,13 +1360,70 @@ document.addEventListener('DOMContentLoaded', () => {
         exitBtn.style.display = 'none';
     }
 
-    modeSelect.addEventListener('change', () => {
-        if (modeSelect.value === 'practice') {
-            countRow.style.display = 'flex';
-        } else {
-            countRow.style.display = 'none';
+    modeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            modeButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentMode = btn.getAttribute('data-mode');
+
+            if (currentMode === 'practice') {
+                countRow.style.display = 'none';
+            } else {
+                countRow.style.display = 'flex';
+            }
+            resetPlatformDisplay();
+        });
+    });
+
+    typeButtons.forEach(b => { b.disabled = false; });
+    countRow.style.display = 'none';
+
+    allRangeBtn.addEventListener('click', () => {
+        if (allRangeBtn.disabled) return;
+        typeButtons.forEach(b => b.classList.remove('active'));
+        allRangeBtn.classList.add('active');
+    });
+
+    itemTypeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (btn.disabled) return;
+            allRangeBtn.classList.remove('active');
+            btn.classList.toggle('active');
+
+            const activeItems = document.querySelectorAll('#typeButtonGroup .select-btn:not([data-type="all"]).active');
+            if (activeItems.length === 0) {
+                allRangeBtn.classList.add('active');
+            }
+        });
+    });
+
+    countButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            countButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            customCountWrapper.classList.remove('active');
+            customCountInput.value = '';
+        });
+    });
+
+    customCountWrapper.addEventListener('click', () => {
+        countButtons.forEach(b => b.classList.remove('active'));
+        customCountWrapper.classList.add('active');
+        customCountInput.value = '';
+        customCountInput.focus();
+    });
+
+    customCountInput.addEventListener('focus', () => {
+        countButtons.forEach(b => b.classList.remove('active'));
+        customCountWrapper.classList.add('active');
+        customCountInput.value = '';
+    });
+
+    customCountInput.addEventListener('input', () => {
+        if (customCountInput.value !== '') {
+            countButtons.forEach(b => b.classList.remove('active'));
+            customCountWrapper.classList.add('active');
         }
-        resetPlatformDisplay();
     });
 
     if (generateBtn) {
@@ -1237,7 +1440,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (submitBtn) {
         submitBtn.addEventListener('click', () => {
-            if (currentMode === 'free') {
+            if (currentMode === 'practice') {
                 checkAnswer();
             } else {
                 if (isFreeRetrySession) {
@@ -1279,7 +1482,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     updateScoreCard();
                     renderResultGrid();
-                    showPracticeDetail(currentDetailIndex);
+                    showExamDetail(currentDetailIndex);
                     dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     isFreeRetrySession = false;
                 } else {
@@ -1323,12 +1526,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (nextBtn) {
         nextBtn.addEventListener('click', () => {
-            const typeSelect = document.getElementById('questionType').value;
             document.getElementById('resultBox').style.display = 'none';
             userAnswerInput.value = '';
             isFreeRetrySession = false;
             freeRetryProblem = null;
-            currentProblem = createSingleProblem(typeSelect);
+            currentProblem = createSingleProblemFromSelection();
             document.getElementById('questionText').innerHTML = currentProblem.text;
             document.getElementById('questionText').scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
@@ -1357,7 +1559,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('resultBox').style.display = 'none';
                 document.getElementById('exitBtn').style.display = 'block';
 
-                loadPracticeQuestion();
+                loadExamQuestion();
                 document.getElementById('questionText').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
