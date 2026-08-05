@@ -96,17 +96,6 @@ h1 {
     margin: 0;
 }
 
-.global-guide-text {
-    font-size: 0.8rem;
-    color: #1a73e8;
-    background: #e8f0fe;
-    padding: 6px 10px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    display: none;
-    font-weight: bold;
-}
-
 .question-section {
     margin-top: 15px;
     margin-bottom: 25px;
@@ -332,8 +321,6 @@ h1 {
     <div class="header-row">
         <h1>運転理論 記述問題</h1>
     </div>
-    
-    
 
     <!-- 第1問 -->
     <div class="question-section">
@@ -651,57 +638,13 @@ slotIds.forEach(id => {
     const slot = document.getElementById(id);
     if (!slot) return;
 
-    let pressTimer = null;
-    let isLongPress = false;
-
-    const startAction = (e) => {
-        isLongPress = false;
-        pressTimer = setTimeout(() => {
-            isLongPress = true;
-            openModal(id);
-        }, 500);
-    };
-
-    const cancelAction = () => {
-        if (pressTimer) {
-            clearTimeout(pressTimer);
-            pressTimer = null;
-        }
-    };
-
-    const tapAction = (e) => {
-        if (isLongPress) return;
+    slot.addEventListener('click', () => {
         openModal(id);
-    };
-
-    slot.addEventListener('mousedown', startAction);
-    slot.addEventListener('mouseup', (e) => {
-        cancelAction();
-        if (!isLongPress) {
-            tapAction(e);
-        }
     });
-    slot.addEventListener('mouseleave', cancelAction);
-    slot.addEventListener('mousemove', cancelAction);
 
     slot.addEventListener('contextmenu', (e) => {
         e.preventDefault();
     });
-
-    slot.addEventListener('touchstart', (e) => {
-        startAction(e);
-    }, { passive: true });
-
-    slot.addEventListener('touchend', (e) => {
-        cancelAction();
-        if (!isLongPress) {
-            tapAction(e);
-        }
-    }, { passive: true });
-
-    slot.addEventListener('touchmove', () => {
-        cancelAction();
-    }, { passive: true });
 });
 
 function confirmModal() {
@@ -722,7 +665,6 @@ function confirmModal() {
     
     slot.setAttribute('data-has-input', 'true');
 
-    document.getElementById('globalGuide').style.display = 'block';
     closeModal();
 }
 
@@ -753,7 +695,6 @@ function toggleAllAnswers() {
 
     if (isAllAnswersShown) {
         btn.textContent = '非表示';
-        document.getElementById('globalGuide').style.display = 'block';
     } else {
         btn.textContent = '表示';
     }
