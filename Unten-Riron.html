@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>運転理論 練習問題プラットフォーム</title>
+<title>運転理論 練習問題</title>
 <style>
 :root {
     --primary-color: #1a73e8;
@@ -239,13 +239,6 @@ h1 {
     color: white;
     border-color: var(--primary-color);
     font-weight: bold;
-}
-
-.select-btn:disabled {
-    background-color: #e0e0e0;
-    color: #a0a0a0;
-    border-color: #d0d0d0;
-    cursor: not-allowed;
 }
 
 #typeButtonGroup {
@@ -633,7 +626,7 @@ canvas {
     <div class="numpad" id="numpadArea" style="display: none;">
         <button class="num-btn clear" data-val="clear">C</button>
         <button class="num-btn operator" data-val="(">(</button>
-        <button class="num-btn operator" data-val=")">)</button>
+        <button class="num-btn operator" data-valseparable data-val=")">)</button>
         <button class="num-btn operator" data-val="/">÷</button>
 
         <button class="num-btn" data-val="7">7</button>
@@ -692,7 +685,6 @@ canvas {
 </div>
 
 <script>
-const allowedSpeeds = [15, 25, 45, 60, 75, 90];
 const emergencyDecel = 4.5;
 
 let currentMode = 'practice';
@@ -754,15 +746,14 @@ function resetPlatformDisplay() {
     document.getElementById('settingsCard').style.display = 'flex';
     document.getElementById('userAnswer').value = '';
     
-    // メニュー画面に戻った時のみ「科目選択」を表示し、「終了」ボタンを隠す
     document.getElementById('subjectSelectBtn').style.display = 'inline-block';
     document.getElementById('exitBtn').style.display = 'none';
     updateGenerateButtonText();
 }
 
-function generateIntegerUniformDistanceProblem() {
-    const v = getRandomItem(allowedSpeeds);
-    const t = getRandomItem([3, 4, 6, 8, 10, 12, 15, 20, 24, 30]);
+function generateUniformDistanceProblem() {
+    const v = getRandomItem([45, 60, 75, 90]);
+    const t = getRandomItem([30, 45, 60]);
     const exactVal = (v * t) / 3.6;
     const isExact = Math.abs(exactVal - Math.round(exactVal)) < 1e-5;
     const distance = isExact ? Math.round(exactVal) : Math.ceil(exactVal);
@@ -777,7 +768,7 @@ function generateIntegerUniformDistanceProblem() {
 
     return {
         type: 'distance_uniform',
-        text: `${v} km/h で ${t} 秒間走行した場合の距離は？`,
+        text: `${v} km/h で走行中、${t} 秒間走行した。この間の走行距離はいくらか。`,
         answer: distance,
         v: v,
         t: t,
@@ -786,9 +777,9 @@ function generateIntegerUniformDistanceProblem() {
     };
 }
 
-function generateIntegerUniformSpeedProblem() {
-    const v = getRandomItem(allowedSpeeds);
-    const t = getRandomItem([3, 4, 5, 6, 8, 10, 12, 15, 20]);
+function generateUniformSpeedProblem() {
+    const t = getRandomItem([10, 14, 15, 20]);
+    const v = getRandomItem([45, 47, 60, 75, 90]);
     const distance = Math.round((v * t) / 3.6);
     const exactVal = (distance * 3.6) / t;
     const isExact = Math.abs(exactVal - v) < 1e-5;
@@ -803,7 +794,7 @@ function generateIntegerUniformSpeedProblem() {
 
     return {
         type: 'speed_uniform',
-        text: `${t} 秒間で ${distance} m 走行した時の速度は？ (単位: km/h)`,
+        text: `電車が起動後、等加速度で ${t} 秒間に ${distance} m 走行した。この時点の速度はいくらか。`,
         answer: v,
         distance: distance,
         t: t,
@@ -812,16 +803,13 @@ function generateIntegerUniformSpeedProblem() {
     };
 }
 
-function generateIntegerAccelProblem() {
-    const rates = [1.0, 1.5, 2.0, 2.5, 3.0];
+function generateAccelProblem() {
+    const rates = [1.5, 2.0, 2.5];
     const rate = getRandomItem(rates);
     const isDecel = Math.random() < 0.5;
 
-    let v1 = getRandomItem(allowedSpeeds);
-    let v2 = getRandomItem(allowedSpeeds);
-    while (v1 === v2) {
-        v2 = getRandomItem(allowedSpeeds);
-    }
+    let v1 = getRandomItem([45, 60]);
+    let v2 = getRandomItem([75, 90]);
 
     if (isDecel) {
         if (v1 < v2) { let tmp = v1; v1 = v2; v2 = tmp; }
@@ -849,7 +837,7 @@ function generateIntegerAccelProblem() {
         return {
             type: 'accel',
             isDecel: true,
-            text: `減速度 &beta; = ${rateStr} km/h/s で ${v1} km/h から ${v2} km/h まで減速した場合の距離は？`,
+            text: `${v1} km/h で惰行中の電車が ${rateStr} km/h/s の減速度で制動をかけたところ、制動初速と制動距離を求めよ。`,
             answer: distance,
             v0: v1,
             v1: v2,
@@ -861,7 +849,7 @@ function generateIntegerAccelProblem() {
         return {
             type: 'accel',
             isDecel: false,
-            text: `加速度 &alpha; = ${rateStr} km/h/s で ${v1} km/h から ${v2} km/h まで加速した場合の距離は？`,
+            text: `${v1} km/h で惰行中の電車が ${rateStr} km/h/s の加速度で力行し、${v2} km/h に達した。この間の走行距離はいくらか。`,
             answer: distance,
             v0: v1,
             v1: v2,
@@ -872,15 +860,15 @@ function generateIntegerAccelProblem() {
     }
 }
 
-function generateIntegerEmergencyProblem() {
-    let v1 = getRandomItem(allowedSpeeds);
+function generateEmergencyProblem() {
+    let v1 = getRandomItem([75, 88, 90]);
     let t_idle = 1;
     let b = emergencyDecel;
     
     let exactTotal = (v1 * t_idle / 3.6) + ((v1 * v1) / (7.2 * b));
     let totalDistRounded = Math.ceil(exactTotal);
 
-    let addExtra = getRandomItem([25, 35, 45, 55, 65, 75, 85]);
+    let addExtra = getRandomItem([6, 15, 25]);
     let targetPoint = totalDistRounded + addExtra;
     let remaining = targetPoint - totalDistRounded;
 
@@ -898,11 +886,11 @@ function generateIntegerEmergencyProblem() {
         <div class="calc-row"><span class="calc-label"></span><span class="calc-symbol">=</span><span class="calc-content">${remaining} m手前</span></div>
     `;
 
-    let calcAndAnswerHtml = `<strong>【計算式】</strong><div class="math-block"><div class="calc-block">${totalDistRows}${remainingRows}</div></div><div style="margin-top:6px; font-weight:bold; color:var(--primary-color);">A: ${remaining} m</div>`;
+    let calcAndAnswerHtml = `<strong>【計算式】</strong><div class="math-block"><div class="calc-block">${totalDistRows}${remainingRows}</div></div><div style="margin-top:6px; font-weight:bold; color:var(--primary-color);">A: ${remaining} m手前</div>`;
 
     return {
         type: 'emergency',
-        text: `${v1} km/h で走行中、前方 ${targetPoint} m 先で異常を認め非常制動（減速度 &beta; = 4.5 km/h/s）を使用して停止した。この場合何 m 手前で停止できるか？ただし空走時間は ${t_idle} 秒とする。`,
+        text: `列車が平たん直線路上を ${v1} km/h で走行中、前方 ${targetPoint} m の地点に人影を発見し、直ちに非常ブレーキをかけた。列車は人影の地点から何 m 手前に停止するか。公式を示し、解は整数のこと。減速度は 4.5 km/h/s、空走時間は 1 秒、滑走はないものとする。`,
         answer: remaining,
         v0: v1,
         targetPoint: targetPoint,
@@ -932,13 +920,13 @@ function createSingleProblemFromSelection() {
 
     switch (selectedType) {
         case 'distance_uniform':
-            return generateIntegerUniformDistanceProblem();
+            return generateUniformDistanceProblem();
         case 'speed_uniform':
-            return generateIntegerUniformSpeedProblem();
+            return generateUniformSpeedProblem();
         case 'accel':
-            return generateIntegerAccelProblem();
+            return generateAccelProblem();
         case 'emergency':
-            return generateIntegerEmergencyProblem();
+            return generateEmergencyProblem();
     }
 }
 
@@ -963,7 +951,6 @@ function startPlatform() {
     document.getElementById('settingsCard').style.display = 'none';
     document.getElementById('questionText').style.display = 'block';
     
-    // 問題画面や演習中へ移行する際、「科目選択」を非表示にし「終了」ボタンを表示する
     document.getElementById('subjectSelectBtn').style.display = 'none';
     document.getElementById('exitBtn').style.display = 'inline-block';
 
@@ -1165,7 +1152,6 @@ function showExamSummary() {
     document.getElementById('numpadArea').style.display = 'none';
     document.getElementById('resultBox').style.display = 'none';
     document.getElementById('exitBtn').style.display = 'none';
-    // 試験結果画面でも「科目選択」は出さないように非表示を維持
     document.getElementById('subjectSelectBtn').style.display = 'none';
 
     const dashboard = document.getElementById('summaryDashboard');
@@ -1394,7 +1380,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const exitBtn = document.getElementById('exitBtn');
     const userAnswerInput = document.getElementById('userAnswer');
 
-    // 初期ロード時は設定画面（メニュー画面）なので「科目選択」を表示
     const subjectSelectBtn = document.getElementById('subjectSelectBtn');
     if (subjectSelectBtn) {
         subjectSelectBtn.style.display = 'inline-block';
