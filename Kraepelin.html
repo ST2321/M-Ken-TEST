@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>クレペリン検査</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'MS Gothic', 'Osaka', monospace, sans-serif;
+            background-color: #e5e5e5;
+            color: #000;
+            margin: 0;
+            padding: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            user-select: none;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            background: #fff;
+            padding: 8px;
+            border: 2px solid #333;
+            max-width: 1400px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            position: relative;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+            position: relative;
+        }
+        .exit-btn {
+            background-color: #555;
+            color: white;
+            border: 1px solid #333;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        .exit-btn:hover {
+            background-color: #444;
+        }
+        h1 {
+            font-size: 1rem;
+            margin: 0;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .timer-space {
+            height: 1.5rem;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #c0392b;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .instructions {
+            font-size: 0.7rem;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.2;
+            text-align: left;
+            background: #fffbe6;
+            padding: 6px 8px;
+            border: 1px solid #e6db55;
+        }
+        .mode-select-area {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .main-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+            justify-content: flex-start;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .test-board {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            padding: 4px;
+            border: 2px inset #999;
+            overflow-y: auto;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            text-align: left;
+            min-height: 150px;
+        }
+
+        .tenkey-panel {
+            width: 100%;
+            max-width: 320px;
+            background: #f8f9fa;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
+            margin-bottom: 2px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .tenkey-panel h3 {
+            font-size: 0.8rem;
+            margin: 0;
+            color: #333;
+        }
+        .tenkey-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            width: 100%;
+        }
+        .tenkey-btn {
+            background-color: #fff;
+            border: 1px solid #7f8c8d;
+            border-radius: 6px;
+            padding: 12px 0;
+            font-size: 1.4rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px #bdc3c7;
+            transition: all 0.05s ease;
+        }
+        .tenkey-btn:active {
+            background-color: #ecf0f1;
+            box-shadow: 0 1px #bdc3c7;
+            transform: translateY(2px);
+        }
+        .tenkey-btn.zero-btn {
+            grid-column: span 3;
+            padding: 10px 0;
+        }
+
+        .row-container {
+            display: flex;
+            align-items: center;
+            height: 32px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.05rem;
+            white-space: nowrap;
+            opacity: 0.35;
+            transition: opacity 0.2s;
+        }
+        .row-container.active {
+            opacity: 1;
+            background-color: #f0f8ff;
+            border-top: 1px dashed #3498db;
+            border-bottom: 1px dashed #3498db;
+        }
+        .row-container.finished {
+            opacity: 0.6;
+        }
+        .row-container.half-divider {
+            border-bottom: 3px solid #2c3e50;
+        }
+
+        .num-span {
+            display: inline-block;
+            width: 22px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .input-cell {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid #7f8c8d;
+            background: #fff;
+            margin: 0 1px;
+            padding: 0;
+            vertical-align: middle;
+            border-radius: 2px;
+        }
+        .input-cell:focus {
+            border-color: #2980b9;
+            background: #ebf5fb;
+            outline: none;
+            box-shadow: 0 0 3px #2980b9;
+            transform: scale(1.05);
+            z-index: 2;
+        }
+        .input-cell:disabled {
+            background: #eaeaea;
+            color: #888;
+            border-color: #d2d2d2;
+        }
+
+        .break-screen {
+            display: none;
+            padding: 30px;
+            background: #eaf2f8;
+            border: 2px solid #3498db;
+            margin: 10px 0;
+        }
+        .break-screen h2 {
+            color: #2980b9;
+            font-size: 1.5rem;
+        }
+
+        .btn {
+            background-color: #2c3e50;
+            color: white;
+            border: 1px solid #1a252f;
+            padding: 8px 20px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        .btn:hover {
+            background-color: #34495e;
+        }
+        
+        #result-area {
+            margin-top: 10px;
+            text-align: left;
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .result-card {
+            background: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-top: 5px;
+        }
+        .curve-container {
+            margin-top: 10px;
+            background: #fff;
+            border: 1px solid #bbb;
+            padding: 10px;
+            text-align: center;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+            background: #fafafa;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="top-bar">
+            <button class="exit-btn" onclick="handleExit()">終了</button>
+            <h1>クレペリン検査</h1>
+        </div>
+        <div class="timer-space" id="timer"></div>
+        
+        <div id="setup-view">
+            <div class="instructions">
+                <strong>【検査の要領】</strong><br>
+                1. 左から右へ隣り合う2つの数字を足した「下1桁」を間のマスに入力します。<br>
+                2. 隣り合う足し算の答えが同じにならないよう、数字の並びが自動調整されています。<br>
+                3. 1文字入力すると自動的に右のマスへカーソルが移動します。<br>
+                4. 残り10秒以下になると上のスペースに残秒数が表示されます。<br>
+                5. <strong>簡易モード</strong>：1行10秒 × 全5行<br>
+                6. <strong>普通モード</strong>：前半15分 ➔ 休憩5分 ➔ 後半15分（全34行）
+            </div>
+            <div class="mode-select-area">
+                <button class="btn" onclick="startTest('easy')">簡易モードで開始</button>
+                <button class="btn" onclick="startTest('normal')">普通モードで開始</button>
+            </div>
+        </div>
+
+        <div id="break-view" class="break-screen">
+            <h2>前半戦が終了しました（休憩中）</h2>
+            <p>5分間の休憩時間です。気持ちを落ち着かせてお待ちください。</p>
+            <p id="break-timer" style="font-size: 1.3rem; font-weight: bold; color: #e74c3c;">残り休憩時間: 5:00</p>
+            <button class="btn" onclick="skipBreak()">すぐに後半戦を開始する</button>
+        </div>
+
+        <div id="test-view" style="display: none;">
+            <div class="main-layout">
+                <div class="test-board" id="board">
+                    <!-- JavaScriptで動的生成 -->
+                </div>
+                
+                <div class="tenkey-panel">
+                    <h3>テンキー</h3>
+                    <div class="tenkey-grid">
+                        <button type="button" class="tenkey-btn" onclick="inputNumber('7')">7</button>
+                        <button type="button" class="tenkey-btn" onclick="inputNumber('8')">8</button>
+                        <button type="button" class="tenkey-btn" onclick="inputNumber('9')">9</button>
+                        <button type="button" class="tenkey-btn" onclick="inputNumber('4')">4</button>
+                        <button type="button" class="tenkey-btn" onclick="inputNumber('5')">5</button>
+                        <button type="button" class="tenkey-btn" onclick="inputNumber('6')">6</button>
+                        <button type="button" class="tenkey-btn" onclick="inputNumber('1')">1</button>
+                        <button type="button" class="tenkey-btn" onclick="inputNumber('2')">2</button>
+                        <button type="button" class="tenkey-btn" onclick="inputNumber('3')">3</button>
+                        <button type="button" class="tenkey-btn zero-btn" onclick="inputNumber('0')">0</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="result-area">
+            <h3>検査終了</h3>
+            <div class="result-card" id="result-text"></div>
+            <div class="curve-container">
+                <h4>作業曲線（行ごとの処理数）</h4>
+                <canvas id="resultCanvas" width="600" height="250"></canvas>
+            </div>
+            <br>
+            <button class="btn" onclick="resetTest()">最初に戻る</button>
+        </div>
+    </div>
+
+    <script>
+        const NUM_COLS = 116; 
+
+        let mode = 'normal'; 
+        let totalRows = 34;
+        let secondsPerRow = 60;
+
+        let currentRow = 0;
+        let timeLeftPerRow = 60;
+        let rowTimer = null;
+        
+        let testData = [];   
+        let userAnswers = []; 
+
+        let isBreakTime = false;
+        let breakTimeLeft = 300; 
+        let breakTimer = null;
+        let currentPhase = 1; 
+
+        let activeInputCell = null;
+
+        function handleExit() {
+            const setupView = document.getElementById('setup-view');
+            const testView = document.getElementById('test-view');
+            const breakView = document.getElementById('break-view');
+            const resultArea = document.getElementById('result-area');
+
+            // 簡易・普通を選ぶ画面（setup-viewが表示されている）にいる場合は index.html へ飛ぶ
+            if (setupView.style.display !== 'none') {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // テスト中、休憩中、または結果画面にいる場合は初期の選択画面に戻す
+            if (rowTimer) clearInterval(rowTimer);
+            if (breakTimer) clearInterval(breakTimer);
+
+            testView.style.display = 'none';
+            breakView.style.display = 'none';
+            resultArea.style.display = 'none';
+            setupView.style.display = 'block';
+            document.getElementById('timer').textContent = '';
+        }
+
+        function startTest(selectedMode) {
+            mode = selectedMode;
+            if (mode === 'easy') {
+                totalRows = 5;
+                secondsPerRow = 10;
+            } else {
+                totalRows = 34;
+                secondsPerRow = 60;
+            }
+
+            document.getElementById('setup-view').style.display = 'none';
+            const testView = document.getElementById('test-view');
+            testView.style.display = 'flex';
+            testView.style.flexDirection = 'column';
+            testView.style.flex = '1';
+            testView.style.minHeight = '0';
+            document.getElementById('result-area').style.display = 'none';
+
+            currentRow = 0;
+            currentPhase = 1;
+            userAnswers = [];
+
+            generateTestData();
+            loadBoard();
+            startRowTimer();
+        }
+
+        function generateTestData() {
+            testData = [];
+            for (let r = 0; r < totalRows; r++) {
+                let rowNums = [];
+                rowNums.push(Math.floor(Math.random() * 9) + 1);
+
+                for (let c = 0; c < NUM_COLS - 1; c++) {
+                    let prevNum = rowNums[c];
+                    let prevAns = (c > 0) ? (rowNums[c - 1] + prevNum) % 10 : -1;
+
+                    let validNextNums = [];
+                    for (let n = 1; n <= 9; n++) {
+                        let currentAns = (prevNum + n) % 10;
+                        if (currentAns !== prevAns) {
+                            validNextNums.push(n);
+                        }
+                    }
+
+                    if (validNextNums.length === 0) {
+                        for (let n = 1; n <= 9; n++) {
+                            if (n !== prevNum) validNextNums.push(n);
+                        }
+                        if (validNextNums.length === 0) validNextNums.push(1);
+                    }
+
+                    let nextNum = validNextNums[Math.floor(Math.random() * validNextNums.length)];
+                    rowNums.push(nextNum);
+                }
+                testData.push(rowNums);
+                userAnswers.push(new Array(NUM_COLS - 1).fill(''));
+            }
+        }
+
+        function loadBoard() {
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+
+            for (let r = 0; r < totalRows; r++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = `row-container ${r === currentRow ? 'active' : ''}`;
+                if (mode === 'normal' && r === 16) rowDiv.classList.add('half-divider'); 
+                rowDiv.id = `row-${r}`;
+
+                const nums = testData[r];
+                for (let c = 0; c < NUM_COLS - 1; c++) {
+                    const numSpan = document.createElement('span');
+                    numSpan.className = 'num-span';
+                    numSpan.textContent = nums[c];
+                    rowDiv.appendChild(numSpan);
+
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.inputMode = 'none'; 
+                    input.maxLength = 1;
+                    input.className = 'input-cell';
+                    input.dataset.row = r;
+                    input.dataset.col = c;
+                    input.value = userAnswers[r][c];
+
+                    if (r !== currentRow) {
+                        input.disabled = true;
+                    }
+
+                    input.addEventListener('focus', () => {
+                        activeInputCell = input;
+                        input.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                    });
+
+                    input.addEventListener('input', (e) => {
+                        const val = e.target.value;
+                        if (!/^[0-9]$/.test(val)) {
+                            e.target.value = '';
+                            return;
+                        }
+                        userAnswers[r][c] = val;
+
+                        if (c < NUM_COLS - 2) {
+                            const nextInput = board.querySelector(`input[data-row="${r}"][data-col="${c + 1}"]`);
+                            if (nextInput) {
+                                nextInput.focus();
+                            }
+                        }
+                    });
+
+                    rowDiv.appendChild(input);
+                }
+
+                const lastNumSpan = document.createElement('span');
+                lastNumSpan.className = 'num-span';
+                lastNumSpan.textContent = nums[NUM_COLS - 1];
+                rowDiv.appendChild(lastNumSpan);
+
+                board.appendChild(rowDiv);
+            }
+
+            focusCurrentFirstInput();
+            updateHeader();
+        }
+
+        function inputNumber(numStr) {
+            if (!activeInputCell || activeInputCell.disabled) return;
+            const r = parseInt(activeInputCell.dataset.row, 10);
+            const c = parseInt(activeInputCell.dataset.col, 10);
+            
+            activeInputCell.value = numStr;
+            userAnswers[r][c] = numStr;
+
+            if (c < NUM_COLS - 2) {
+                const board = document.getElementById('board');
+                const nextInput = board.querySelector(`input[data-row="${r}"][data-col="${c + 1}"]`);
+                if (nextInput) {
+                    nextInput.focus();
+                }
+            }
+        }
+
+        function startRowTimer() {
+            if (rowTimer) clearInterval(rowTimer);
+            timeLeftPerRow = secondsPerRow;
+            updateHeader();
+
+            rowTimer = setInterval(() => {
+                timeLeftPerRow--;
+                updateHeader();
+                if (timeLeftPerRow <= 0) {
+                    clearInterval(rowTimer);
+                    goToNextRowOrBreak();
+                }
+            }, 1000);
+        }
+
+        function goToNextRowOrBreak() {
+            currentRow++;
+            
+            if (mode === 'normal' && currentRow === 17 && currentPhase === 1) {
+                startBreak();
+                return;
+            }
+
+            if (currentRow >= totalRows) {
+                endTest();
+                return;
+            }
+
+            updateRowStates();
+            focusCurrentFirstInput();
+            startRowTimer();
+        }
+
+        function startBreak() {
+            isBreakTime = true;
+            document.getElementById('test-view').style.display = 'none';
+            document.getElementById('break-view').style.display = 'block';
+            document.getElementById('timer').textContent = '';
+            breakTimeLeft = 300; 
+            updateBreakTimerDisplay();
+
+            breakTimer = setInterval(() => {
+                breakTimeLeft--;
+                updateBreakTimerDisplay();
+                if (breakTimeLeft <= 0) {
+                    clearInterval(breakTimer);
+                    endBreak();
+                }
+            }, 1000);
+        }
+
+        function updateBreakTimerDisplay() {
+            const min = Math.floor(breakTimeLeft / 60);
+            const sec = breakTimeLeft % 60;
+            document.getElementById('break-timer').textContent = `残り休憩時間: ${min}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        function skipBreak() {
+            if (breakTimer) clearInterval(breakTimer);
+            endBreak();
+        }
+
+        function endBreak() {
+            isBreakTime = false;
+            currentPhase = 2;
+            document.getElementById('break-view').style.display = 'none';
+            const testView = document.getElementById('test-view');
+            testView.style.display = 'flex';
+            testView.style.flexDirection = 'column';
+            testView.style.flex = '1';
+            testView.style.minHeight = '0';
+            
+            updateRowStates();
+            focusCurrentFirstInput();
+            startRowTimer();
+        }
+
+        function updateRowStates() {
+            for (let r = 0; r < totalRows; r++) {
+                const rowDiv = document.getElementById(`row-${r}`);
+                if (!rowDiv) continue;
+                
+                rowDiv.classList.remove('active', 'finished');
+                if (r < currentRow) {
+                    rowDiv.classList.add('finished');
+                } else if (r === currentRow) {
+                    rowDiv.classList.add('active');
+                    rowDiv.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                }
+
+                const inputs = document.querySelectorAll(`input[data-row="${r}"]`);
+                inputs.forEach(inp => {
+                    inp.disabled = (r !== currentRow);
+                });
+            }
+        }
+
+        function focusCurrentFirstInput() {
+            const board = document.getElementById('board');
+            for (let c = 0; c < NUM_COLS - 1; c++) {
+                if (userAnswers[currentRow][c] === '') {
+                    const target = board.querySelector(`input[data-row="${currentRow}"][data-col="${c}"]`);
+                    if (target) {
+                        target.focus();
+                        target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                        return;
+                    }
+                }
+            }
+            const lastTarget = board.querySelector(`input[data-row="${currentRow}"][data-col="${NUM_COLS - 2}"]`);
+            if (lastTarget) {
+                lastTarget.focus();
+                lastTarget.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+            }
+        }
+
+        function updateHeader() {
+            const timerEl = document.getElementById('timer');
+            if (timeLeftPerRow <= 10) {
+                timerEl.textContent = `残り ${timeLeftPerRow}秒`;
+            } else {
+                timerEl.textContent = '';
+            }
+        }
+
+        function endTest() {
+            if (rowTimer) clearInterval(rowTimer);
+            document.getElementById('test-view').style.display = 'none';
+            document.getElementById('timer').textContent = '';
+
+            let totalProcessed = 0;
+            let totalCorrect = 0;
+            let rowCounts = [];
+
+            for (let r = 0; r < totalRows; r++) {
+                let rowProcessed = 0;
+                for (let c = 0; c < NUM_COLS - 1; c++) {
+                    const ans = userAnswers[r][c];
+                    if (ans !== '') {
+                        totalProcessed++;
+                        rowProcessed++;
+                        const correctVal = (testData[r][c] + testData[r][c+1]) % 10;
+                        if (parseInt(ans, 10) === correctVal) {
+                            totalCorrect++;
+                        }
+                    }
+                }
+                rowCounts.push(rowProcessed);
+            }
+
+            const totalIncorrect = totalProcessed - totalCorrect;
+            const resultHTML = `
+                <p><strong>総処理数（解答数）:</strong> ${totalProcessed} 問</p>
+                <p><strong>正解数:</strong> ${totalCorrect} 問</p>
+                <p><strong>誤答数:</strong> ${totalIncorrect} 問</p>
+            `;
+
+            document.getElementById('result-text').innerHTML = resultHTML;
+            document.getElementById('result-area').style.display = 'block';
+
+            drawWorkCurve(rowCounts);
+        }
+
+        function drawWorkCurve(rowCounts) {
+            const canvas = document.getElementById('resultCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const padding = 40;
+            const graphWidth = canvas.width - padding * 2;
+            const graphHeight = canvas.height - padding * 2;
+
+            const maxCount = Math.max(...rowCounts, 10);
+            const numRows = rowCounts.length;
+
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, canvas.height - padding);
+            ctx.lineTo(canvas.width - padding, canvas.height - padding);
+            ctx.stroke();
+
+            ctx.font = '10px sans-serif';
+            ctx.fillStyle = '#666';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 4; i++) {
+                let val = Math.round((maxCount / 4) * i);
+                let y = canvas.height - padding - (graphHeight / 4) * i;
+                ctx.fillText(val, padding - 5, y + 4);
+
+                ctx.strokeStyle = '#eee';
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(canvas.width - padding, y);
+                ctx.stroke();
+            }
+
+            ctx.strokeStyle = '#2980b9';
+            ctx.fillStyle = '#2980b9';
+            ctx.lineWidth = 2;
+
+            let points = [];
+            for (let i = 0; i < numRows; i++) {
+                let x = padding + (numRows > 1 ? (graphWidth / (numRows - 1)) * i : graphWidth / 2);
+                let y = canvas.height - padding - (graphHeight / maxCount) * rowCounts[i];
+                points.push({ x, y });
+
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#666';
+                ctx.fillText(`${i + 1}行`, x, canvas.height - padding + 15);
+            }
+
+            if (points.length > 0) {
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                for (let i = 1; i < points.length; i++) {
+                    ctx.lineTo(points[i].x, points[i].y);
+                }
+                ctx.stroke();
+
+                for (let p of points) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.fill();
+                }
+            }
+        }
+
+        function resetTest() {
+            document.getElementById('result-area').style.display = 'none';
+            document.getElementById('setup-view').style.display = 'block';
+            document.getElementById('timer').textContent = '';
+        }
+    </script>
+</body>
+</html>
