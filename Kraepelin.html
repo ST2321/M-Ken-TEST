@@ -150,7 +150,7 @@
             overflow: hidden;
         }
         
-        /* 縦画面（ポートレート）時のレイアウト調整（縦長ボタン化） */
+        /* 縦画面（ポートレート）時のレイアウト調整（縦長ボタン化・コンパクト化） */
         @media screen and (orientation: portrait) and (max-width: 767px) {
             .main-layout {
                 flex-direction: column !important;
@@ -160,27 +160,27 @@
                 max-width: none !important;
                 flex-direction: column !important;
                 align-items: center !important;
-                padding: 6px 10px !important;
+                padding: 4px 8px !important;
                 flex-shrink: 0;
             }
             .tenkey-panel h3 {
-                font-size: 0.75rem !important;
-                margin-bottom: 4px !important;
+                font-size: 0.7rem !important;
+                margin-bottom: 2px !important;
             }
             .tenkey-grid {
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
-                gap: 6px !important;
+                gap: 4px !important;
                 width: 100% !important;
                 max-width: 360px;
             }
             .tenkey-btn {
-                padding: 14px 0 !important;
-                font-size: 1.3rem !important;
+                padding: 8px 0 !important;
+                font-size: 1.1rem !important;
             }
             .tenkey-btn.zero-btn {
                 grid-column: span 3 !important;
-                padding: 12px 0 !important;
+                padding: 6px 0 !important;
             }
         }
 
@@ -592,7 +592,6 @@
                     testView.style.flex = '1';
                     testView.style.minHeight = '0';
 
-                    // 検査開始直後の1行目から正しく秒数が設定されるように調整
                     timeLeftPerRow = secondsPerRow;
                     focusCurrentFirstInput();
                     startRowTimer();
