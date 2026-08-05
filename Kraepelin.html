@@ -90,9 +90,8 @@
             background: #fdfdfd;
             padding: 6px 10px;
             border: 1px solid #ccc;
-            display: none; /* デフォルトは非表示（縦画面スマホ用） */
+            display: none;
         }
-        /* 横画面（landscape）または幅が一定以上（PC等）の場合に表示 */
         @media screen and (min-width: 768px), (orientation: landscape) {
             .setup-section {
                 display: block;
@@ -150,6 +149,42 @@
             min-height: 0;
             overflow: hidden;
         }
+        
+        /* 縦画面（ポートレート）時のレイアウト調整（縦長ボタン化） */
+        @media screen and (orientation: portrait) and (max-width: 767px) {
+            .main-layout {
+                flex-direction: column !important;
+            }
+            .tenkey-panel {
+                width: 100% !important;
+                max-width: none !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                padding: 6px 10px !important;
+                flex-shrink: 0;
+            }
+            .tenkey-panel h3 {
+                font-size: 0.75rem !important;
+                margin-bottom: 4px !important;
+            }
+            .tenkey-grid {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 6px !important;
+                width: 100% !important;
+                max-width: 360px;
+            }
+            .tenkey-btn {
+                padding: 14px 0 !important;
+                font-size: 1.3rem !important;
+            }
+            .tenkey-btn.zero-btn {
+                grid-column: span 3 !important;
+                padding: 12px 0 !important;
+            }
+        }
+
+        /* 横画面またはPC表示時の利き手設定 */
         .main-layout.hand-right {
             flex-direction: row;
         }
@@ -377,7 +412,7 @@
             <div class="setup-section" id="hand-setup-section">
                 <div>
                     <h3>利き手の選択</h3>
-                    <span class="setup-note">テンキーの表示位置を変更できます。</span>
+                    <span class="setup-note">テンキーの表示位置を変更できます（横画面・PC用）。</span>
                 </div>
                 <div class="hand-select-area">
                     <button type="button" id="hand-left-btn" class="hand-btn" onclick="setHandedness('left')">左</button>
@@ -507,12 +542,15 @@
                 secondsPerRow = 60;
             }
 
-            // 縦画面スマホ（非表示状態）の場合はデフォルトで右利き扱いにする
             const isLandscapeOrPC = window.innerWidth >= 768 || window.innerWidth > window.innerHeight;
             const activeHand = isLandscapeOrPC ? selectedHand : 'right';
 
             const mainLayout = document.getElementById('main-layout');
-            mainLayout.className = 'main-layout ' + (activeHand === 'left' ? 'hand-left' : 'hand-right');
+            if (isLandscapeOrPC) {
+                mainLayout.className = 'main-layout ' + (activeHand === 'left' ? 'hand-left' : 'hand-right');
+            } else {
+                mainLayout.className = 'main-layout';
+            }
 
             document.getElementById('setup-view').style.display = 'none';
             document.getElementById('result-area').style.display = 'none';
@@ -554,6 +592,8 @@
                     testView.style.flex = '1';
                     testView.style.minHeight = '0';
 
+                    // 検査開始直後の1行目から正しく秒数が設定されるように調整
+                    timeLeftPerRow = secondsPerRow;
                     focusCurrentFirstInput();
                     startRowTimer();
                 }
