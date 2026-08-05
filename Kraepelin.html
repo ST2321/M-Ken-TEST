@@ -33,6 +33,7 @@
             flex-direction: column;
             text-align: center;
             position: relative;
+            overflow: hidden;
         }
         .top-bar {
             display: flex;
@@ -40,6 +41,7 @@
             align-items: center;
             margin-bottom: 3px;
             position: relative;
+            flex-shrink: 0;
         }
         .exit-btn {
             background-color: #555;
@@ -70,6 +72,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
         .instructions {
             font-size: 0.7rem;
@@ -81,25 +84,82 @@
             padding: 6px 8px;
             border: 1px solid #e6db55;
         }
+        .setup-section {
+            margin-bottom: 10px;
+            text-align: left;
+            background: #fdfdfd;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            display: none; /* デフォルトは非表示（縦画面スマホ用） */
+        }
+        /* 横画面（landscape）または幅が一定以上（PC等）の場合に表示 */
+        @media screen and (min-width: 768px), (orientation: landscape) {
+            .setup-section {
+                display: block;
+            }
+        }
+
+        .setup-section h3 {
+            font-size: 0.8rem;
+            margin: 0 0 6px 0;
+            color: #2c3e50;
+            display: inline-block;
+        }
+        .setup-note {
+            font-size: 0.75rem;
+            color: #555;
+            margin-left: 10px;
+            display: inline-block;
+        }
+        .hand-select-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .hand-btn {
+            flex: 1;
+            padding: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border: 2px solid #7f8c8d;
+            background-color: #fff;
+            color: #333;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+        .hand-btn.selected {
+            background-color: #2980b9;
+            color: white;
+            border-color: #1f618d;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
         .mode-select-area {
             display: flex;
             gap: 10px;
             justify-content: center;
             margin-top: 10px;
         }
+        
         .main-layout {
             display: flex;
-            flex-direction: column;
             gap: 6px;
-            align-items: center;
+            align-items: stretch;
             justify-content: flex-start;
             flex: 1;
             min-height: 0;
+            overflow: hidden;
+        }
+        .main-layout.hand-right {
+            flex-direction: row;
+        }
+        .main-layout.hand-left {
+            flex-direction: row-reverse;
         }
 
         .test-board {
-            width: 100%;
             flex: 1;
+            min-width: 0;
             display: flex;
             flex-direction: column;
             background: #ffffff;
@@ -109,54 +169,53 @@
             overflow-x: auto;
             scroll-behavior: smooth;
             text-align: left;
-            min-height: 150px;
         }
 
         .tenkey-panel {
-            width: 100%;
-            max-width: 320px;
+            width: 32%;
+            max-width: 280px;
             background: #f8f9fa;
             border: 2px solid #bdc3c7;
             border-radius: 6px;
-            padding: 8px;
+            padding: 6px 8px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
             align-items: center;
             flex-shrink: 0;
-            margin-bottom: 2px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            justify-content: center;
         }
         .tenkey-panel h3 {
-            font-size: 0.8rem;
-            margin: 0;
+            font-size: 0.75rem;
+            margin: 0 0 4px 0;
             color: #333;
         }
         .tenkey-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
+            gap: 4px;
             width: 100%;
         }
         .tenkey-btn {
             background-color: #fff;
             border: 1px solid #7f8c8d;
-            border-radius: 6px;
-            padding: 12px 0;
-            font-size: 1.4rem;
+            border-radius: 4px;
+            padding: 8px 0;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 3px #bdc3c7;
+            box-shadow: 0 2px #bdc3c7;
             transition: all 0.05s ease;
         }
         .tenkey-btn:active {
             background-color: #ecf0f1;
             box-shadow: 0 1px #bdc3c7;
-            transform: translateY(2px);
+            transform: translateY(1px);
         }
         .tenkey-btn.zero-btn {
             grid-column: span 3;
-            padding: 10px 0;
+            padding: 6px 0;
         }
 
         .row-container {
@@ -236,7 +295,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(2px);
             z-index: 10;
             flex-direction: column;
             justify-content: center;
@@ -307,13 +367,24 @@
         <div id="setup-view">
             <div class="instructions">
                 <strong>【検査の要領】</strong><br>
-                1. 左から右へ隣り合う2つの数字を足した「下1桁」を間のマスに入力します。<br>
-                2. 隣り合う足し算の答えが同じにならないよう、数字の並びが自動調整されています。<br>
-                3. 1文字入力すると自動的に右のマスへカーソルが移動します。<br>
-                4. 残り10秒以下になると上のスペースに残秒数が表示されます。<br>
-                5. <strong>簡易モード</strong>：1行10秒 × 全5行<br>
-                6. <strong>本番モード</strong>：前半15分 ➔ 休憩5分 ➔ 後半15分（全34行）
+                1. 隣り合う2つの数字を足した「下1桁」を間のマスに入力します。<br>
+                2. 1文字入力すると自動的に右のマスへカーソルが移動します。<br>
+                3. 残り10秒以下になると上のスペースに残秒数が表示されます。<br>
+                4. <strong>簡易モード</strong>：1行10秒 × 全5行<br>
+                5. <strong>本番モード</strong>：前半15分 ➔ 休憩5分 ➔ 後半15分（全34行）
             </div>
+
+            <div class="setup-section" id="hand-setup-section">
+                <div>
+                    <h3>利き手の選択</h3>
+                    <span class="setup-note">テンキーの表示位置を変更できます。</span>
+                </div>
+                <div class="hand-select-area">
+                    <button type="button" id="hand-left-btn" class="hand-btn" onclick="setHandedness('left')">左</button>
+                    <button type="button" id="hand-right-btn" class="hand-btn selected" onclick="setHandedness('right')">右</button>
+                </div>
+            </div>
+
             <div class="mode-select-area">
                 <button class="btn" onclick="startTest('easy')">簡易モードで開始</button>
                 <button class="btn" onclick="startTest('normal')">本番モードで開始</button>
@@ -328,12 +399,12 @@
         </div>
 
         <div id="countdown-overlay" class="countdown-overlay">
-            <p style="font-size: 1.5rem; margin-bottom: 10px; font-weight: bold; color: #333;"></p>
+            <p id="countdown-label" style="font-size: 1.5rem; margin-bottom: 10px; font-weight: bold; color: #333; background: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 4px;">検査開始まで</p>
             <div class="countdown-number" id="countdown-num">5</div>
         </div>
 
         <div id="test-view" style="display: none;">
-            <div class="main-layout">
+            <div class="main-layout" id="main-layout">
                 <div class="test-board" id="board">
                     <!-- JavaScriptで動的生成 -->
                 </div>
@@ -371,6 +442,7 @@
     <script>
         const NUM_COLS = 116; 
 
+        let selectedHand = 'right';
         let mode = 'normal'; 
         let totalRows = 34;
         let secondsPerRow = 60;
@@ -389,27 +461,38 @@
         let currentPhase = 1; 
 
         let activeInputCell = null;
+        let testIsRunning = false;
+
+        function setHandedness(hand) {
+            selectedHand = hand;
+            const leftBtn = document.getElementById('hand-left-btn');
+            const rightBtn = document.getElementById('hand-right-btn');
+            
+            if (hand === 'left') {
+                leftBtn.classList.add('selected');
+                rightBtn.classList.remove('selected');
+            } else {
+                rightBtn.classList.add('selected');
+                leftBtn.classList.remove('selected');
+            }
+        }
 
         function handleExit() {
             const setupView = document.getElementById('setup-view');
-            const testView = document.getElementById('test-view');
-            const breakView = document.getElementById('break-view');
-            const resultArea = document.getElementById('result-area');
-            const countdownOverlay = document.getElementById('countdown-overlay');
-
             if (setupView.style.display !== 'none') {
                 window.location.href = 'index.html';
                 return;
             }
 
+            testIsRunning = false;
             if (rowTimer) clearInterval(rowTimer);
             if (breakTimer) clearInterval(breakTimer);
             if (countdownTimer) clearInterval(countdownTimer);
 
-            countdownOverlay.style.display = 'none';
-            testView.style.display = 'none';
-            breakView.style.display = 'none';
-            resultArea.style.display = 'none';
+            document.getElementById('countdown-overlay').style.display = 'none';
+            document.getElementById('test-view').style.display = 'none';
+            document.getElementById('break-view').style.display = 'none';
+            document.getElementById('result-area').style.display = 'none';
             setupView.style.display = 'block';
             document.getElementById('timer').textContent = '';
         }
@@ -424,6 +507,13 @@
                 secondsPerRow = 60;
             }
 
+            // 縦画面スマホ（非表示状態）の場合はデフォルトで右利き扱いにする
+            const isLandscapeOrPC = window.innerWidth >= 768 || window.innerWidth > window.innerHeight;
+            const activeHand = isLandscapeOrPC ? selectedHand : 'right';
+
+            const mainLayout = document.getElementById('main-layout');
+            mainLayout.className = 'main-layout ' + (activeHand === 'left' ? 'hand-left' : 'hand-right');
+
             document.getElementById('setup-view').style.display = 'none';
             document.getElementById('result-area').style.display = 'none';
 
@@ -434,13 +524,16 @@
             generateTestData();
             loadBoard();
 
-            // 5秒のカウントダウンを開始
+            testIsRunning = true;
             startCountdown();
         }
 
         function startCountdown() {
             const overlay = document.getElementById('countdown-overlay');
             const numEl = document.getElementById('countdown-num');
+            const labelEl = document.getElementById('countdown-label');
+            
+            labelEl.textContent = "検査開始まで";
             let count = 5;
             numEl.textContent = count;
             overlay.style.display = 'flex';
@@ -582,7 +675,6 @@
 
         function startRowTimer() {
             if (rowTimer) clearInterval(rowTimer);
-            timeLeftPerRow = secondsPerRow;
             updateHeader();
 
             rowTimer = setInterval(() => {
@@ -608,6 +700,7 @@
                 return;
             }
 
+            timeLeftPerRow = secondsPerRow;
             updateRowStates();
             focusCurrentFirstInput();
             startRowTimer();
@@ -620,7 +713,11 @@
             document.getElementById('timer').textContent = '';
             breakTimeLeft = 300; 
             updateBreakTimerDisplay();
+            startBreakTimerOnly();
+        }
 
+        function startBreakTimerOnly() {
+            if (breakTimer) clearInterval(breakTimer);
             breakTimer = setInterval(() => {
                 breakTimeLeft--;
                 updateBreakTimerDisplay();
@@ -652,6 +749,7 @@
             testView.style.flex = '1';
             testView.style.minHeight = '0';
             
+            timeLeftPerRow = secondsPerRow;
             updateRowStates();
             focusCurrentFirstInput();
             startRowTimer();
@@ -706,6 +804,7 @@
         }
 
         function endTest() {
+            testIsRunning = false;
             if (rowTimer) clearInterval(rowTimer);
             document.getElementById('test-view').style.display = 'none';
             document.getElementById('timer').textContent = '';
@@ -811,6 +910,7 @@
         }
 
         function resetTest() {
+            testIsRunning = false;
             document.getElementById('result-area').style.display = 'none';
             document.getElementById('setup-view').style.display = 'block';
             document.getElementById('timer').textContent = '';
