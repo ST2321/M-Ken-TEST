@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>線路とホームの形式</title>
+<style>
+:root {
+    --primary-color: #1a73e8;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-color: #202124;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.back-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 999;
+    background-color: #ffffff;
+    color: #1a73e8;
+    border: 2px solid #1a73e8;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.back-btn:hover {
+    background-color: #e8f0fe;
+}
+
+.all-toggle-btn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 999;
+    background-color: #ffffff;
+    color: #1a73e8;
+    border: 2px solid #1a73e8;
+    padding: 6px 16px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.all-toggle-btn:hover {
+    background-color: #e8f0fe;
+}
+
+.container {
+    width: 100%;
+    max-width: 850px;
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    margin-bottom: 30px;
+    margin-top: 15px;
+}
+
+.header-row {
+    border-bottom: 2px solid #1a73e8;
+    padding-bottom: 8px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 1.2rem;
+    color: #202124;
+    margin: 0;
+}
+
+.question-section {
+    margin-top: 15px;
+    margin-bottom: 25px;
+    line-height: 2.2;
+    font-size: 1rem;
+}
+
+.q-title {
+    font-weight: bold;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+    border-left: 4px solid #1a73e8;
+    padding-left: 8px;
+    background: #f1f3f4;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.sub-q {
+    margin-left: 10px;
+    margin-bottom: 15px;
+}
+
+.handwrite-slot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    width: 90px;
+    height: 28px;
+    vertical-align: middle;
+    border: 2px dashed #1a73e8;
+    background: #fff;
+    border-radius: 4px;
+    margin: 0 4px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.handwrite-slot:hover {
+    background-color: #e8f0fe;
+}
+
+.slot-image-preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: none;
+    pointer-events: none;
+}
+
+.slot-answer-inline {
+    display: none;
+    font-size: 0.8rem;
+    color: #d93025;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    pointer-events: none;
+    position: absolute;
+    white-space: nowrap;
+}
+
+.ascii-diagram {
+    background: #fdfdfd;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.platform-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    justify-items: center;
+}
+
+.platform-item {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    width: 95%;
+    max-width: 750px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+}
+
+.modal-header {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #1a73e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-canvas-scroll-container {
+    width: 100%;
+    height: 180px;
+    border: 2px solid #1a73e8;
+    border-radius: 8px;
+    background: #fafafa;
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-canvas-box {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    touch-action: none;
+}
+
+.modal-canvas-box canvas {
+    height: 100%;
+    display: block;
+    cursor: crosshair;
+}
+
+.modal-scroll-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    background: #f1f3f4;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: none;
+}
+
+.modal-scroll-control label {
+    font-size: 0.85rem;
+    color: #3c4043;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.modal-scroll-control input[type="range"] {
+    flex: 1;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background-color: #f1f3f4;
+    color: #3c4043;
+    border: 1px solid #dadce0;
+}
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-btn">&larr; 戻る</a>
+<button type="button" class="all-toggle-btn" id="allToggleBtn" onclick="toggleAllAnswers()">表示</button>
+
+<div class="container">
+    <div class="header-row">
+        <h1>線路</h1>
+    </div>
+
+    <!-- 第二章 -->
+    <div class="question-section">
+        <div class="q-title">第二章　停車場、線路</div>
+        
+        <div class="sub-q">
+            <strong>1.停車場</strong><br>
+            停車場は｢
+            <span class="handwrite-slot" id="slot_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_1"><span class="slot-answer-inline" id="ans_slot_1">駅</span></span>
+            ｣、｢
+            <span class="handwrite-slot" id="slot_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_2"><span class="slot-answer-inline" id="ans_slot_2">信号場</span></span>
+            ｣および｢
+            <span class="handwrite-slot" id="slot_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_3"><span class="slot-answer-inline" id="ans_slot_3">操車場</span></span>
+            ｣をいう。
+        </div>
+
+        <!-- ホームの形式 -->
+        <div class="ascii-diagram">
+            <div class="platform-grid">
+                <!-- 1. 島式 -->
+                <div class="platform-item">
+                    <div style="margin-bottom: 5px;">
+                        <span class="handwrite-slot" style="width:75px;height:24px;" id="slot_p1_1" data-has-input="false">
+                            <img class="slot-image-preview" id="img_slot_p1_1">
+                            <span class="slot-answer-inline" id="ans_slot_p1_1" style="font-size:0.75rem;">島式</span>
+                        </span>
+                    </div>
+                    <svg width="150" height="70" viewBox="0 0 150 70">
+                        <path d="M 15 20 L 135 20" stroke="#000" stroke-width="2.5" fill="none"/>
+                        <path d="M 15 50 L 135 50" stroke="#000" stroke-width="2.5" fill="none"/>
+                        <rect x="35" y="27" width="80" height="16" fill="#b0b0b0" stroke="#000" stroke-width="1"/>
+                        <text x="60" y="39" font-size="9" fill="#000" font-weight="bold">ホーム</text>
+                    </svg>
+                </div>
+
+                <!-- 2. 相対式 -->
+                <div class="platform-item">
+                    <div style="margin-bottom: 5px;">
+                        <span class="handwrite-slot" style="width:75px;height:24px;" id="slot_p1_2" data-has-input="false">
+                            <img class="slot-image-preview" id="img_slot_p1_2">
+                            <span class="slot-answer-inline" id="ans_slot_p1_2" style="font-size:0.75rem;">相対式</span>
+                        </span>
+                    </div>
+                    <svg width="150" height="70" viewBox="0 0 150 70">
+                        <rect x="35" y="16" width="80" height="13" fill="#b0b0b0" stroke="#000" stroke-width="1"/>
+                        <text x="60" y="25" font-size="8" fill="#000" font-weight="bold">ホーム</text>
+                        <path d="M 15 35 L 135 35" stroke="#000" stroke-width="2.5" fill="none"/>
+                        <rect x="35" y="41" width="80" height="13" fill="#b0b0b0" stroke="#000" stroke-width="1"/>
+                        <text x="60" y="50" font-size="8" fill="#000" font-weight="bold">ホーム</text>
+                    </svg>
+                </div>
+
+                <!-- 3. 単式 -->
+                <div class="platform-item">
+                    <div style="margin-bottom: 5px;">
+                        <span class="handwrite-slot" style="width:75px;height:24px;" id="slot_p1_3" data-has-input="false">
+                            <img class="slot-image-preview" id="img_slot_p1_3">
+                            <span class="slot-answer-inline" id="ans_slot_p1_3" style="font-size:0.75rem;">単式</span>
+                        </span>
+                    </div>
+                    <svg width="150" height="70" viewBox="0 0 150 70">
+                        <path d="M 15 28 L 135 28" stroke="#000" stroke-width="2.5" fill="none"/>
+                        <rect x="35" y="34" width="80" height="16" fill="#b0b0b0" stroke="#000" stroke-width="1"/>
+                        <text x="60" y="46" font-size="9" fill="#000" font-weight="bold">ホーム</text>
+                    </svg>
+                </div>
+
+                <!-- 4. くし形式 -->
+                <div class="platform-item">
+                    <div style="margin-bottom: 5px;">
+                        <span class="handwrite-slot" style="width:75px;height:24px;" id="slot_p1_4" data-has-input="false">
+                            <img class="slot-image-preview" id="img_slot_p1_4">
+                            <span class="slot-answer-inline" id="ans_slot_p1_4" style="font-size:0.75rem;">くし形式</span>
+                        </span>
+                    </div>
+                    <svg width="150" height="70" viewBox="0 0 150 70">
+                        <path d="M 40 18 L 135 18 L 135 52 L 40 52" fill="#b0b0b0" stroke="#000" stroke-width="1"/>
+                        <rect x="40" y="24" width="65" height="22" fill="#ffffff" stroke="none"/>
+                        <path d="M 15 29 L 105 29" stroke="#000" stroke-width="2.5" fill="none"/>
+                        <path d="M 15 41 L 105 41" stroke="#000" stroke-width="2.5" fill="none"/>
+                        <text x="108" y="38" font-size="6.5" fill="#000" font-weight="bold">ホーム</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="sub-q">
+            列車の行き違い又は待ち合わせを行うために使用される場所を｢
+            <span class="handwrite-slot" id="slot_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_4"><span class="slot-answer-inline" id="ans_slot_4">信号場</span></span>
+            ｣、車両の入れ換えや列車の組成を行うために使用される場所を｢
+            <span class="handwrite-slot" id="slot_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_5"><span class="slot-answer-inline" id="ans_slot_5">操車場</span></span>
+            ｣という。
+        </div>
+
+        <div class="sub-q" style="margin-top:20px;">
+            <strong>2.線路</strong><br>
+            列車または車両の通路となる
+            <span class="handwrite-slot" id="slot_6" data-has-input="false"><img class="slot-image-preview" id="img_slot_6"><span class="slot-answer-inline" id="ans_slot_6">軌道</span></span>
+            とそれを支持する
+            <span class="handwrite-slot" id="slot_7" data-has-input="false"><img class="slot-image-preview" id="img_slot_7"><span class="slot-answer-inline" id="ans_slot_7">路盤</span></span>
+            とこれらに直接付帯する建造物を総称して
+            <span class="handwrite-slot" id="slot_8" data-has-input="false"><img class="slot-image-preview" id="img_slot_8"><span class="slot-answer-inline" id="ans_slot_8">線路</span></span>
+            という。<br>
+            <span class="handwrite-slot" id="slot_9" data-has-input="false"><img class="slot-image-preview" id="img_slot_9"><span class="slot-answer-inline" id="ans_slot_9">軌道</span></span>
+            は
+            <span class="handwrite-slot" id="slot_10" data-has-input="false"><img class="slot-image-preview" id="img_slot_10"><span class="slot-answer-inline" id="ans_slot_10">道床</span></span>
+            、
+            <span class="handwrite-slot" id="slot_11" data-has-input="false"><img class="slot-image-preview" id="img_slot_11"><span class="slot-answer-inline" id="ans_slot_11">まくら木</span></span>
+            、
+            <span class="handwrite-slot" id="slot_12" data-has-input="false"><img class="slot-image-preview" id="img_slot_12"><span class="slot-answer-inline" id="ans_slot_12">レール</span></span>
+            およびその付属品からなる。
+        </div>
+
+        <div class="sub-q">
+            軌間は
+            <span class="handwrite-slot" id="slot_13" data-has-input="false"><img class="slot-image-preview" id="img_slot_13"><span class="slot-answer-inline" id="ans_slot_13">ゲージ</span></span>
+            とも呼ばれ、レール面上より
+            <span class="handwrite-slot" id="slot_14" data-has-input="false"><img class="slot-image-preview" id="img_slot_14"><span class="slot-answer-inline" id="ans_slot_14">14mm</span></span>
+            以内における左右両レール頭部間の最短距離をいう。<br>
+            1435mmの軌間を
+            <span class="handwrite-slot" id="slot_15" data-has-input="false"><img class="slot-image-preview" id="img_slot_15"><span class="slot-answer-inline" id="ans_slot_15">標準軌間</span></span>
+            、これより狭いものを
+            <span class="handwrite-slot" id="slot_16" data-has-input="false"><img class="slot-image-preview" id="img_slot_16"><span class="slot-answer-inline" id="ans_slot_16">狭軌</span></span>
+            、広いものを
+            <span class="handwrite-slot" id="slot_17" data-has-input="false"><img class="slot-image-preview" id="img_slot_17"><span class="slot-answer-inline" id="ans_slot_17">広軌</span></span>
+            という。<br><br>
+            線路上を走行する車両が建造物に接触しないようにする限界を
+            <span class="handwrite-slot" id="slot_18" data-has-input="false"><img class="slot-image-preview" id="img_slot_18"><span class="slot-answer-inline" id="ans_slot_18">建築限界</span></span>
+            といい、車両に対する限界を
+            <span class="handwrite-slot" id="slot_19" data-has-input="false"><img class="slot-image-preview" id="img_slot_19"><span class="slot-answer-inline" id="ans_slot_19">車両限界</span></span>
+            という。トンネル内にて電灯、電線などを添架その他設置するために必要な余裕を
+            <span class="handwrite-slot" id="slot_20" data-has-input="false"><img class="slot-image-preview" id="img_slot_20"><span class="slot-answer-inline" id="ans_slot_20">規定余裕</span></span>
+            という。<br><br>
+            当局地下隧道は
+            <span class="handwrite-slot" id="slot_21" data-has-input="false"><img class="slot-image-preview" id="img_slot_21"><span class="slot-answer-inline" id="ans_slot_21">シールド工法</span></span>
+            と
+            <span class="handwrite-slot" id="slot_22" data-has-input="false"><img class="slot-image-preview" id="img_slot_22"><span class="slot-answer-inline" id="ans_slot_22">開削工法</span></span>
+            を採用している。
+        </div>
+    </div>
+
+    <!-- 第三章 -->
+    <div class="question-section">
+        <div class="q-title">第三章　曲線とこう配</div>
+        <div class="sub-q">
+            <strong>1.曲線</strong><br>
+            曲線の遠心力に対応させるためレール頭面に高さの差をつけることを
+            <span class="handwrite-slot" id="slot_23" data-has-input="false"><img class="slot-image-preview" id="img_slot_23"><span class="slot-answer-inline" id="ans_slot_23">カント</span></span>
+            を付けるといい、その量を
+            <span class="handwrite-slot" id="slot_24" data-has-input="false"><img class="slot-image-preview" id="img_slot_24"><span class="slot-answer-inline" id="ans_slot_24">カント量</span></span>
+            という。<br><br>
+            曲線で軌間を拡大する寸法を
+            <span class="handwrite-slot" id="slot_25" data-has-input="false"><img class="slot-image-preview" id="img_slot_25"><span class="slot-answer-inline" id="ans_slot_25">スラック</span></span>
+            という。<br><br>
+            曲線抵抗を線路こう配に換算したものを
+            <span class="handwrite-slot" id="slot_26" data-has-input="false"><img class="slot-image-preview" id="img_slot_26"><span class="slot-answer-inline" id="ans_slot_26">換算こう配</span></span>
+            と呼び、その値だけ実際のこう配より差し引いたものを
+            <span class="handwrite-slot" id="slot_27" data-has-input="false"><img class="slot-image-preview" id="img_slot_27"><span class="slot-answer-inline" id="ans_slot_27">補正こう配</span></span>
+            という。
+        </div>
+    </div>
+
+    <!-- 第四章 -->
+    <div class="question-section">
+        <div class="q-title">第四章　軌道</div>
+        <div class="sub-q">
+            レールは直接車両の荷重に耐えその荷重を
+            <span class="handwrite-slot" id="slot_28" data-has-input="false"><img class="slot-image-preview" id="img_slot_28"><span class="slot-answer-inline" id="ans_slot_28">まくらぎ</span></span>
+            に伝えるとともに平滑な走行面を与える役目をする。<br>
+            レールの種類は、長さ
+            <span class="handwrite-slot" id="slot_29" data-has-input="false"><img class="slot-image-preview" id="img_slot_29"><span class="slot-answer-inline" id="ans_slot_29">1m</span></span>
+            当りの重量を呼び名にしている。<br>
+            レールの長さはできるだけ長くして、軌道の弱点である
+            <span class="handwrite-slot" id="slot_30" data-has-input="false"><img class="slot-image-preview" id="img_slot_30"><span class="slot-answer-inline" id="ans_slot_30">継目</span></span>
+            の数を少なくすることが望ましい。<br>
+            標準の長さは
+            <span class="handwrite-slot" id="slot_31" data-has-input="false"><img class="slot-image-preview" id="img_slot_31"><span class="slot-answer-inline" id="ans_slot_31">25m</span></span>
+            である。<br><br>
+            特殊鋼レールは摩耗の特に多い分岐器などに用いられる｢
+            <span class="handwrite-slot" id="slot_32" data-has-input="false"><img class="slot-image-preview" id="img_slot_32"><span class="slot-answer-inline" id="ans_slot_32">マンガン</span></span>
+            鋼レール｣と、曲線部、継目部等に用いられるレールの頭部に焼入れして硬度を上げた｢
+            <span class="handwrite-slot" id="slot_33" data-has-input="false"><img class="slot-image-preview" id="img_slot_33"><span class="slot-answer-inline" id="ans_slot_33">硬頭</span></span>
+            レール｣がある。<br><br>
+            漏洩電流によって腐食される現象を
+            <span class="handwrite-slot" id="slot_34" data-has-input="false"><img class="slot-image-preview" id="img_slot_34"><span class="slot-answer-inline" id="ans_slot_34">電食</span></span>
+            という。<br><br>
+            レール継目の配置には車両通過の際、左右同時に振動を受ける｢
+            <span class="handwrite-slot" id="slot_35" data-has-input="false"><img class="slot-image-preview" id="img_slot_35"><span class="slot-answer-inline" id="ans_slot_35">相対式</span></span>
+            ｣と左右交互に振動して、車両が横揺れを起こすおがある｢
+            <span class="handwrite-slot" id="slot_36" data-has-input="false"><img class="slot-image-preview" id="img_slot_36"><span class="slot-answer-inline" id="ans_slot_36">相互式</span></span>
+            ｣がある。<br><br>
+            レール継目の支承方法には継目の衝撃を2本のまくらぎに分布させる｢
+            <span class="handwrite-slot" id="slot_37" data-has-input="false"><img class="slot-image-preview" id="img_slot_37"><span class="slot-answer-inline" id="ans_slot_37">かけ継法</span></span>
+            ｣と継目の衝撃を1本のまくらぎで受ける｢
+            <span class="handwrite-slot" id="slot_38" data-has-input="false"><img class="slot-image-preview" id="img_slot_38"><span class="slot-answer-inline" id="ans_slot_38">ささえ継法</span></span>
+            ｣がある。<br><br>
+            敷設レールは気温の変化に応じて伸縮する。その継目部には適正な間隔を与える必要があり、これを｢
+            <span class="handwrite-slot" id="slot_39" data-has-input="false"><img class="slot-image-preview" id="img_slot_39"><span class="slot-answer-inline" id="ans_slot_39">継目遊間</span></span>
+            ｣という。<br>
+            遊間が狭いとレール温度が上昇するとレールが伸びることができないため内部に大きな軸圧を生じて、レールの
+            <span class="handwrite-slot" id="slot_40" data-has-input="false"><img class="slot-image-preview" id="img_slot_40"><span class="slot-answer-inline" id="ans_slot_40">座屈</span></span>
+            の原因となる。<br>
+            遊間が大きすぎる場合は、車両の通過の際に大きな衝撃を起こして乗り心地を悪くするばかりでなく、軌道に
+            <span class="handwrite-slot" id="slot_41" data-has-input="false"><img class="slot-image-preview" id="img_slot_41"><span class="slot-answer-inline" id="ans_slot_41">継目落ち</span></span>
+            を生じる。<br><br>
+            左右レールをまくらぎ上の所定の位置に固定保持するためにレールをまくらぎに取り付けること
+            <span class="handwrite-slot" id="slot_42" data-has-input="false"><img class="slot-image-preview" id="img_slot_42"><span class="slot-answer-inline" id="ans_slot_42">レール締結</span></span>
+            という。<br>
+            レールを上下2方向から弾性的に支持するものを
+            <span class="handwrite-slot" id="slot_43" data-has-input="false"><img class="slot-image-preview" id="img_slot_43"><span class="slot-answer-inline" id="ans_slot_43">二重弾性締結</span></span>
+            と呼ぶ。<br><br>
+            道床は軌道の基礎となり軌きょうを保持するもので、大別して
+            <span class="handwrite-slot" id="slot_44" data-has-input="false"><img class="slot-image-preview" id="img_slot_44"><span class="slot-answer-inline" id="ans_slot_44">普通道床</span></span>
+            、補助道床、
+            <span class="handwrite-slot" id="slot_45" data-has-input="false"><img class="slot-image-preview" id="img_slot_45"><span class="slot-answer-inline" id="ans_slot_45">コンクリート道床</span></span>
+            、スラブ軌道の4種類がある。<br><br>
+            本線レールに沿ってある間隔を保って敷設するレールを
+            <span class="handwrite-slot" id="slot_46" data-has-input="false"><img class="slot-image-preview" id="img_slot_46"><span class="slot-answer-inline" id="ans_slot_46">ガードレール</span></span>
+            という。<br>
+            車両脱線を防止するために曲線内軌側に設けるレールまたは鋼材を
+            <span class="handwrite-slot" id="slot_47" data-has-input="false"><img class="slot-image-preview" id="img_slot_47"><span class="slot-answer-inline" id="ans_slot_47">脱線防止レール</span></span>
+            または
+            <span class="handwrite-slot" id="slot_48" data-has-input="false"><img class="slot-image-preview" id="img_slot_48"><span class="slot-answer-inline" id="ans_slot_48">脱線防止ガード</span></span>
+            という。<br><br>
+            内軌レールの軌間内側に敷設して内軌側車輪フランジの横移動をある程度拘束し、外軌レールの摩耗負担を軽くする目的で設けるものを
+            <span class="handwrite-slot" id="slot_49" data-has-input="false"><img class="slot-image-preview" id="img_slot_49"><span class="slot-answer-inline" id="ans_slot_49">摩耗防止レール</span></span>
+            という。<br><br>
+            潤滑油を外側軌条の頭部の内側に塗る装置を
+            <span class="handwrite-slot" id="slot_50" data-has-input="false"><img class="slot-image-preview" id="img_slot_50"><span class="slot-answer-inline" id="ans_slot_50">自動塗油器</span></span>
+            という。<br><br>
+            <strong>線路諸標</strong><br>
+            <span class="handwrite-slot" id="slot_51" data-has-input="false"><img class="slot-image-preview" id="img_slot_51"><span class="slot-answer-inline" id="ans_slot_51">距離標</span></span>
+            :線路の起点からの距離を示すもので、一般的には線路左側の施工基面肩に建植する。距離標には1kmごとの甲号、100mごとの乙号、10mごとの丙号がある。<br>
+            <span class="handwrite-slot" id="slot_52" data-has-input="false"><img class="slot-image-preview" id="img_slot_52"><span class="slot-answer-inline" id="ans_slot_52">こう配標</span></span>
+            :線路こう配を示すもので、こう配変更点の線路左側に建植する。<br>
+            <span class="handwrite-slot" id="slot_53" data-has-input="false"><img class="slot-image-preview" id="img_slot_53"><span class="slot-answer-inline" id="ans_slot_53">曲線標</span></span>
+            :曲線半径、スラック、カント、および曲線長などを示すもの。<br>
+            <span class="handwrite-slot" id="slot_54" data-has-input="false"><img class="slot-image-preview" id="img_slot_54"><span class="slot-answer-inline" id="ans_slot_54">てい減標</span></span>
+            :カントのてい減の終点を表わすものである。<br>
+            <span class="handwrite-slot" id="slot_55" data-has-input="false"><img class="slot-image-preview" id="img_slot_55"><span class="slot-answer-inline" id="ans_slot_55">用地境界標</span></span>
+            :線路用地の境界を明示するため建植されるもの。<br>
+            <span class="handwrite-slot" id="slot_56" data-has-input="false"><img class="slot-image-preview" id="img_slot_56"><span class="slot-answer-inline" id="ans_slot_56">車両接触限界標識</span></span>
+            :軌道の分岐または交差する箇所で、軌道上にある車両が他線を支障しない限界を示す。<br><br>
+            軌道変位は、
+            <span class="handwrite-slot" id="slot_57" data-has-input="false"><img class="slot-image-preview" id="img_slot_57"><span class="slot-answer-inline" id="ans_slot_57">軌間</span></span>
+            、
+            <span class="handwrite-slot" id="slot_58" data-has-input="false"><img class="slot-image-preview" id="img_slot_58"><span class="slot-answer-inline" id="ans_slot_58">水準</span></span>
+            、
+            <span class="handwrite-slot" id="slot_59" data-has-input="false"><img class="slot-image-preview" id="img_slot_59"><span class="slot-answer-inline" id="ans_slot_59">高低</span></span>
+            、
+            <span class="handwrite-slot" id="slot_60" data-has-input="false"><img class="slot-image-preview" id="img_slot_60"><span class="slot-answer-inline" id="ans_slot_60">通り</span></span>
+            の4項目で表わす。
+        </div>
+    </div>
+</div>
+
+<!-- モーダル -->
+<div class="modal-overlay" id="handwriteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>手書き記入</span>
+            <button type="button" class="btn btn-secondary" style="padding:2px 8px; font-size:0.8rem;" onclick="clearModalCanvas()">全消去</button>
+        </div>
+        <div class="modal-canvas-scroll-container" id="scrollContainer">
+            <div class="modal-canvas-box" id="canvasBox">
+                <canvas id="modalCanvas"></canvas>
+            </div>
+        </div>
+        <div class="modal-scroll-control" id="scrollControlArea">
+            <label>スクロール:</label>
+            <input type="range" id="canvasRange" min="0" max="100" value="0" step="1">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+            <button type="button" class="btn" onclick="confirmModal()">決定</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentActiveSlotId = null;
+const modalCanvas = document.getElementById('modalCanvas');
+const modalCtx = modalCanvas.getContext('2d');
+const canvasBox = document.getElementById('canvasBox');
+const scrollContainer = document.getElementById('scrollContainer');
+const canvasRange = document.getElementById('canvasRange');
+const scrollControlArea = document.getElementById('scrollControlArea');
+
+let isDrawing = false;
+let isAllAnswersShown = false;
+
+const virtualWidthMultiplier = 4.0; 
+let currentVirtualWidth = 0;
+let currentDisplayWidth = 0;
+
+const slotIds = [];
+for (let i = 1; i <= 60; i++) slotIds.push('slot_' + i);
+slotIds.push('slot_p1_1', 'slot_p1_2', 'slot_p1_3', 'slot_p1_4');
+
+function initModalCanvasSize(isLongText) {
+    const rect = scrollContainer.getBoundingClientRect();
+    currentDisplayWidth = rect.width;
+    
+    if (isLongText) {
+        currentVirtualWidth = currentDisplayWidth * virtualWidthMultiplier;
+        scrollControlArea.style.display = 'flex';
+    } else {
+        currentVirtualWidth = currentDisplayWidth;
+        scrollControlArea.style.display = 'none';
+    }
+
+    canvasBox.style.width = currentVirtualWidth + 'px';
+    modalCanvas.style.width = currentVirtualWidth + 'px';
+    modalCanvas.style.height = rect.height + 'px';
+
+    modalCanvas.width = currentVirtualWidth * window.devicePixelRatio;
+    modalCanvas.height = rect.height * window.devicePixelRatio;
+    
+    modalCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    modalCtx.strokeStyle = '#202124';
+    modalCtx.lineWidth = 3.0;
+    modalCtx.lineCap = 'round';
+    modalCtx.lineJoin = 'round';
+
+    canvasRange.value = 0;
+    scrollContainer.scrollLeft = 0;
+}
+
+function openModal(slotId) {
+    currentActiveSlotId = slotId;
+    document.getElementById('handwriteModal').style.display = 'flex';
+    
+    setTimeout(() => {
+        initModalCanvasSize(false);
+        modalCtx.clearRect(0, 0, modalCanvas.width, modalCanvas.height);
+    }, 50);
+}
+
+function closeModal() {
+    document.getElementById('handwriteModal').style.display = 'none';
+    currentActiveSlotId = null;
+}
+
+function clearModalCanvas() {
+    modalCtx.clearRect(0, 0, modalCanvas.width, modalCanvas.height);
+}
+
+canvasRange.addEventListener('input', (e) => {
+    const val = e.target.value;
+    const maxScroll = currentVirtualWidth - currentDisplayWidth;
+    scrollContainer.scrollLeft = (val / 100) * maxScroll;
+});
+
+scrollContainer.addEventListener('scroll', () => {
+    const maxScroll = currentVirtualWidth - currentDisplayWidth;
+    if (maxScroll > 0) {
+        canvasRange.value = (scrollContainer.scrollLeft / maxScroll) * 100;
+    }
+});
+
+function getModalPos(e) {
+    const rect = modalCanvas.getBoundingClientRect();
+    let clientX = e.clientX;
+    let clientY = e.clientY;
+    if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    }
+    return { x: clientX - rect.left, y: clientY - rect.top };
+}
+
+modalCanvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    const pos = getModalPos(e);
+    modalCtx.beginPath();
+    modalCtx.moveTo(pos.x, pos.y);
+});
+
+modalCanvas.addEventListener('mousemove', (e) => {
+    if (!isDrawing) return;
+    const pos = getModalPos(e);
+    modalCtx.lineTo(pos.x, pos.y);
+    modalCtx.stroke();
+});
+
+window.addEventListener('mouseup', () => { isDrawing = false; });
+
+modalCanvas.addEventListener('touchstart', (e) => {
+    isDrawing = true;
+    const pos = getModalPos(e);
+    modalCtx.beginPath();
+    modalCtx.moveTo(pos.x, pos.y);
+}, { passive: true });
+
+modalCanvas.addEventListener('touchmove', (e) => {
+    if (!isDrawing) return;
+    const pos = getModalPos(e);
+    modalCtx.lineTo(pos.x, pos.y);
+    modalCtx.stroke();
+}, { passive: true });
+
+modalCanvas.addEventListener('touchend', () => { isDrawing = false; });
+
+slotIds.forEach(id => {
+    const slot = document.getElementById(id);
+    if (!slot) return;
+
+    slot.addEventListener('click', () => {
+        openModal(id);
+    });
+
+    slot.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
+});
+
+function confirmModal() {
+    if (!currentActiveSlotId) return;
+    
+    const dataUrl = modalCanvas.toDataURL('image/png');
+    const slot = document.getElementById(currentActiveSlotId);
+    if (!slot) return;
+
+    const imgPreview = slot.querySelector('.slot-image-preview');
+
+    if (imgPreview) {
+        imgPreview.src = dataUrl;
+        if (!isAllAnswersShown) {
+            imgPreview.style.display = 'block';
+        }
+    }
+    
+    slot.setAttribute('data-has-input', 'true');
+    closeModal();
+}
+
+function toggleAllAnswers() {
+    const btn = document.getElementById('allToggleBtn');
+    isAllAnswersShown = !isAllAnswersShown;
+
+    slotIds.forEach(id => {
+        const slot = document.getElementById(id);
+        if (!slot) return;
+        const imgPreview = slot.querySelector('.slot-image-preview');
+        const answerInline = slot.querySelector('.slot-answer-inline');
+        const hasInput = slot.getAttribute('data-has-input') === 'true';
+
+        if (isAllAnswersShown) {
+            if (imgPreview) imgPreview.style.display = 'none';
+            if (answerInline) answerInline.style.display = 'block';
+        } else {
+            if (answerInline) answerInline.style.display = 'none';
+            if (hasInput) {
+                if (imgPreview) imgPreview.style.display = 'block';
+            } else {
+                if (imgPreview) imgPreview.style.display = 'none';
+            }
+        }
+    });
+
+    if (isAllAnswersShown) {
+        btn.textContent = '非表示';
+    } else {
+        btn.textContent = '表示';
+    }
+}
+</script>
+
+</body>
+</html>
