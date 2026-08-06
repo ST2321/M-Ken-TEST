@@ -258,7 +258,7 @@ h1 {
 
 @media (min-width: 500px) {
     #typeButtonGroup {
-        width: 380px;
+        width: 420px;
     }
 }
 
@@ -549,7 +549,7 @@ canvas {
 }
 
 .result-item-badge.retry-correct {
-    background-color: var(--retry-success-bg);
+    background-color: #fef7e0;
     color: var(--retry-success-color);
     border-color: var(--retry-success-border);
 }
@@ -594,6 +594,14 @@ canvas {
             <div class="math-block">
                 s = <span class="fraction"><span class="numerator">V<sub>1</sub> × t<sub>0</sub></span><span class="denominator">3.6</span></span> + <span class="fraction"><span class="numerator">V<sub>1</sub><sup>2</sup></span><span class="denominator">7.2 × β</span></span>
             </div>
+            <strong>5. 起動勾配：</strong>
+            <div class="math-block">
+                i = <span class="fraction"><span class="numerator">F<sub>D</sub> - r<sub>s</sub></span><span class="denominator">9.8</span></span> （または全引力・重量から算出）
+            </div>
+            <strong>6. 主電動機回転数による速度変化量：</strong>
+            <div class="math-block">
+                V変化量 = <span class="fraction"><span class="numerator">D × n変化量</span><span class="denominator">5310 × G</span></span>
+            </div>
         </p>
     </details>
 
@@ -618,6 +626,9 @@ canvas {
                 <button type="button" class="select-btn" data-type="speed_uniform">等速速度計算</button>
                 <button type="button" class="select-btn" data-type="accel">加減速距離</button>
                 <button type="button" class="select-btn" data-type="emergency">非常制動停止距離</button>
+                <button type="button" class="select-btn" data-type="startup_gradient">起動勾配</button>
+                <button type="button" class="select-btn" data-type="motor_speed">電動機回転数と速度</button>
+                <button type="button" class="select-btn" data-type="startup_load">空車・荷重起動勾配</button>
             </div>
         </div>
         <div class="setting-row" id="countRow">
@@ -711,6 +722,10 @@ canvas {
 
 <script>
 const emergencyDecel = 4.5;
+const globalFixedSpeedOptions = [15, 25, 45, 60, 75, 90];
+const globalStartupResistance = 29.4;
+const globalFormation = "3M3T";
+const globalGearRatio = "100/15";
 
 let currentMode = 'practice';
 let currentProblem = null;
@@ -781,7 +796,7 @@ function resetPlatformDisplay() {
 }
 
 function generateUniformDistanceProblem() {
-    const v = getRandomItem([45, 60, 75, 90]);
+    const v = getRandomItem(globalFixedSpeedOptions);
     const t = getRandomItem([30, 45, 60]);
     const exactVal = (v * t) / 3.6;
     const isExact = Math.abs(exactVal - Math.round(exactVal)) < 1e-5;
@@ -807,8 +822,8 @@ function generateUniformDistanceProblem() {
 }
 
 function generateUniformSpeedProblem() {
-    const t = getRandomItem([10, 14, 15, 20]);
-    const v = getRandomItem([45, 47, 60, 75, 90]);
+    const t = getRandomItem([10, 15, 20]);
+    const v = getRandomItem(globalFixedSpeedOptions);
     const distance = Math.round((v * t) / 3.6);
     const exactVal = (distance * 3.6) / t;
     const isExact = Math.abs(exactVal - v) < 1e-5;
@@ -852,7 +867,7 @@ function generateAccelProblem() {
     let distance = isExact ? Math.round(exactVal) : Math.ceil(exactVal);
     let rateStr = rate.toFixed(1);
 
-    let fracHtml = isDecel ? createFractionHtml(v1 + '<sup>2</sup> - ' + v2 + '<sup>2</sup>', '7.2 &times; ' + rateStr) : createFractionHtml(v2 + '<sup>2</sup> - ' + v1 + '<sup>2</sup>', '7.2 &times; ' + rateStr);
+    let fracHtml = isDecel ? createFractionHtml('V<sub>1</sub><sup>2</sup> - V<sub>2</sub><sup>2</sup>', '7.2 &times; &beta;') : createFractionHtml('V<sub>2</sub><sup>2</sup> - V<sub>1</sub><sup>2</sup>', '7.2 &times; &alpha;');
 
     let calcAndAnswerHtml = '';
     if (isExact) {
@@ -890,7 +905,7 @@ function generateAccelProblem() {
 }
 
 function generateEmergencyProblem() {
-    let v1 = getRandomItem([75, 88, 90]);
+    let v1 = getRandomItem([75, 90]);
     let t_idle = 1;
     let b = emergencyDecel;
 
@@ -929,6 +944,100 @@ function generateEmergencyProblem() {
     };
 }
 
+function generateStartupGradientProblem() {
+    const fDOptions = [25000, 27200, 30000];
+    const loadOptions = [4, 6, 8];
+    const fD = getRandomItem(fDOptions);
+    const loadWeight = getRandomItem(loadOptions);
+
+    const mCars = 3;
+    const tCars = 3;
+    const mWeight = 34;
+    const tWeight = 29;
+    const totalUnits = 3;
+    const totalWeight = (mWeight * mCars) + (tWeight * tCars) + (loadWeight * (mCars + tCars));
+    const totalForce = fD * totalUnits;
+    const rs = globalStartupResistance;
+
+    let exactI = (totalForce - (totalWeight * rs)) / (totalWeight * 9.8);
+    let answerI = Math.floor(exactI);
+
+    let calcAndAnswerHtml = `<strong>【計算式】</strong><div class="math-block"><div class="calc-block">
+        <div class="calc-row"><span class="calc-label">i</span><span class="calc-symbol">=</span><span class="calc-content">${createFractionHtml(totalForce + ' - (' + totalWeight + ' &times; ' + rs + ')', totalWeight + ' &times; 9.8')}</span></div>
+        <div class="calc-row"><span class="calc-label"></span><span class="calc-symbol">=</span><span class="calc-content">${answerI} ‰ (切り捨て)</span></div>
+    </div></div><div style="margin-top:6px; font-weight:bold; color:var(--primary-color);">A: ${answerI} ‰</div>`;
+
+    return {
+        type: 'startup_gradient',
+        text: `次の列車について、直線上は何‰の勾配まで起動できるか。解は整数のこと。<br>編成：${globalFormation}、自重：M車 ${mWeight} t、T車 ${tWeight} t、けん引力：${fD} N/1ユニット、出発抵抗：${globalStartupResistance} N/t、荷重：${loadWeight} t / 1両`,
+        answer: answerI,
+        formula: `<strong>【使用する公式】</strong><div class="math-block">i = ${createFractionHtml('F<sub>D</sub> - (W &times; r<sub>s</sub>)', 'W &times; 9.8')}</div>`,
+        calcAndAnswer: calcAndAnswerHtml
+    };
+}
+
+function generateMotorSpeedProblem() {
+    const d = 860;
+    const gearG = 100 / 15;
+    const n1 = getRandomItem([850, 920, 1000]);
+    const n2 = getRandomItem([1300, 1380, 1450]);
+    const deltaN = n2 - n1;
+
+    let exactDeltaV = (d * deltaN) / (5310 * (100 / 15));
+    let answerDeltaV = Math.round(exactDeltaV);
+
+    let calcAndAnswerHtml = `<strong>【計算式】</strong><div class="math-block"><div class="calc-block">
+        <div class="calc-row"><span class="calc-label">V変化量</span><span class="calc-symbol">=</span><span class="calc-content">${createFractionHtml(d + ' &times; (' + n2 + ' - ' + n1 + ')', '5310 &times; (100 / 15)')}</span></div>
+        <div class="calc-row"><span class="calc-label"></span><span class="calc-symbol">=</span><span class="calc-content">${answerDeltaV} km/h</span></div>
+    </div></div><div style="margin-top:6px; font-weight:bold; color:var(--primary-color);">A: ${answerDeltaV} km/h</div>`;
+
+    return {
+        type: 'motor_speed',
+        text: `主電動機回転数を ${n1} rpm から ${n2} rpm に変えたときの速度の変化量はいくらか。解は整数のこと。車輪径：${d} mm、歯車比：${globalGearRatio}`,
+        answer: answerDeltaV,
+        formula: `<strong>【使用する公式】</strong><div class="math-block">V変化量 = ${createFractionHtml('D &times; n変化量', '5310 &times; G')}</div>`,
+        calcAndAnswer: calcAndAnswerHtml
+    };
+}
+
+function generateStartupLoadProblem() {
+    const mWeightOpt = getRandomItem([30, 33, 34]);
+    const tWeightOpt = getRandomItem([26, 27, 29]);
+    const passengerCount = getRandomItem([800, 1000, 1200]);
+    const mCars = 3;
+    const tCars = 3;
+    const totalCars = mCars + tCars;
+    
+    const emptyWeight = (mWeightOpt * mCars) + (tWeightOpt * tCars);
+    const loadWeightTotal = 0.06 * passengerCount;
+    const totalWeight = emptyWeight + loadWeightTotal;
+
+    const fDUnit = 27200;
+    const totalUnits = 3;
+    const totalForce = fDUnit * totalUnits;
+    const rs = globalStartupResistance;
+
+    let exactI = (totalForce - (305.6 * totalWeight) - (totalWeight * rs)) / (totalWeight * 9.8);
+    let answerI = Math.floor(exactI);
+    let fsVal = (305.6 * totalWeight).toFixed(1);
+    let fdVal = totalForce;
+
+    let calcAndAnswerHtml = `<strong>【計算式】</strong><div class="math-block"><div class="calc-block">
+        <div class="calc-row"><span class="calc-label">総重量(W)</span><span class="calc-symbol">=</span><span class="calc-content">${mWeightOpt}×3 + ${tWeightOpt}×3 + 0.06×${passengerCount} = ${totalWeight} t</span></div>
+        <div class="calc-row"><span class="calc-label">F<sub>S</sub></span><span class="calc-symbol">=</span><span class="calc-content">305.6 × ${totalWeight} = ${fsVal} N</span></div>
+        <div class="calc-row"><span class="calc-label">F<sub>D</sub></span><span class="calc-symbol">=</span><span class="calc-content">${fdVal} N</span></div>
+        <div class="calc-row"><span class="calc-label">i</span><span class="calc-symbol">=</span><span class="calc-content">${createFractionHtml(fdVal + ' - ' + fsVal + ' - (' + totalWeight + ' × ' + rs + ')', totalWeight + ' × 9.8')} = ${answerI} ‰</span></div>
+    </div></div><div style="margin-top:6px; font-weight:bold; color:var(--primary-color);">A: ${answerI} ‰</div>`;
+
+    return {
+        type: 'startup_load',
+        text: `空車起動時の加速度が考慮される電車は、下記のとき何‰の勾配まで起動可能か。ただし、機器容量を考慮して下記条件の起動に 0.3 km/h/s 以上の加速度を確保すること。解は整数のこと。<br>編成：${globalFormation}、M車 ${mWeightOpt}t、T車 ${tWeightOpt}t、荷重 60kg × ${passengerCount}人<br>公式：F<sub>S</sub> = 305.6 &times; W、歯車比：${globalGearRatio}、出発抵抗：${globalStartupResistance} N/t`,
+        answer: answerI,
+        formula: `<strong>【使用する公式】</strong><div class="math-block">F<sub>S</sub> &le; F<sub>D</sub> - R<sub>G</sub></div>`,
+        calcAndAnswer: calcAndAnswerHtml
+    };
+}
+
 function getSelectedTypes() {
     const typeButtons = document.querySelectorAll('#typeButtonGroup .select-btn');
     let selected = [];
@@ -943,7 +1052,7 @@ function getSelectedTypes() {
 function createSingleProblemFromSelection() {
     let selectedTypes = getSelectedTypes();
     if (selectedTypes.length === 0) {
-        selectedTypes = ['distance_uniform', 'speed_uniform', 'accel', 'emergency'];
+        selectedTypes = ['distance_uniform', 'speed_uniform', 'accel', 'emergency', 'startup_gradient', 'motor_speed', 'startup_load'];
     }
     let selectedType = getRandomItem(selectedTypes);
 
@@ -956,6 +1065,14 @@ function createSingleProblemFromSelection() {
             return generateAccelProblem();
         case 'emergency':
             return generateEmergencyProblem();
+        case 'startup_gradient':
+            return generateStartupGradientProblem();
+        case 'motor_speed':
+            return generateMotorSpeedProblem();
+        case 'startup_load':
+            return generateStartupLoadProblem();
+        default:
+            return generateUniformDistanceProblem();
     }
 }
 
