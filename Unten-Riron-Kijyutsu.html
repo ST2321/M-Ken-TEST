@@ -476,6 +476,79 @@ h1 {
         </table>
     </div>
 
+    <!-- 第3問：電車用主電動機の具備すべき条件 -->
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">3. 電車用主電動機の具備すべき条件</div>
+        <div class="sub-q">
+            a) 
+            <span class="handwrite-slot" style="width: 80px;" id="slot_motor_a1" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_motor_a1" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_motor_a1">起動時</span>
+            </span>
+            及び
+            <span class="handwrite-slot" style="width: 80px;" id="slot_motor_a2" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_motor_a2" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_motor_a2">勾配線</span>
+            </span>
+            で大きな
+            <span class="handwrite-slot" style="width: 80px;" id="slot_motor_a3" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_motor_a3" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_motor_a3">けん引力</span>
+            </span>
+            が出せること。<br><br>
+            
+            b) 
+            <span class="handwrite-slot" style="width: 90px;" id="slot_motor_b1" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_motor_b1" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_motor_b1">速度制御</span>
+            </span>
+            が容易にできること。<br><br>
+            
+            c) 低速時に大きな
+            <span class="handwrite-slot" style="width: 80px;" id="slot_motor_c1" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_motor_c1" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_motor_c1">回転力</span>
+            </span>
+            が得られること。<br><br>
+            
+            d) 小形で
+            <span class="handwrite-slot" style="width: 70px;" id="slot_motor_d1" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_motor_d1" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_motor_d1">出力</span>
+            </span>
+            が大きくかつ
+            <span class="handwrite-slot" style="width: 70px;" id="slot_motor_d2" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_motor_d2" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_motor_d2">頑丈</span>
+            </span>
+            なこと。<br><br>
+            
+            e) 
+            <span class="handwrite-slot" style="width: 90px;" id="slot_motor_e1" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_motor_e1" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_motor_e1">回転方向</span>
+            </span>
+            が容易に変えられること。<br><br>
+            
+            f) 
+            <span class="handwrite-slot" style="width: 70px;" id="slot_motor_f1" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_motor_f1" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_motor_f1">防水</span>
+            </span>
+            、
+            <span class="handwrite-slot" style="width: 70px;" id="slot_motor_f2" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_motor_f2" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_motor_f2">防塵</span>
+            </span>
+            が完全でありかつ
+            <span class="handwrite-slot" style="width: 90px;" id="slot_motor_f3" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_motor_f3" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_motor_f3">点検着脱</span>
+            </span>
+            に便利であること。
+        </div>
+    </div>
+
 </div>
 
 <!-- 手書き入力モーダル -->
@@ -523,7 +596,9 @@ const slotIds = [
     'slot_law1', 'slot_law2_1', 'slot_law2_2', 'slot_law3_1', 'slot_law3_2', 
     'slot_r1', 'slot_r2', 'slot_r3', 'slot_cond1', 'slot_cond2', 'slot_cond3', 'slot_cond4',
     'slot_res_name1', 'slot_res_name2', 'slot_res_name3', 'slot_res_name4', 'slot_res_name5',
-    'slot_res1', 'slot_res2', 'slot_res3', 'slot_res4', 'slot_res5'
+    'slot_res1', 'slot_res2', 'slot_res3', 'slot_res4', 'slot_res5',
+    'slot_motor_a1', 'slot_motor_a2', 'slot_motor_a3', 'slot_motor_b1', 'slot_motor_c1', 
+    'slot_motor_d1', 'slot_motor_d2', 'slot_motor_e1', 'slot_motor_f1', 'slot_motor_f2', 'slot_motor_f3'
 ];
 
 function initModalCanvasSize(isLongText) {
