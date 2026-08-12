@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>検査修繕</title>
+<style>
+:root {
+    --primary-color: #1a73e8;
+    --success-color: #34a853;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-color: #202124;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* フローティング形式の戻るボタン（画面左上） */
+.back-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 999;
+    background-color: #ffffff;
+    color: #1a73e8;
+    border: 2px solid #1a73e8;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.back-btn:hover {
+    background-color: #e8f0fe;
+}
+
+/* フローティング形式の表示・非表示ボタン（画面右上） */
+.all-toggle-btn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 999;
+    background-color: #ffffff;
+    color: #1a73e8;
+    border: 2px solid #1a73e8;
+    padding: 6px 16px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.all-toggle-btn:hover {
+    background-color: #e8f0fe;
+}
+
+.container {
+    width: 100%;
+    max-width: 850px;
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    margin-bottom: 30px;
+    margin-top: 15px;
+}
+
+.header-row {
+    border-bottom: 2px solid #1a73e8;
+    padding-bottom: 8px;
+    margin-bottom: 5px;
+}
+
+h1 {
+    font-size: 1.2rem;
+    color: #202124;
+    margin: 0;
+}
+
+.question-section {
+    margin-top: 15px;
+    margin-bottom: 25px;
+    line-height: 2.2;
+    font-size: 1rem;
+}
+
+.q-title {
+    font-weight: bold;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+}
+
+.sub-q {
+    margin-left: 10px;
+    margin-bottom: 22px;
+}
+
+.handwrite-slot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    width: 100px;
+    height: 28px;
+    vertical-align: middle;
+    border: 2px dashed #1a73e8;
+    background: #fff;
+    border-radius: 4px;
+    margin: 0 4px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.handwrite-slot:hover {
+    background-color: #e8f0fe;
+}
+
+.slot-image-preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: none;
+    pointer-events: none;
+}
+
+.slot-answer-inline {
+    display: none;
+    font-size: 0.8rem;
+    color: #d93025;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    pointer-events: none;
+    position: absolute;
+    white-space: nowrap;
+}
+
+/* モーダル */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    width: 95%;
+    max-width: 750px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+}
+
+.modal-header {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #1a73e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 手書きスペース（横スクロール可能） */
+.modal-canvas-scroll-container {
+    width: 100%;
+    height: 180px;
+    border: 2px solid #1a73e8;
+    border-radius: 8px;
+    background: #fafafa;
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-canvas-box {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    touch-action: none;
+}
+
+.modal-canvas-box canvas {
+    height: 100%;
+    display: block;
+    cursor: crosshair;
+}
+
+/* 下部のスライダーエリア */
+.modal-scroll-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    background: #f1f3f4;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.modal-scroll-control label {
+    font-size: 0.85rem;
+    color: #3c4043;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.modal-scroll-control input[type="range"] {
+    flex: 1;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background-color: #f1f3f4;
+    color: #3c4043;
+    border: 1px solid #dadce0;
+}
+</style>
+</head>
+<body>
+
+<!-- 常に画面左上に追従する戻るボタン -->
+<a href="#" class="back-btn">&larr; 戻る</a>
+
+<!-- 常に画面右上に追従する表示・非表示ボタン -->
+<button type="button" class="all-toggle-btn" id="allToggleBtn" onclick="toggleAllAnswers()">表示</button>
+
+<div class="container">
+    <div class="header-row">
+        <h1>検査修繕</h1>
+    </div>
+
+    <div class="question-section">
+        <div class="sub-q">
+            鉄道営業法第1条に｢鉄道の建設、車両器具の構造及び運転は、国土交通 省令を以って定める規程に依るべし。」と定めてあり 「鉄道に関する技術上の 基準を定める省令」はこれに従って制定されている。<br><br>
+            この省令は、第1条の目的 「この省令は、
+            <span class="handwrite-slot" style="width: 110px;" id="slot_1" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_1" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_1">鉄道の輸送の用</span>
+            </span>
+            に供する施設及び車両の
+            <span class="handwrite-slot" style="width: 60px;" id="slot_2" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_2" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_2">構造</span>
+            </span>
+            及び取扱いについて、必要な
+            <span class="handwrite-slot" style="width: 100px;" id="slot_3" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_3" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_3">技術上の基準</span>
+            </span>
+            を定めることにより、安全な輸送及び安定的な輸送の確保を図り、もって公共の福祉の増進に資す。 ることを目的とする。」の主旨により、鉄道を建設する場合の
+            <span class="handwrite-slot" style="width: 60px;" id="slot_4" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_4" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_4">線路</span>
+            </span>
+            及び
+            <span class="handwrite-slot" style="width: 75px;" id="slot_5" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_5" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_5">構造物</span>
+            </span>
+            、
+            <span class="handwrite-slot" style="width: 60px;" id="slot_6" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_6" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_6">車両</span>
+            </span>
+            、
+            <span class="handwrite-slot" style="width: 80px;" id="slot_7" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_7" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_7">電気設備</span>
+            </span>
+            、
+            <span class="handwrite-slot" style="width: 95px;" id="slot_8" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_8" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_8">運転保安設備</span>
+            </span>
+            、
+            <span class="handwrite-slot" style="width: 60px;" id="slot_9" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_9" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_9">運転</span>
+            </span>
+            、
+            <span class="handwrite-slot" style="width: 60px;" id="slot_10" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_10" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_10">施設</span>
+            </span>
+            及び
+            <span class="handwrite-slot" style="width: 90px;" id="slot_11" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_11" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_11">車両の保全</span>
+            </span>
+            その他全般に いて、その基準が定めてある。<br><br>
+            第3条第1項には「
+            <span class="handwrite-slot" style="width: 90px;" id="slot_12" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_12" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_12">鉄道事業者</span>
+            </span>
+            (新幹線にあっては、営業主体及び建設 体のそれぞれ。)は、この省令の
+            <span class="handwrite-slot" style="width: 120px;" id="slot_13" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_13" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_13">実施に関する基準</span>
+            </span>
+            (以下「
+            <span class="handwrite-slot" style="width: 80px;" id="slot_14" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_14" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_14">実施基準</span>
+            </span>
+            」という。) を定めなければならない。」とある。<br><br>
+            規定の
+            <span class="handwrite-slot" style="width: 85px;" id="slot_15" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_15" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_15">性能規定化</span>
+            </span>
+            に伴い、鉄道事業者の技術的判断の参考、国土交通省の許認可等の審査に際しての
+            <span class="handwrite-slot" style="width: 80px;" id="slot_16" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_16" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_16">判断基準</span>
+            </span>
+            を明確にするため、省令等の解釈を強制力をもたないかたちで具体化、
+            <span class="handwrite-slot" style="width: 70px;" id="slot_17" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_17" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_17">数値化</span>
+            </span>
+            して明示した「
+            <span class="handwrite-slot" style="width: 80px;" id="slot_18" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_18" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_18">解釈基準</span>
+            </span>
+            」(鉄道局 長通達)が策定された。<br><br>
+            鉄道事業者は、省令等に適合する範囲内で、
+            <span class="handwrite-slot" style="width: 80px;" id="slot_19" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_19" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_19">解釈基準</span>
+            </span>
+            、あるいは
+            <span class="handwrite-slot" style="width: 65px;" id="slot_20" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_20" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_20">解説</span>
+            </span>
+            等を 参考にしながら、個々の実情を反映した詳細な「
+            <span class="handwrite-slot" style="width: 80px;" id="slot_21" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_21" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_21">実施基準</span>
+            </span>
+            」を策定・届出し、 これに基づき施設、車両の設計、運転取扱い等を行うことになる。<br><br>
+            本市交通局においても実施基準 (
+            <span class="handwrite-slot" style="width: 70px;" id="slot_22" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_22" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_22">総則編</span>
+            </span>
+            、
+            <span class="handwrite-slot" style="width: 100px;" id="slot_23" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_23" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_23">鉄道土木施設編</span>
+            </span>
+            、
+            <span class="handwrite-slot" style="width: 100px;" id="slot_24" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_24" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_24">鉄道電気施設編</span>
+            </span>
+            、
+            <span class="handwrite-slot" style="width: 70px;" id="slot_25" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_25" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_25">車両編</span>
+            </span>
+            、
+            <span class="handwrite-slot" style="width: 70px;" id="slot_26" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_26" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_26">運転編</span>
+            </span>
+            )をそれぞれ定めている。
+        </div>
+    </div>
+</div>
+
+<!-- 手書き入力モーダル -->
+<div class="modal-overlay" id="handwriteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>手書き記入</span>
+            <button type="button" class="btn btn-secondary" style="padding:2px 8px; font-size:0.8rem;" onclick="clearModalCanvas()">全消去</button>
+        </div>
+        <!-- 横スクロール可能な手書きスペース -->
+        <div class="modal-canvas-scroll-container" id="scrollContainer">
+            <div class="modal-canvas-box" id="canvasBox">
+                <canvas id="modalCanvas"></canvas>
+            </div>
+        </div>
+        <!-- 記入欄の下に配置したスクロール用スライダーバー -->
+        <div class="modal-scroll-control" id="scrollControlArea">
+            <label>スクロール:</label>
+            <input type="range" id="canvasRange" min="0" max="100" value="0" step="1">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+            <button type="button" class="btn" onclick="confirmModal()">決定</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentActiveSlotId = null;
+const modalCanvas = document.getElementById('modalCanvas');
+const modalCtx = modalCanvas.getContext('2d');
+const canvasBox = document.getElementById('canvasBox');
+const scrollContainer = document.getElementById('scrollContainer');
+const canvasRange = document.getElementById('canvasRange');
+const scrollControlArea = document.getElementById('scrollControlArea');
+
+let isDrawing = false;
+let isAllAnswersShown = false;
+
+const virtualWidthMultiplier = 4.0; 
+let currentVirtualWidth = 0;
+let currentDisplayWidth = 0;
+
+const slotIds = [];
+for (let i = 1; i <= 26; i++) {
+    slotIds.push('slot_' + i);
+}
+
+function initModalCanvasSize(isLongText) {
+    const rect = scrollContainer.getBoundingClientRect();
+    currentDisplayWidth = rect.width;
+    
+    if (isLongText) {
+        currentVirtualWidth = currentDisplayWidth * virtualWidthMultiplier;
+        scrollControlArea.style.display = 'flex';
+    } else {
+        currentVirtualWidth = currentDisplayWidth;
+        scrollControlArea.style.display = 'none';
+    }
+
+    canvasBox.style.width = currentVirtualWidth + 'px';
+    modalCanvas.style.width = currentVirtualWidth + 'px';
+    modalCanvas.style.height = rect.height + 'px';
+
+    modalCanvas.width = currentVirtualWidth * window.devicePixelRatio;
+    modalCanvas.height = rect.height * window.devicePixelRatio;
+    
+    modalCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    modalCtx.strokeStyle = '#202124';
+    modalCtx.lineWidth = 3.0;
+    modalCtx.lineCap = 'round';
+    modalCtx.lineJoin = 'round';
+
+    canvasRange.value = 0;
+    scrollContainer.scrollLeft = 0;
+}
+
+function openModal(slotId) {
+    currentActiveSlotId = slotId;
+    document.getElementById('handwriteModal').style.display = 'flex';
+    
+    // 長めの文字列の可能性があるスロットは横スクロールを有効にする
+    const isLongText = ['slot_3', 'slot_8', 'slot_13', 'slot_23', 'slot_24'].includes(slotId);
+
+    setTimeout(() => {
+        initModalCanvasSize(isLongText);
+        modalCtx.clearRect(0, 0, modalCanvas.width, modalCanvas.height);
+    }, 50);
+}
+
+function closeModal() {
+    document.getElementById('handwriteModal').style.display = 'none';
+    currentActiveSlotId = null;
+}
+
+function clearModalCanvas() {
+    modalCtx.clearRect(0, 0, modalCanvas.width, modalCanvas.height);
+}
+
+canvasRange.addEventListener('input', (e) => {
+    const val = e.target.value;
+    const maxScroll = currentVirtualWidth - currentDisplayWidth;
+    scrollContainer.scrollLeft = (val / 100) * maxScroll;
+});
+
+scrollContainer.addEventListener('scroll', () => {
+    const maxScroll = currentVirtualWidth - currentDisplayWidth;
+    if (maxScroll > 0) {
+        canvasRange.value = (scrollContainer.scrollLeft / maxScroll) * 100;
+    }
+});
+
+function getModalPos(e) {
+    const rect = modalCanvas.getBoundingClientRect();
+    let clientX = e.clientX;
+    let clientY = e.clientY;
+    if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    }
+    return { x: clientX - rect.left, y: clientY - rect.top };
+}
+
+modalCanvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    const pos = getModalPos(e);
+    modalCtx.beginPath();
+    modalCtx.moveTo(pos.x, pos.y);
+});
+
+modalCanvas.addEventListener('mousemove', (e) => {
+    if (!isDrawing) return;
+    const pos = getModalPos(e);
+    modalCtx.lineTo(pos.x, pos.y);
+    modalCtx.stroke();
+});
+
+window.addEventListener('mouseup', () => { isDrawing = false; });
+
+modalCanvas.addEventListener('touchstart', (e) => {
+    isDrawing = true;
+    const pos = getModalPos(e);
+    modalCtx.beginPath();
+    modalCtx.moveTo(pos.x, pos.y);
+}, { passive: true });
+
+modalCanvas.addEventListener('touchmove', (e) => {
+    if (!isDrawing) return;
+    const pos = getModalPos(e);
+    modalCtx.lineTo(pos.x, pos.y);
+    modalCtx.stroke();
+}, { passive: true });
+
+modalCanvas.addEventListener('touchend', () => { isDrawing = false; });
+
+slotIds.forEach(id => {
+    const slot = document.getElementById(id);
+    if (!slot) return;
+
+    slot.addEventListener('click', () => {
+        openModal(id);
+    });
+
+    slot.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
+});
+
+function confirmModal() {
+    if (!currentActiveSlotId) return;
+    
+    const dataUrl = modalCanvas.toDataURL('image/png');
+    const slot = document.getElementById(currentActiveSlotId);
+    if (!slot) return;
+
+    const imgPreview = slot.querySelector('.slot-image-preview');
+
+    if (imgPreview) {
+        imgPreview.src = dataUrl;
+        if (!isAllAnswersShown) {
+            imgPreview.style.display = 'block';
+        }
+    }
+    
+    slot.setAttribute('data-has-input', 'true');
+
+    closeModal();
+}
+
+function toggleAllAnswers() {
+    const btn = document.getElementById('allToggleBtn');
+    isAllAnswersShown = !isAllAnswersShown;
+
+    slotIds.forEach(id => {
+        const slot = document.getElementById(id);
+        if (!slot) return;
+        const imgPreview = slot.querySelector('.slot-image-preview');
+        const answerInline = slot.querySelector('.slot-answer-inline');
+        const hasInput = slot.getAttribute('data-has-input') === 'true';
+
+        if (isAllAnswersShown) {
+            if (imgPreview) imgPreview.style.display = 'none';
+            if (answerInline) answerInline.style.display = 'block';
+        } else {
+            if (answerInline) answerInline.style.display = 'none';
+            
+            if (hasInput) {
+                if (imgPreview) imgPreview.style.display = 'block';
+            } else {
+                if (imgPreview) imgPreview.style.display = 'none';
+            }
+        }
+    });
+
+    if (isAllAnswersShown) {
+        btn.textContent = '非表示';
+    } else {
+        btn.textContent = '表示';
+    }
+}
+</script>
+
+</body>
+</html>
