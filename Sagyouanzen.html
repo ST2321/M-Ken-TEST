@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>作業安全 記述問題</title>
+<style>
+:root {
+    --primary-color: #1a73e8;
+    --success-color: #34a853;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-color: #202124;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* フローティング形式の戻るボタン（画面左上） */
+.back-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 999;
+    background-color: #ffffff;
+    color: #1a73e8;
+    border: 2px solid #1a73e8;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.back-btn:hover {
+    background-color: #e8f0fe;
+}
+
+/* フローティング形式の表示・非表示ボタン（画面右上） */
+.all-toggle-btn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 999;
+    background-color: #ffffff;
+    color: #1a73e8;
+    border: 2px solid #1a73e8;
+    padding: 6px 16px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.all-toggle-btn:hover {
+    background-color: #e8f0fe;
+}
+
+.container {
+    width: 100%;
+    max-width: 850px;
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    margin-bottom: 30px;
+    margin-top: 15px;
+}
+
+.header-row {
+    border-bottom: 2px solid #1a73e8;
+    padding-bottom: 8px;
+    margin-bottom: 5px;
+}
+
+h1 {
+    font-size: 1.2rem;
+    color: #202124;
+    margin: 0;
+}
+
+.question-section {
+    margin-top: 15px;
+    margin-bottom: 25px;
+    line-height: 2.0;
+    font-size: 1rem;
+}
+
+.q-title {
+    font-weight: bold;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+}
+
+.sub-q {
+    margin-left: 15px;
+    margin-bottom: 22px;
+}
+
+.handwrite-slot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    width: 90px;
+    height: 28px;
+    vertical-align: middle;
+    border: 2px dashed #1a73e8;
+    background: #fff;
+    border-radius: 4px;
+    margin: 0 4px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.handwrite-slot:hover {
+    background-color: #e8f0fe;
+}
+
+.slot-image-preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: none;
+    pointer-events: none;
+}
+
+.slot-answer-inline {
+    display: none;
+    font-size: 0.8rem;
+    color: #d93025;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    pointer-events: none;
+    position: absolute;
+    white-space: nowrap;
+}
+
+/* 交通ルール等のテーブル用（横幅調整など） */
+.resistance-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.resistance-table th, .resistance-table td {
+    border: 1px solid #bdc1c6;
+    padding: 8px;
+    vertical-align: middle;
+}
+
+.resistance-table th {
+    background-color: #f1f3f4;
+    width: 110px;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.resistance-slot {
+    width: 100%;
+    height: 48px;
+    border: 2px dashed #ccc;
+    background: #fff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.resistance-slot:hover {
+    background-color: #f8f9fa;
+}
+
+.resistance-slot .slot-answer-inline {
+    font-size: 0.8rem;
+    padding: 0 5px;
+    box-sizing: border-box;
+    white-space: normal;
+}
+
+/* モーダル */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    width: 95%;
+    max-width: 750px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+}
+
+.modal-header {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #1a73e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 手書きスペース（横スクロール可能） */
+.modal-canvas-scroll-container {
+    width: 100%;
+    height: 180px;
+    border: 2px solid #1a73e8;
+    border-radius: 8px;
+    background: #fafafa;
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-canvas-box {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    touch-action: none;
+}
+
+.modal-canvas-box canvas {
+    height: 100%;
+    display: block;
+    cursor: crosshair;
+}
+
+/* 下部のスライダーエリア */
+.modal-scroll-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    background: #f1f3f4;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.modal-scroll-control label {
+    font-size: 0.85rem;
+    color: #3c4043;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.modal-scroll-control input[type="range"] {
+    flex: 1;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background-color: #f1f3f4;
+    color: #3c4043;
+    border: 1px solid #dadce0;
+}
+</style>
+</head>
+<body>
+
+<!-- 常に画面左上に追従する戻るボタン -->
+<a href="index.html" class="back-btn">&larr; 戻る</a>
+
+<!-- 常に画面右上に追従する表示・非表示ボタン -->
+<button type="button" class="all-toggle-btn" id="allToggleBtn" onclick="toggleAllAnswers()">表示</button>
+
+<div class="container">
+    <div class="header-row">
+        <h1>作業安全</h1>
+    </div>
+
+    <!-- 第1問：全国安全週間 -->
+    <div class="question-section">
+        <div class="q-title">1．全国安全週間</div>
+        <div class="sub-q">
+            令和8年度 (2026年度)の全国安全週間のスローガン：
+            <span class="handwrite-slot" style="width: 280px;" id="slot_slogan" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_slogan" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_slogan">多様な人材、全員参加 みんなで育てる安全職場</span>
+            </span>
+            <br><br>
+            厚生労働省の主唱で毎年
+            <span class="handwrite-slot" style="width: 70px;" id="slot_w1" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_w1" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_w1">7月1日</span>
+            </span>
+            から
+            <span class="handwrite-slot" style="width: 50px;" id="slot_w2" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_w2" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_w2">7日</span>
+            </span>
+            までの1週間を
+            <span class="handwrite-slot" style="width: 100px;" id="slot_w3" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_w3" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_w3">全国安全週間</span>
+            </span>
+            としており、その第1日は
+            <span class="handwrite-slot" style="width: 90px;" id="slot_w4" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_w4" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_w4">国民安全の日</span>
+            </span>
+            
+            。準備期間は
+            <span class="handwrite-slot" style="width: 70px;" id="slot_w5" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_w5" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_w5">6月1日</span>
+            </span>
+            から
+            <span class="handwrite-slot" style="width: 60px;" id="slot_w6" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_w6" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_w6">30日</span>
+            </span>
+            。
+        </div>
+    </div>
+
+    <!-- 第2問：原因 -->
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">2．事故の原因について</div>
+        <div class="sub-q">
+            原因には、
+            <span class="handwrite-slot" style="width: 80px;" id="slot_c1" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_c1" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_c1">人的原因</span>
+            </span>
+            と
+            <span class="handwrite-slot" style="width: 80px;" id="slot_c2" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_c2" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_c2">物的原因</span>
+            </span>
+            がある。たとえば、機械に手を触れて、けがをした場合「うっかり」して手を触れたという「
+            <span class="handwrite-slot" style="width: 80px;" id="slot_c3" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_c3" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_c3">人的原因</span>
+            </span>
+            」と「機械にカバーをしていなかった」という「
+            <span class="handwrite-slot" style="width: 80px;" id="slot_c4" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_c4" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_c4">物的原因</span>
+            </span>
+            」がある。<br><br>
+            
+            <span class="handwrite-slot" style="width: 80px;" id="slot_c5" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_c5" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_c5">人的原因</span>
+            </span>
+            としては、作業方法の不適当、放心、不注意、他人の行為、作業内規および作業心得の不遵守、連絡の不十分等によるものが高い件数を示している。<br><br>
+            
+            <span class="handwrite-slot" style="width: 80px;" id="slot_c6" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_c6" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_c6">物的原因</span>
+            </span>
+            としては、作業余地の不十分、作業足場の不良、整理整頓の不良、工具および補助器具の不良等の原因で事故が多く発生している。
+        </div>
+    </div>
+
+    <!-- 第3問：交通事故防止 -->
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">3. 交通事故防止</div>
+        
+        <div class="sub-q">
+            ・車を運転する場合
+            <table class="resistance-table">
+                <tr><th>(1)</th><td><div class="resistance-slot" id="slot_car1" data-has-input="false"><img class="slot-image-preview" id="img_slot_car1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_car1">人命の尊さを知る。</span></div></td></tr>
+                <tr><th>(2)</th><td><div class="resistance-slot" id="slot_car2" data-has-input="false"><img class="slot-image-preview" id="img_slot_car2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_car2">交通規則を理解して守る。</span></div></td></tr>
+                <tr><th>(3)</th><td><div class="resistance-slot" id="slot_car3" data-has-input="false"><img class="slot-image-preview" id="img_slot_car3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_car3">注意力を集中する。</span></div></td></tr>
+                <tr><th>(4)</th><td><div class="resistance-slot" id="slot_car4" data-has-input="false"><img class="slot-image-preview" id="img_slot_car4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_car4">前方ばかりでなく、側方・後方にも注意する。</span></div></td></tr>
+                <tr><th>(5)</th><td><div class="resistance-slot" id="slot_car5" data-has-input="false"><img class="slot-image-preview" id="img_slot_car5" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_car5">ゆずり合いの気持ちを持つ。</span></div></td></tr>
+                <tr><th>(6)</th><td><div class="resistance-slot" id="slot_car6" data-has-input="false"><img class="slot-image-preview" id="img_slot_car6" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_car6">だろう運転をやめる。</span></div></td></tr>
+                <tr><th>(7)</th><td><div class="resistance-slot" id="slot_car7" data-has-input="false"><img class="slot-image-preview" id="img_slot_car7" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_car7">心身の状態を良好に保つ。</span></div></td></tr>
+                <tr><th>(8)</th><td><div class="resistance-slot" id="slot_car8" data-has-input="false"><img class="slot-image-preview" id="img_slot_car8" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_car8">運転技能を過信しない。</span></div></td></tr>
+                <tr><th>(9)</th><td><div class="resistance-slot" id="slot_car9" data-has-input="false"><img class="slot-image-preview" id="img_slot_car9" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_car9">ゆとりのある時間計算。</span></div></td></tr>
+            </table>
+        </div>
+
+        <div class="sub-q" style="margin-top: 25px;">
+            ・歩行する場合
+            <table class="resistance-table">
+                <tr><th>(1)</th><td><div class="resistance-slot" id="slot_walk1" data-has-input="false"><img class="slot-image-preview" id="img_slot_walk1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_walk1">通行区分を守る。(右側通行、歩道通行の原則。</span></div></td></tr>
+                <tr><th>(2)</th><td><div class="resistance-slot" id="slot_walk2" data-has-input="false"><img class="slot-image-preview" id="img_slot_walk2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_walk2">踏切、通路等の横断には指差喚呼する。</span></div></td></tr>
+                <tr><th>(3)</th><td><div class="resistance-slot" id="slot_walk3" data-has-input="false"><img class="slot-image-preview" id="img_slot_walk3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_walk3">夜間や雨の日は、注意力、視力が低下することを心得ておく。</span></div></td></tr>
+                <tr><th>(4)</th><td><div class="resistance-slot" id="slot_walk4" data-has-input="false"><img class="slot-image-preview" id="img_slot_walk4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_walk4">自動車に乗降するときは、歩道側から行う。</span></div></td></tr>
+                <tr><th>(5)</th><td><div class="resistance-slot" id="slot_walk5" data-has-input="false"><img class="slot-image-preview" id="img_slot_walk5" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_walk5">夜間の歩行は目立つ色の服装をする。</span></div></td></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- 第4問：乗務の前の準備 -->
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">4. 乗務の前の準備</div>
+        <div class="sub-q">
+            乗務の前に次のような準備ができるように時間に余裕をもって出勤しなければならない。<br>
+            (1) 
+            <span class="handwrite-slot" style="width: 130px;" id="slot_p1" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_p1" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_p1">通達掲示等の確認</span>
+            </span>
+            <br>
+            (2) 
+            <span class="handwrite-slot" style="width: 90px;" id="slot_p2" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_p2" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_p2">指示の受領</span>
+            </span>
+            <br>
+            (3) 
+            <span class="handwrite-slot" style="width: 100px;" id="slot_p3" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_p3" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_p3">携帯品の整備</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- 第5問：乗務中の作業心得 -->
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">5. 乗務中の作業心得</div>
+        <div class="sub-q">
+            1. 線路から車両の乗務員室に乗り込むときは、
+            <span class="handwrite-slot" style="width: 95px;" id="slot_ope1" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope1" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope1">グラブハンドル</span>
+            </span>
+            を確実に握り、
+            <span class="handwrite-slot" style="width: 95px;" id="slot_ope2" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope2" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope2">フット・ステップ</span>
+            </span>
+            を確実に踏んで乗り込み、降りるときは
+            <span class="handwrite-slot" style="width: 70px;" id="slot_ope3" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope3" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope3">後向き</span>
+            </span>
+            になって、
+            <span class="handwrite-slot" style="width: 60px;" id="slot_ope4" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope4" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope4">足場</span>
+            </span>
+            の位置を確かめ
+            <span class="handwrite-slot" style="width: 60px;" id="slot_ope5" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope5" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope5">片足</span>
+            </span>
+            を先に降ろし、足許の安定するまで手を離さないこと。この場合携帯品は
+            <span class="handwrite-slot" style="width: 80px;" id="slot_ope6" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope6" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope6">車両床上</span>
+            </span>
+            に置いて乗降の安全を図るようにしなければならない。<br><br>
+            
+            2. 
+            <span class="handwrite-slot" style="width: 60px;" id="slot_ope7" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope7" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope7">進路</span>
+            </span>
+            または
+            <span class="handwrite-slot" style="width: 80px;" id="slot_ope8" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope8" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope8">隣接線路</span>
+            </span>
+            で作業中の係員等の状態に注意し、
+            <span class="handwrite-slot" style="width: 90px;" id="slot_ope9" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope9" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope9">汽笛を吹鳴</span>
+            </span>
+            する。列車または車両の接近を感知した気配が見えないときは、
+            <span class="handwrite-slot" style="width: 90px;" id="slot_ope10" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope10" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope10">直ちに急停止</span>
+            </span>
+            の処置をとらなければならない。<br><br>
+            
+            3. 列車走行中、異常を認めたときは、できるだけ
+            <span class="handwrite-slot" style="width: 95px;" id="slot_ope11" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope11" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope11">次駅に到着</span>
+            </span>
+            させることに努めること。ただし、異常を感知したときで乗務員室から車両の側面を見るときは、側柱その他構築物との間隔が非常に狭く接触する危険があるから、
+            <span class="handwrite-slot" style="width: 80px;" id="slot_ope12" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope12" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope12">列車を停止</span>
+            </span>
+            させた後行うこと。<br><br>
+            
+            4. 途中線路で列車または車両を点検するときは、
+            <span class="handwrite-slot" style="width: 80px;" id="slot_ope13" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope13" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope13">転動防止</span>
+            </span>
+            のため
+            <span class="handwrite-slot" style="width: 90px;" id="slot_ope14" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope14" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope14">制動機を緊縮</span>
+            </span>
+            すること。勾配線においては、
+            <span class="handwrite-slot" style="width: 90px;" id="slot_ope15" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope15" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope15">ハンドスコッチ</span>
+            </span>
+            の使用を忘れてはならない。<br><br>
+            
+            5. 列車または車両の点検を行うときは、これに関係のある他の係員と
+            <span class="handwrite-slot" style="width: 70px;" id="slot_ope16" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope16" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope16">打合せ</span>
+            </span>
+            を行うこと。また、
+            <span class="handwrite-slot" style="width: 80px;" id="slot_ope17" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope17" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope17">起動試験</span>
+            </span>
+            をするときは、他の係員が列車または車両の下部および側面にいないこと、
+            <span class="handwrite-slot" style="width: 95px;" id="slot_ope18" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope18" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope18">ハンドスコッチ</span>
+            </span>
+            の除去などを確かめた後でなければ行ってはならない。<br><br>
+            
+            6. 列車または車両の運転中は、乗務員の
+            <span class="handwrite-slot" style="width: 70px;" id="slot_ope19" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope19" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope19">開き戸</span>
+            </span>
+            、
+            <span class="handwrite-slot" style="width: 50px;" id="slot_ope20" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope20" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope20">窓</span>
+            </span>
+            等は閉めておくようにする。なお開閉は
+            <span class="handwrite-slot" style="width: 60px;" id="slot_ope21" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_ope21" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_ope21">把手</span>
+            </span>
+            をもって静かに行い手や指をはさまれないよう注意しなければならない。
+        </div>
+    </div>
+
+    <!-- 第6問：疲労 -->
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">6. 疲労</div>
+        <div class="sub-q">
+            1. 
+            <span class="handwrite-slot" style="width: 80px;" id="slot_f1" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_f1" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_f1">普通疲労</span>
+            </span>
+            <br>
+            「疲れたなぁー」という感じの程度が普通疲労である。我々が1日8時間労働で感じる程度の疲れで、一晩の睡眠で完全に回復され、翌日には疲れは残らない。健康保持のためには、疲労はこの線までで止めておきたいものである。<br><br>
+            
+            2. 
+            <span class="handwrite-slot" style="width: 80px;" id="slot_f2" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_f2" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_f2">蓄積疲労</span>
+            </span>
+            <br>
+            疲労が回復されず疲労が長く続くと蓄積疲労として病的となり、長く続くと医師の手当てが要となり、自分自身のために不幸であるばかりでなく、輸送の安全確保のためにも憂慮すべきである。<br><br>
+            
+            3. 
+            <span class="handwrite-slot" style="width: 70px;" id="slot_f3" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_f3" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_f3">過労</span>
+            </span>
+            <br>
+            休日に慣れない作業の手伝い、無理な登山、夜更かし等で疲れを回復すべきところを、逆に疲労が蓄積されて過労の状態となり、行動は鈍く、判断力は低下し、時には精神はもうろうとなる。運転従事者として最も危険な状態で事故の素因となる。
+        </div>
+    </div>
+
+</div>
+
+<!-- 手書き入力モーダル -->
+<div class="modal-overlay" id="handwriteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>手書き記入</span>
+            <button type="button" class="btn btn-secondary" style="padding:2px 8px; font-size:0.8rem;" onclick="clearModalCanvas()">全消去</button>
+        </div>
+        <!-- 横スクロール可能な手書きスペース -->
+        <div class="modal-canvas-scroll-container" id="scrollContainer">
+            <div class="modal-canvas-box" id="canvasBox">
+                <canvas id="modalCanvas"></canvas>
+            </div>
+        </div>
+        <!-- 記入欄の下に配置したスクロール用スライダーバー -->
+        <div class="modal-scroll-control" id="scrollControlArea">
+            <label>スクロール:</label>
+            <input type="range" id="canvasRange" min="0" max="100" value="0" step="1">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+            <button type="button" class="btn" onclick="confirmModal()">決定</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentActiveSlotId = null;
+const modalCanvas = document.getElementById('modalCanvas');
+const modalCtx = modalCanvas.getContext('2d');
+const canvasBox = document.getElementById('canvasBox');
+const scrollContainer = document.getElementById('scrollContainer');
+const canvasRange = document.getElementById('canvasRange');
+const scrollControlArea = document.getElementById('scrollControlArea');
+
+let isDrawing = false;
+let isAllAnswersShown = false;
+
+const virtualWidthMultiplier = 4.0; 
+let currentVirtualWidth = 0;
+let currentDisplayWidth = 0;
+
+const slotIds = [
+    'slot_slogan', 'slot_w1', 'slot_w2', 'slot_w3', 'slot_w4', 'slot_w5', 'slot_w6',
+    'slot_c1', 'slot_c2', 'slot_c3', 'slot_c4', 'slot_c5', 'slot_c6',
+    'slot_car1', 'slot_car2', 'slot_car3', 'slot_car4', 'slot_car5', 'slot_car6', 'slot_car7', 'slot_car8', 'slot_car9',
+    'slot_walk1', 'slot_walk2', 'slot_walk3', 'slot_walk4', 'slot_walk5',
+    'slot_p1', 'slot_p2', 'slot_p3',
+    'slot_ope1', 'slot_ope2', 'slot_ope3', 'slot_ope4', 'slot_ope5', 'slot_ope6',
+    'slot_ope7', 'slot_ope8', 'slot_ope9', 'slot_ope10', 'slot_ope11', 'slot_ope12',
+    'slot_ope13', 'slot_ope14', 'slot_ope15', 'slot_ope16', 'slot_ope17', 'slot_ope18',
+    'slot_ope19', 'slot_ope20', 'slot_ope21',
+    'slot_f1', 'slot_f2', 'slot_f3'
+];
+
+function initModalCanvasSize(isLongText) {
+    const rect = scrollContainer.getBoundingClientRect();
+    currentDisplayWidth = rect.width;
+    
+    if (isLongText) {
+        currentVirtualWidth = currentDisplayWidth * virtualWidthMultiplier;
+        scrollControlArea.style.display = 'flex';
+    } else {
+        currentVirtualWidth = currentDisplayWidth;
+        scrollControlArea.style.display = 'none';
+    }
+
+    canvasBox.style.width = currentVirtualWidth + 'px';
+    modalCanvas.style.width = currentVirtualWidth + 'px';
+    modalCanvas.style.height = rect.height + 'px';
+
+    modalCanvas.width = currentVirtualWidth * window.devicePixelRatio;
+    modalCanvas.height = rect.height * window.devicePixelRatio;
+    
+    modalCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    modalCtx.strokeStyle = '#202124';
+    modalCtx.lineWidth = 3.0;
+    modalCtx.lineCap = 'round';
+    modalCtx.lineJoin = 'round';
+
+    canvasRange.value = 0;
+    scrollContainer.scrollLeft = 0;
+}
+
+function openModal(slotId) {
+    currentActiveSlotId = slotId;
+    document.getElementById('handwriteModal').style.display = 'flex';
+    
+    const isLongText = slotId === 'slot_slogan' || slotId.startsWith('slot_car') || slotId.startsWith('slot_walk');
+
+    setTimeout(() => {
+        initModalCanvasSize(isLongText);
+        modalCtx.clearRect(0, 0, modalCanvas.width, modalCanvas.height);
+    }, 50);
+}
+
+function closeModal() {
+    document.getElementById('handwriteModal').style.display = 'none';
+    currentActiveSlotId = null;
+}
+
+function clearModalCanvas() {
+    modalCtx.clearRect(0, 0, modalCanvas.width, modalCanvas.height);
+}
+
+/* スライダーで横スクロール位置を調整 */
+canvasRange.addEventListener('input', (e) => {
+    const val = e.target.value;
+    const maxScroll = currentVirtualWidth - currentDisplayWidth;
+    scrollContainer.scrollLeft = (val / 100) * maxScroll;
+});
+
+/* 手書きスペース自体をスクロールしたときにもスライダーを連動 */
+scrollContainer.addEventListener('scroll', () => {
+    const maxScroll = currentVirtualWidth - currentDisplayWidth;
+    if (maxScroll > 0) {
+        canvasRange.value = (scrollContainer.scrollLeft / maxScroll) * 100;
+    }
+});
+
+function getModalPos(e) {
+    const rect = modalCanvas.getBoundingClientRect();
+    let clientX = e.clientX;
+    let clientY = e.clientY;
+    if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    }
+    return { x: clientX - rect.left, y: clientY - rect.top };
+}
+
+modalCanvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    const pos = getModalPos(e);
+    modalCtx.beginPath();
+    modalCtx.moveTo(pos.x, pos.y);
+});
+
+modalCanvas.addEventListener('mousemove', (e) => {
+    if (!isDrawing) return;
+    const pos = getModalPos(e);
+    modalCtx.lineTo(pos.x, pos.y);
+    modalCtx.stroke();
+});
+
+window.addEventListener('mouseup', () => { isDrawing = false; });
+
+modalCanvas.addEventListener('touchstart', (e) => {
+    isDrawing = true;
+    const pos = getModalPos(e);
+    modalCtx.beginPath();
+    modalCtx.moveTo(pos.x, pos.y);
+}, { passive: true });
+
+modalCanvas.addEventListener('touchmove', (e) => {
+    if (!isDrawing) return;
+    const pos = getModalPos(e);
+    modalCtx.lineTo(pos.x, pos.y);
+    modalCtx.stroke();
+}, { passive: true });
+
+modalCanvas.addEventListener('touchend', () => { isDrawing = false; });
+
+slotIds.forEach(id => {
+    const slot = document.getElementById(id);
+    if (!slot) return;
+
+    slot.addEventListener('click', () => {
+        openModal(id);
+    });
+
+    slot.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
+});
+
+function confirmModal() {
+    if (!currentActiveSlotId) return;
+    
+    const dataUrl = modalCanvas.toDataURL('image/png');
+    const slot = document.getElementById(currentActiveSlotId);
+    if (!slot) return;
+
+    const imgPreview = slot.querySelector('.slot-image-preview');
+
+    if (imgPreview) {
+        imgPreview.src = dataUrl;
+        if (!isAllAnswersShown) {
+            imgPreview.style.display = 'block';
+        }
+    }
+    
+    slot.setAttribute('data-has-input', 'true');
+
+    closeModal();
+}
+
+function toggleAllAnswers() {
+    const btn = document.getElementById('allToggleBtn');
+    isAllAnswersShown = !isAllAnswersShown;
+
+    slotIds.forEach(id => {
+        const slot = document.getElementById(id);
+        if (!slot) return;
+        const imgPreview = slot.querySelector('.slot-image-preview');
+        const answerInline = slot.querySelector('.slot-answer-inline');
+        const hasInput = slot.getAttribute('data-has-input') === 'true';
+
+        if (isAllAnswersShown) {
+            if (imgPreview) imgPreview.style.display = 'none';
+            if (answerInline) answerInline.style.display = 'block';
+        } else {
+            if (answerInline) answerInline.style.display = 'none';
+            
+            if (hasInput) {
+                if (imgPreview) imgPreview.style.display = 'block';
+            } else {
+                if (imgPreview) imgPreview.style.display = 'none';
+            }
+        }
+    });
+
+    if (isAllAnswersShown) {
+        btn.textContent = '非表示';
+    } else {
+        btn.textContent = '表示';
+    }
+}
+</script>
+
+</body>
+</html>
