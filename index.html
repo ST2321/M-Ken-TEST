@@ -3,47 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>運転士研修自習ソフト</title>
+    <title>第48期 運転士研修 試験対策</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
             background-color: #f4f7f6;
             color: #333;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
         .container {
             background-color: #ffffff;
-            padding: 40px;
+            padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            text-align: center;
             width: 100%;
-            max-width: 400px;
+            max-width: 950px;
+            box-sizing: border-box;
         }
         h1 {
             margin-bottom: 24px;
-            font-size: 24px;
+            font-size: 22px;
             color: #2c3e50;
+            text-align: center;
+            white-space: nowrap;
         }
+        /* セクション全体（初期状態は縦画面用：縦並び） */
+        .sections-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        /* 横画面（landscape）またはパソコン画面（幅768px以上）の場合に横並びにする */
+        @media screen and (min-width: 768px), screen and (orientation: landscape) {
+            .sections-wrapper {
+                flex-direction: row;
+                align-items: stretch;
+                justify-content: space-between;
+                gap: 16px;
+            }
+        }
+
+        .section-group {
+            flex: 1;
+            background-color: #fafbfc;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #34495e;
+            margin-bottom: 12px;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 6px;
+            white-space: nowrap;
+        }
+        /* ボタンリスト（縦横関わらず縦並び） */
         .menu-list {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
         .btn {
             display: block;
             background-color: #3498db;
             color: white;
-            padding: 14px;
+            padding: 12px;
             border-radius: 4px;
             text-decoration: none;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
+            text-align: center;
             transition: background-color 0.3s ease;
         }
         .btn:hover {
@@ -54,15 +94,36 @@
 <body>
 
     <div class="container">
-        <h1>科目選択</h1>
-        <div class="menu-list">
-            <!-- 「運転理論」ボタン：同じ階層の Unten-Riron.html へ移動 -->
-            <a href="Kraepelin.html" class="btn">クレペリン</a>
-            <a href="Chyuui-Haibun.html" class="btn">注意配分</a>
-            <a href="Hannou-Sokudo.html" class="btn">反応速度</a>
-            <a href="Unten-Riron.html" class="btn">運転理論</a>
-             <a href="Senro.html" class="btn">線　　路</a>
-<a href="Kensasyuuzen.html" class="btn">検査修繕</a>
+        <h1>第48期 運転士研修 試験対策</h1>
+        
+        <div class="sections-wrapper">
+            <!-- 適正検査 -->
+            <div class="section-group">
+                <div class="section-title">適正検査</div>
+                <div class="menu-list">
+                    <a href="Chyuui-Haibun.html" class="btn">注意配分</a>
+                    <a href="Hannou-Sokudo.html" class="btn">反応速度</a>
+                    <a href="Kraepelin.html" class="btn">クレペリン</a>
+                </div>
+            </div>
+
+            <!-- 中間試験 -->
+            <div class="section-group">
+                <div class="section-title">中間試験</div>
+                <div class="menu-list">
+                    <a href="Unten-Riron.html" class="btn">運転理論(中間)</a>
+                </div>
+            </div>
+
+            <!-- 修了試験 -->
+            <div class="section-group">
+                <div class="section-title">修了試験</div>
+                <div class="menu-list">
+                    <a href="Senro.html" class="btn">線　　路</a>
+                    <a href="Kensasyuuzen.html" class="btn">検査修繕</a>
+                    <a href="Sagyouanzen.html" class="btn">作業安全</a>
+                </div>
+            </div>
         </div>
     </div>
 
