@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>運転理論(修了)</title>
+<style>
+:root {
+    --primary-color: #1a73e8;
+    --secondary-color: #e8f0fe;
+    --success-color: #34a853;
+    --error-color: #ea4335;
+    --retry-success-bg: #fef7e0;
+    --retry-success-color: #b06000;
+    --retry-success-border: #fef0c7;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-color: #202124;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+    -webkit-text-size-adjust: 100%;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    background: var(--card-bg);
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+h1 {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin: 0;
+    text-align: center;
+    flex: 1;
+}
+
+.btn-exit {
+    background-color: #5f6368;
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    touch-action: manipulation;
+}
+
+.btn-subject-select {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    -webkit-appearance: none;
+    touch-action: manipulation;
+}
+
+.formula-summary {
+    background: #f8f9fa;
+    border: 1px solid #dadce0;
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+.formula-summary summary {
+    font-weight: bold;
+    color: var(--primary-color);
+    cursor: pointer;
+}
+
+.math-block {
+    text-align: center;
+    margin: 4px 0;
+    font-family: serif;
+    font-size: 1rem;
+    overflow-x: auto;
+}
+
+.calc-block {
+    display: inline-block;
+    text-align: left;
+    margin: 0 auto;
+}
+
+.calc-row {
+    display: flex;
+    align-items: center;
+    margin: 2px 0;
+    white-space: nowrap;
+}
+
+.calc-label {
+    text-align: right;
+    padding-right: 4px;
+}
+
+.calc-symbol {
+    width: 16px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.calc-content {
+    text-align: left;
+}
+
+.settings-card {
+    background: var(--secondary-color);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.setting-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+@media (min-width: 500px) {
+    .setting-row {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+}
+
+.settings-card label {
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding-top: 4px;
+}
+
+.mode-desc-container {
+    font-size: 0.75rem;
+    color: #5f6368;
+    margin-top: 2px;
+    font-weight: normal;
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    width: 100%;
+}
+
+@media (min-width: 500px) {
+    .button-group {
+        width: auto;
+        justify-content: flex-end;
+        max-width: 450px;
+    }
+}
+
+.select-btn {
+    background-color: #fff;
+    color: var(--text-color);
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    flex: 1;
+    text-align: center;
+    min-width: 100px;
+}
+
+.select-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    font-weight: bold;
+}
+
+#typeButtonGroup {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    width: 100%;
+}
+
+@media (min-width: 500px) {
+    #typeButtonGroup {
+        width: 380px;
+    }
+}
+
+#countButtonGroup {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+    width: 100%;
+}
+
+@media (min-width: 500px) {
+    #countButtonGroup {
+        width: 380px;
+    }
+}
+
+.custom-count-wrapper {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0 6px;
+    flex: 1;
+    min-width: 100px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.custom-count-wrapper.active {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 1px var(--primary-color);
+    background-color: var(--primary-color);
+}
+
+.custom-count-wrapper input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 0.85rem;
+    padding: 6px 0;
+    text-align: center;
+    background: transparent;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.custom-count-wrapper.active input {
+    color: white;
+    font-weight: bold;
+    cursor: text;
+}
+
+.btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    -webkit-appearance: none;
+    touch-action: manipulation;
+    text-decoration: none;
+    display: block;
+    box-sizing: border-box;
+}
+
+.btn:hover {
+    background-color: #1557b0;
+}
+
+.btn-next {
+    background-color: #137333;
+    margin-top: 10px;
+}
+
+.btn-retry {
+    background-color: #f29900;
+    margin-top: 8px;
+}
+
+.btn-reveal {
+    background-color: #5f6368;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+}
+
+.question-box {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 10px 0;
+    padding: 10px 12px;
+    border-left: 4px solid var(--primary-color);
+    background: #f1f3f4;
+    border-radius: 0 6px 6px 0;
+    word-break: break-all;
+    line-height: 1.5;
+}
+
+.visual-diagram {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    height: 125px;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+    margin: 12px auto;
+    box-sizing: border-box;
+    font-family: monospace;
+    font-size: 0.75rem;
+    overflow-x: auto;
+}
+
+.diag-inner {
+    position: relative;
+    width: 380px;
+    height: 100%;
+}
+
+.diag-station-a {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    width: 70px;
+    height: 24px;
+    border: 2px solid #202124;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    background: #fff;
+}
+
+.diag-box-b {
+    position: absolute;
+    top: 17px;
+    left: 260px;
+    width: 24px;
+    height: 20px;
+    border: 2px solid #202124;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    background: #fff;
+}
+
+.diag-track {
+    position: absolute;
+    top: 45px;
+    left: 10px;
+    right: 15px;
+    height: 4px;
+    background: #202124;
+}
+
+.diag-track-label {
+    position: absolute;
+    top: 33px;
+    right: 20px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.diag-platform-box {
+    position: absolute;
+    top: 50px;
+    left: 35px;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #202124;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    background: #fff;
+}
+
+/* 縦線の位置はそのまま維持 */
+.diag-vertical-line1 {
+    position: absolute;
+    top: 70px;
+    left: 65px;
+    width: 2px;
+    height: 25px;
+    background: #202124;
+}
+
+/* 数字を線の右側に配置（leftを縦線より右に設定） */
+.diag-km-label {
+    position: absolute;
+    top: 78px;
+    left: 70px;
+    font-size: 0.65rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.diag-vertical-line2 {
+    position: absolute;
+    top: 60px;
+    left: 255px;
+    width: 2px;
+    height: 20px;
+    background: #202124;
+}
+
+.diag-sub-km {
+    position: absolute;
+    top: 64px;
+    left: 260px;
+    font-size: 0.6rem;
+    white-space: nowrap;
+}
+
+.diag-slope-line {
+    position: absolute;
+    top: 95px;
+    left: 15px;
+    right: 20px;
+    height: 2px;
+    background: #202124;
+}
+
+.diag-grade-1 {
+    position: absolute;
+    top: 77px;
+    left: 130px;
+    font-weight: bold;
+    font-size: 0.7rem;
+}
+
+.diag-grade-2 {
+    position: absolute;
+    top: 77px;
+    left: 295px;
+    font-weight: bold;
+    font-size: 0.7rem;
+}
+
+.diag-grade-text {
+    position: absolute;
+    top: 77px;
+    right: 15px;
+    font-weight: bold;
+    font-size: 0.7rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+@media (min-width: 500px) {
+    .input-group {
+        flex-direction: row;
+    }
+}
+
+.input-group input {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    -webkit-appearance: none;
+}
+
+.numpad {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    max-width: 280px;
+    margin: 0 auto 10px auto;
+}
+
+.num-btn {
+    background-color: #f1f3f4;
+    border: 1px solid #dadce0;
+    padding: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+.num-btn:active {
+    background-color: #dadce0;
+}
+
+.num-btn.clear {
+    background-color: #fce8e6;
+    color: #c5221f;
+    border-color: #fad2cf;
+}
+
+.num-btn.operator {
+    background-color: #e8f0fe;
+    color: var(--primary-color);
+    border-color: #d2e3fc;
+}
+
+.num-btn.equals {
+    background-color: #137333;
+    color: white;
+    border-color: #0b5123;
+}
+
+.result-box {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    display: none;
+    word-break: break-all;
+}
+
+.result-box.correct {
+    background-color: #e6f4ea;
+    color: var(--success-color);
+    border: 1px solid #ceead6;
+}
+
+.result-box.incorrect {
+    background-color: #fce8e6;
+    color: var(--error-color);
+    border: 1px solid #fad2cf;
+}
+
+.explanation {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #3c4043;
+    overflow-x: auto;
+}
+
+.summary-dashboard {
+    display: none;
+    margin-top: 10px;
+}
+
+.score-card {
+    background: var(--secondary-color);
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: var(--primary-color);
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.result-item-badge {
+    padding: 8px 0;
+    text-align: center;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
+}
+
+.result-item-badge.correct {
+    background-color: #e6f4ea;
+    color: var(--success-color);
+    border-color: #ceead6;
+}
+
+.result-item-badge.incorrect {
+    background-color: #fce8e6;
+    color: var(--error-color);
+    border-color: #fad2cf;
+}
+
+.result-item-badge.retry-correct {
+    background-color: #fef7e0;
+    color: #b06000;
+    border-color: #fef0c7;
+}
+
+.detail-view-card {
+    background: #fff;
+    border: 1px solid #dadce0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-row">
+        <a href="Unten-Riron.html" class="btn-subject-select" id="subjectSelectBtn">科目選択に戻る</a>
+        <h1>運転理論(修了)</h1>
+        <button class="btn-exit" id="exitBtn" style="display: none;">終了</button>
+    </div>
+
+    <details class="formula-summary" id="formulaSummaryCard">
+        <summary>公式一覧</summary>
+        <p>
+            <strong>1. 所要時間（加速時）：</strong>
+            <div class="math-block">t = V / &alpha;</div>
+            <strong>2. 走行抵抗（R<sub>r</sub>）：</strong>
+            <div class="math-block">R<sub>r</sub> = r<sub>r</sub> × W</div>
+            <strong>3. 引張力（F）：</strong>
+            <div class="math-block">F = R = R<sub>r</sub> + R<sub>g</sub> (R<sub>g</sub> = 9.8 × i × W)</div>
+            <strong>4. 非常制動（勾配補正）：</strong>
+            <div class="math-block">&beta;&apos; = &beta; + (9.8 × i) / 305.6</div>
+        </p>
+    </details>
+
+    <div class="settings-card" id="settingsCard">
+        <div style="font-weight: bold; color: var(--primary-color); border-bottom: 1px solid #dadce0; padding-bottom: 2px; font-size: 0.9rem;">修了試験 練習問題設定</div>
+        <div class="setting-row">
+            <div>
+                <label>モード選択：</label>
+                <div class="mode-desc-container" id="modeDescText">一問ごとに解説が表示されます。</div>
+            </div>
+            <div class="button-group" id="modeButtonGroup">
+                <button type="button" class="select-btn active" data-mode="practice">練習モード</button>
+                <button type="button" class="select-btn" data-mode="exam">試験モード</button>
+            </div>
+        </div>
+        <div class="setting-row">
+            <label>出題形式（複数選択可）：</label>
+            <div class="button-group" id="typeButtonGroup">
+                <button type="button" class="select-btn active" data-type="all">全範囲</button>
+                <button type="button" class="select-btn" data-type="力行・定速">力行・定速</button>
+                <button type="button" class="select-btn" data-type="走行抵抗・張引力">走行抵抗・張引力</button>
+                <button type="button" class="select-btn" data-type="勾配抵抗・キロ程">勾配抵抗・キロ程</button>
+            </div>
+        </div>
+        <div class="setting-row" id="countRow">
+            <label>問題数：</label>
+            <div class="button-group" id="countButtonGroup">
+                <button type="button" class="select-btn" data-count="3">3問</button>
+                <button type="button" class="select-btn active" data-count="5">5問</button>
+                <button type="button" class="select-btn" data-count="10">10問</button>
+                <div class="custom-count-wrapper" id="customCountWrapper">
+                    <input type="number" id="customCountInput" min="1" max="100" placeholder="問題数指定">
+                </div>
+            </div>
+        </div>
+        <button class="btn" id="generateBtn">練習を開始する</button>
+    </div>
+
+    <div class="question-box" id="questionText" style="display: none;">
+        「開始」ボタンを押してください。
+    </div>
+
+    <div class="input-group" id="inputArea" style="display: none;">
+        <input type="text" id="userAnswer" placeholder="答を入力（または電卓で計算）">
+        <button class="btn" id="submitBtn" style="width: auto; min-width: 90px;">回答</button>
+    </div>
+
+    <div class="numpad" id="numpadArea" style="display: none;">
+        <button class="num-btn clear" data-val="clear">C</button>
+        <button class="num-btn operator" data-val="(">(</button>
+        <button class="num-btn operator" data-valdepending data-val=")">)</button>
+        <button class="num-btn operator" data-val="/">÷</button>
+
+        <button class="num-btn" data-val="7">7</button>
+        <button class="num-btn" data-val="8">8</button>
+        <button class="num-btn" data-val="9">9</button>
+        <button class="num-btn operator" data-val="*">×</button>
+
+        <button class="num-btn" data-val="4">4</button>
+        <button class="num-btn" data-val="5">5</button>
+        <button class="num-btn" data-val="6">6</button>
+        <button class="num-btn operator" data-val="-">-</button>
+
+        <button class="num-btn" data-val="1">1</button>
+        <button class="num-btn" data-val="2">2</button>
+        <button class="num-btn" data-val="3">3</button>
+        <button class="num-btn operator" data-val="+">+</button>
+
+        <button class="num-btn" data-val="0">0</button>
+        <button class="num-btn" data-val=".">.</button>
+        <button class="num-btn" data-val="back">←</button>
+        <button class="num-btn equals" data-val="calc">=</button>
+    </div>
+
+    <div class="result-box" id="resultBox">
+        <div id="resultTitle" style="font-weight: bold; font-size: 1rem; margin-bottom: 4px;"></div>
+        <div class="explanation" id="explanationText"></div>
+        <div style="display: flex; gap: 8px;">
+            <button class="btn btn-retry" id="retrySameBtn" style="flex: 1; display:none;">再挑戦</button>
+            <button class="btn btn-next" id="nextBtn" style="flex: 1; display:none;">次の問題</button>
+        </div>
+    </div>
+
+    <div class="summary-dashboard" id="summaryDashboard">
+        <div class="score-card" id="scoreCardText"></div>
+        <p style="font-size: 0.85rem; font-weight: bold; margin-bottom: 6px;">問題番号を選択すると解説を表示します：</p>
+        <div class="result-grid" id="resultGrid"></div>
+        <div class="detail-view-card" id="detailViewCard" style="display: none;">
+            <div id="detailTitle" style="font-weight: bold; margin-bottom: 6px; color: var(--primary-color); font-size: 0.95rem;"></div>
+            <div id="detailQuestion" style="margin-bottom: 6px; font-weight: 500; font-size: 0.9rem;"></div>
+            <div id="detailUserAns" style="margin-bottom: 6px; font-size: 0.9rem;"></div>
+            <div id="detailHistoryContainer"></div>
+            <div class="explanation" id="detailExplanationText"></div>
+            <button class="btn btn-retry" id="detailRetryBtn" style="display: none;">この問題を再挑戦</button>
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <button class="btn btn-retry" id="retryWrongBtn" style="flex: 1; display: none;">誤答を再挑戦</button>
+            <button class="btn btn-exit" id="practiceExitBtn" style="flex: 1; background-color: #5f6368; padding: 10px; font-size: 0.95rem;">終了</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const allowedSpeeds = [15, 25, 45, 60, 75, 90];
+
+function getRandomSpeed() {
+    return allowedSpeeds[Math.floor(Math.random() * allowedSpeeds.length)];
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function generateDynamicProblem(category) {
+    if (category === '力行・定速') {
+        const subType = Math.random() < 0.5 ? 1 : 2;
+        const alpha = (Math.floor(Math.random() * 5) + 1) * 0.5;
+        const v = getRandomSpeed();
+
+        if (subType === 1) {
+            const ans = Math.ceil(v / alpha);
+            return {
+                id: 'q1_1',
+                title: '力行・定速',
+                category: '力行・定速',
+                text: `電車が出発後、平均加速度 ${alpha} km/h/s で力行し、${v} km/h で定速運転とした。出発から定速運転に入るまでの所要時間を求めよ。ただし, 解はすべて切り上げ整数のこと。`,
+                answer: ans,
+                formula: '<strong>【使用する公式】</strong><div class="math-block">t = V / &alpha;</div>',
+                calcAndAnswer: `<strong>【計算式】</strong>
+                    <div class="math-block">
+                        <div class="calc-block">
+                            <div class="calc-row"><span class="calc-label">t</span><span class="calc-symbol">=</span><span class="calc-content">${v} / ${alpha}</span></div>
+                            <div class="calc-row"><span class="calc-label"></span><span class="calc-symbol">=</span><span class="calc-content">${v / alpha} 秒</span></div>
+                        </div>
+                    </div>
+                    <div style="margin-top:4px; font-weight:bold; color:var(--primary-color);">A: ${ans} 秒</div>`
+            };
+        } else {
+            const accelDist = getRandomInt(100, 300);
+            const totalDist = accelDist + getRandomInt(100, 400);
+            const t1 = v / alpha;
+            const dist1 = (v * v) / (7.2 * alpha);
+            const constDist = totalDist - dist1;
+            const t2 = constDist > 0 ? (constDist * 3.6) / v : 0;
+            const totalT = Math.ceil(t1 + t2);
+
+            return {
+                id: 'q1_2',
+                title: '力行・定速',
+                category: '力行・定速',
+                text: `電車が平均加速度 ${alpha} km/h/s で力行し、${v} km/h で定速運転としたとき、出発から ${totalDist} m 走行した時点までの所要時間を求めよ。ただし, 解はすべて切り上げ整数のこと。`,
+                answer: totalT,
+                formula: '<strong>【使用する公式】</strong><div class="math-block">s = V<sup>2</sup> / (7.2&alpha;) + (V &times; t<sub>c</sub>) / 3.6</div>',
+                calcAndAnswer: `<strong>【計算式】</strong>
+                    <div class="math-block">
+                        <div class="calc-block">
+                            <div class="calc-row"><span class="calc-label">加速距離</span><span class="calc-symbol">=</span><span class="calc-content">${v}<sup>2</sup> / (7.2 &times; ${alpha}) ≒ ${dist1.toFixed(1)} m</span></div>
+                            <div class="calc-row"><span class="calc-label">定速距離</span><span class="calc-symbol">=</span><span class="calc-content">${totalDist} - ${dist1.toFixed(1)} = ${constDist.toFixed(1)} m</span></div>
+                            <div class="calc-row"><span class="calc-label">定速時間</span><span class="calc-symbol">=</span><span class="calc-content">(${constDist.toFixed(1)} &times; 3.6) / ${v} ≒ ${t2.toFixed(1)} 秒</span></div>
+                            <div class="calc-row"><span class="calc-label">総時間</span><span class="calc-symbol">=</span><span class="calc-content">${t1.toFixed(1)} + ${t2.toFixed(1)} = ${(t1+t2).toFixed(1)} 秒</span></div>
+                        </div>
+                    </div>
+                    <div style="margin-top:4px; font-weight:bold; color:var(--primary-color);">A: ${totalT} 秒</div>`
+            };
+        }
+    } else if (category === '走行抵抗・張引力') {
+        const subType = Math.random() < 0.5 ? 1 : 2;
+        const mMass = getRandomInt(30, 40);
+        const tMass = getRandomInt(20, 30);
+        const mRes = getRandomInt(30, 45) + 0.5;
+        const tRes = getRandomInt(20, 32) + 0.5;
+        const grade = getRandomInt(10, 30);
+        const v = getRandomSpeed();
+
+        const mCount = 3;
+        const tCount = 3;
+        const totalMWeight = mMass * mCount;
+        const totalTWeight = tMass * tCount;
+        const totalWeight = totalMWeight + totalTWeight;
+
+        const rR = (mRes * totalMWeight) + (tRes * totalTWeight);
+
+        if (subType === 1) {
+            const ans = Math.round(rR);
+            return {
+                id: 'q2_1',
+                title: '走行抵抗・張引力',
+                category: '走行抵抗・張引力',
+                text: `列車編成 3M3T、一両当たりの質量（M車 ${mMass} t、T車 ${tMass} t）、単位質量当たりの走行抵抗（M車 ${mRes} N/t、T車 ${tRes} N/t）の列車が、+${grade} ‰ の直線路上を ${v} km/h の一定の速度で運転していた。この時の列車の走行抵抗 Rᵣ はいくらか。`,
+                answer: ans,
+                formula: '<strong>【使用する公式】</strong><div class="math-block">R<sub>r</sub> = r<sub>r</sub> &times; W</div>',
+                calcAndAnswer: `<strong>【計算式】</strong>
+                    <div class="math-block">
+                        <div class="calc-block">
+                            <div class="calc-row"><span class="calc-label">M車抵抗</span><span class="calc-symbol">=</span><span class="calc-content">${mRes} &times; ${mMass} &times; ${mCount} = ${mRes * totalMWeight} N</span></div>
+                            <div class="calc-row"><span class="calc-label">T車抵抗</span><span class="calc-symbol">=</span><span class="calc-content">${tRes} &times; ${tMass} &times; ${tCount} = ${tRes * totalTWeight} N</span></div>
+                            <div class="calc-row"><span class="calc-label">合計($R_r$)</span><span class="calc-symbol">=</span><span class="calc-content">${rR} N</span></div>
+                        </div>
+                    </div>
+                    <div style="margin-top:4px; font-weight:bold; color:var(--primary-color);">A: ${ans} N</div>`
+            };
+        } else {
+            const rG = 9.8 * grade * totalWeight;
+            const f = rR + rG;
+            const ans = Math.round(f);
+            return {
+                id: 'q2_2',
+                title: '走行抵抗・張引力',
+                category: '走行抵抗・張引力',
+                text: `列車編成 3M3T（M車 ${mMass} t・${mRes} N/t、T車 ${tMass} t・${tRes} N/t）、+${grade} ‰ 勾配、${v} km/h 定速の条件において、この時の列車の引張力 F はいくらか。`,
+                answer: ans,
+                formula: '<strong>【使用する公式】</strong><div class="math-block">F = R = R<sub>r</sub> + R<sub>g</sub><br>R<sub>g</sub> = 9.8 &times; i &times; W</div>',
+                calcAndAnswer: `<strong>【計算式】</strong>
+                    <div class="math-block">
+                        <div class="calc-block">
+                            <div class="calc-row"><span class="calc-label">総重量($W$)</span><span class="calc-symbol">=</span><span class="calc-content">(${mMass} &times; 3) + (${tMass} &times; 3) = ${totalWeight} t</span></div>
+                            <div class="calc-row"><span class="calc-label">走行抵抗($R_r$)</span><span class="calc-symbol">=</span><span class="calc-content">${rR} N</span></div>
+                            <div class="calc-row"><span class="calc-label">勾配抵抗($R_g$)</span><span class="calc-symbol">=</span><span class="calc-content">9.8 &times; ${grade} &times; ${totalWeight} = ${rG.toFixed(1)} N</span></div>
+                            <div class="calc-row"><span class="calc-label">引張力($F$)</span><span class="calc-symbol">=</span><span class="calc-content">${rR} + ${rG.toFixed(1)} = ${f.toFixed(1)} N</span></div>
+                        </div>
+                    </div>
+                    <div style="margin-top:4px; font-weight:bold; color:var(--primary-color);">A: ${ans} N</div>`
+            };
+        }
+    } else {
+        const v = getRandomSpeed();
+        const beta = (Math.floor(Math.random() * 3) + 2) * 0.5;
+        const t0 = getRandomInt(1, 3);
+        const grade = (Math.floor(Math.random() * 5) + 1) * 0.5;
+        
+        const baseKM = 1;
+        const baseM = 447;
+
+        const betaPrime = beta + (9.8 * grade) / 305.6;
+        const idleDist = (v * t0) / 3.6;
+        const brakeDist = (v * v) / (7.2 * betaPrime);
+        const totalDist = Math.ceil(idleDist + brakeDist);
+
+        let totalMeters = baseKM * 1000 + baseM - totalDist;
+        const bKM = Math.floor(totalMeters / 1000);
+        const bM = totalMeters % 1000;
+
+        const diagramHtml = `
+            <div class="visual-diagram">
+                <div class="diag-inner">
+                    <div class="diag-station-a">A駅</div>
+                    <div class="diag-box-b">B</div>
+                    <div class="diag-track"></div>
+                    <div class="diag-track-label">線路</div>
+                    
+                    <div class="diag-platform-box">6</div>
+                    <div class="diag-vertical-line1"></div>
+                    <div class="diag-km-label">1K447M</div>
+
+                    <div class="diag-vertical-line2"></div>
+                    <div class="diag-sub-km">0K810M</div>
+
+                    <div class="diag-slope-line"></div>
+                    <div class="diag-grade-1">+${grade}</div>
+                    <div class="diag-grade-2">-20</div>
+                    <div class="diag-grade-text">こう配</div>
+                </div>
+            </div>
+        `;
+
+        return {
+            id: 'q3_1',
+            title: '勾配抵抗・キロ程',
+            category: '勾配抵抗・キロ程',
+            text: `直線路上を ${v} km/h で走行中の列車を、B地点からブレーキを投入し、図のA駅6番線（1K447M）に停止させる。B地点のキロ程を求めよ。ただし、ブレーキによって生じる減速度は ${beta} km/h/s、空走時間は ${t0} 秒、滑走はないものとする。勾配はA駅側から +${grade} ‰、途中 0K810M 地点から -20 ‰ とする。解は整数（切り上げ）のこと。<br>` + diagramHtml,
+            answer: totalDist, 
+            formula: '<strong>【使用する公式】</strong><div class="math-block">s = (V_1 &times; t_0) / 3.6 + V_1^2 / (7.2 &times; &beta;&apos;)<br>&beta;&apos; = &beta; + (9.8 &times; i) / 305.6</div>',
+            calcAndAnswer: `<strong>【計算式】</strong>
+                <div class="math-block">
+                    <div class="calc-block">
+                        <div class="calc-row"><span class="calc-label">実効減速度(&beta;&apos;)</span><span class="calc-symbol">=</span><span class="calc-content">${beta} + (9.8 &times; ${grade}) / 305.6 ≒ ${betaPrime.toFixed(3)} km/h/s</span></div>
+                        <div class="calc-row"><span class="calc-label">空走距離</span><span class="calc-symbol">=</span><span class="calc-content">(${v} &times; ${t0}) / 3.6 ≒ ${idleDist.toFixed(2)} m</span></div>
+                        <div class="calc-row"><span class="calc-label">制動距離</span><span class="calc-symbol">=</span><span class="calc-content">${v}<sup>2</sup> / (7.2 &times; ${betaPrime.toFixed(3)}) ≒ ${brakeDist.toFixed(2)} m</span></div>
+                        <div class="calc-row"><span class="calc-label">総停止距離(s)</span><span class="calc-symbol">=</span><span class="calc-content">${idleDist.toFixed(2)} + ${brakeDist.toFixed(2)} = ${totalDist} m</span></div>
+                        <div class="calc-row"><span class="calc-label">B地点キロ程</span><span class="calc-symbol">=</span><span class="calc-content">${baseKM}K${baseM}M - ${totalDist}m = ${bKM}K${bM}M</span></div>
+                    </div>
+                </div>
+                <div style="margin-top:4px; font-weight:bold; color:var(--primary-color);">A: ${bKM}k${bM}m (または ${totalDist}m)</div>`
+        };
+    }
+}
+
+let currentMode = 'practice';
+let currentProblem = null;
+let isQuestionActive = false;
+
+let practiceList = [];
+let practiceIndex = 0;
+let practiceResults = [];
+let currentDetailIndex = null;
+
+let freeRetryProblem = null;
+let isFreeRetrySession = false;
+
+let isBatchRetrySession = false;
+let batchRetryQueue = [];
+let batchRetryOriginalIndices = [];
+let batchRetryCurrentStep = 0;
+
+function updateGenerateButtonText() {
+    const generateBtn = document.getElementById('generateBtn');
+    if (isQuestionActive) {
+        generateBtn.textContent = '問題生成';
+    } else {
+        generateBtn.textContent = '練習を開始する';
+    }
+}
+
+function resetPlatformDisplay() {
+    isQuestionActive = false;
+    currentProblem = null;
+    freeRetryProblem = null;
+    isFreeRetrySession = false;
+    isBatchRetrySession = false;
+    batchRetryQueue = [];
+    batchRetryOriginalIndices = [];
+    batchRetryCurrentStep = 0;
+    
+    document.getElementById('questionText').style.display = 'none';
+    document.getElementById('inputArea').style.display = 'none';
+    document.getElementById('numpadArea').style.display = 'none';
+    document.getElementById('resultBox').style.display = 'none';
+    document.getElementById('summaryDashboard').style.display = 'none';
+    
+    document.getElementById('settingsCard').style.display = 'flex';
+    document.getElementById('formulaSummaryCard').style.display = 'block';
+    document.getElementById('userAnswer').value = '';
+
+    document.getElementById('subjectSelectBtn').style.display = 'inline-block';
+    document.getElementById('exitBtn').style.display = 'none';
+    updateGenerateButtonText();
+}
+
+function getSelectedCount() {
+    const activeCountBtn = document.querySelector('#countButtonGroup .select-btn.active');
+    if (activeCountBtn) {
+        return parseInt(activeCountBtn.getAttribute('data-count'), 10);
+    }
+    const customInput = document.getElementById('customCountInput');
+    let val = parseInt(customInput.value, 10);
+    if (isNaN(val) || val <= 0) {
+        return 5;
+    }
+    return val;
+}
+
+function generateRandomProblem() {
+    const activeTypeBtns = document.querySelectorAll('#typeButtonGroup .select-btn.active');
+    let categories = [];
+    activeTypeBtns.forEach(btn => {
+        let t = btn.getAttribute('data-type');
+        if (t !== 'all') {
+            categories.push(t);
+        }
+    });
+
+    if (categories.length === 0) {
+        categories = ['力行・定速', '走行抵抗・張引力', '勾配抵抗・キロ程'];
+    }
+
+    let cat = categories[Math.floor(Math.random() * categories.length)];
+    return generateDynamicProblem(cat);
+}
+
+function startPlatform() {
+    currentMode = document.querySelector('#modeButtonGroup .select-btn.active').getAttribute('data-mode');
+
+    const activeTypeBtns = document.querySelectorAll('#typeButtonGroup .select-btn.active');
+    if (activeTypeBtns.length === 0) {
+        alert("出題形式を少なくとも1つ選択してください。");
+        return;
+    }
+
+    document.getElementById('summaryDashboard').style.display = 'none';
+    document.getElementById('resultBox').style.display = 'none';
+    document.getElementById('settingsCard').style.display = 'none';
+    document.getElementById('formulaSummaryCard').style.display = 'block';
+    
+    const qBox = document.getElementById('questionText');
+    qBox.style.display = 'block';
+    qBox.className = 'question-box';
+
+    document.getElementById('subjectSelectBtn').style.display = 'none';
+    document.getElementById('exitBtn').style.display = 'inline-block';
+
+    if (currentMode === 'practice') {
+        document.getElementById('inputArea').style.display = 'flex';
+        document.getElementById('numpadArea').style.display = 'grid';
+        isQuestionActive = true;
+        isFreeRetrySession = false;
+        isBatchRetrySession = false;
+        freeRetryProblem = null;
+        updateGenerateButtonText();
+
+        currentProblem = generateRandomProblem();
+        qBox.innerHTML = `<strong>【${currentProblem.title}】</strong><br>` + currentProblem.text;
+    } else {
+        const count = getSelectedCount();
+        practiceList = [];
+        for (let i = 0; i < count; i++) {
+            practiceList.push(generateRandomProblem());
+        }
+        practiceIndex = 0;
+        practiceResults = [];
+
+        document.getElementById('inputArea').style.display = 'flex';
+        document.getElementById('numpadArea').style.display = 'grid';
+        isQuestionActive = true;
+        isFreeRetrySession = false;
+        isBatchRetrySession = false;
+        freeRetryProblem = null;
+        updateGenerateButtonText();
+
+        loadExamQuestion();
+    }
+}
+
+function loadExamQuestion() {
+    currentProblem = practiceList[practiceIndex];
+    document.getElementById('questionText').innerHTML = `<strong>【第 ${practiceIndex + 1} 問 / 全 ${practiceList.length} 問 - ${currentProblem.title}】</strong><br>` + currentProblem.text;
+    document.getElementById('userAnswer').value = '';
+}
+
+function checkAnswer() {
+    const userAnsVal = document.getElementById('userAnswer').value.trim();
+    if (userAnsVal === "") {
+        alert("答えを入力してください。");
+        return;
+    }
+
+    let userAns;
+    try {
+        let sanitized = userAnsVal.replace(/[^0-9\+\-\*/().]/g, '');
+        userAns = Number(eval(sanitized));
+    } catch (e) {
+        alert("正しい数値を入力してください。");
+        return;
+    }
+
+    if (currentMode === 'practice') {
+        const resultBox = document.getElementById('resultBox');
+        const resultTitle = document.getElementById('resultTitle');
+        const explanationText = document.getElementById('explanationText');
+        const nextBtn = document.getElementById('nextBtn');
+        const retrySameBtn = document.getElementById('retrySameBtn');
+
+        resultBox.style.display = 'block';
+
+        let targetProb = isFreeRetrySession ? freeRetryProblem : currentProblem;
+        let isCorrect = Math.abs(userAns - targetProb.answer) < 1.0;
+
+        if (isFreeRetrySession) {
+            if (isCorrect) {
+                resultBox.className = 'result-box';
+                resultBox.style.backgroundColor = 'var(--retry-success-bg)';
+                resultBox.style.color = 'var(--retry-success-color)';
+                resultBox.style.border = '1px solid var(--retry-success-border)';
+                resultTitle.textContent = '再挑戦：○ 正解';
+            } else {
+                resultBox.className = 'result-box incorrect';
+                resultBox.style.backgroundColor = '';
+                resultBox.style.color = '';
+                resultBox.style.border = '';
+                resultTitle.textContent = '再挑戦：✕ 不正解';
+            }
+        } else {
+            if (isCorrect) {
+                resultBox.className = 'result-box correct';
+                resultTitle.textContent = '◎ 正解';
+            } else {
+                resultBox.className = 'result-box incorrect';
+                resultTitle.textContent = '✕ 不正解';
+            }
+        }
+
+        nextBtn.style.display = 'block';
+        retrySameBtn.style.display = 'block';
+
+        if (isCorrect) {
+            explanationText.innerHTML = `${targetProb.formula}${targetProb.calcAndAnswer}`;
+        } else {
+            explanationText.innerHTML = `${targetProb.formula}<button class="btn btn-reveal" id="revealBtn">計算式と解答を表示</button><div id="hiddenCalcContainer" style="display:none;">${targetProb.calcAndAnswer}</div>`;
+            const revealBtn = document.getElementById('revealBtn');
+            revealBtn.addEventListener('click', () => {
+                document.getElementById('hiddenCalcContainer').style.display = 'block';
+                revealBtn.style.display = 'none';
+            });
+        }
+
+        resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    } else {
+        let isCorrect = Math.abs(userAns - currentProblem.answer) < 1.0;
+
+        if (isBatchRetrySession) {
+            let origIdx = batchRetryOriginalIndices[batchRetryCurrentStep];
+            let resObj = practiceResults[origIdx];
+
+            resObj.retryCorrect = isCorrect;
+
+            if (!resObj.retryHistory) {
+                resObj.retryHistory = [];
+            }
+            resObj.retryHistory.push({
+                userAns: userAns,
+                isCorrect: isCorrect
+            });
+
+            batchRetryCurrentStep++;
+            if (batchRetryCurrentStep < batchRetryQueue.length) {
+                loadExamQuestion();
+            } else {
+                isBatchRetrySession = false;
+                showExamSummary();
+            }
+        } else {
+            practiceResults.push({
+                question: currentProblem,
+                userAns: userAns,
+                isCorrect: isCorrect,
+                retryCorrect: null,
+                retryHistory: []
+            });
+
+            practiceIndex++;
+            if (practiceIndex < practiceList.length) {
+                loadExamQuestion();
+            } else {
+                showExamSummary();
+            }
+        }
+    }
+}
+
+function updateScoreCard() {
+    const correctCount = practiceResults.filter(r => r.isCorrect || r.retryCorrect === true).length;
+    const total = practiceResults.length;
+    document.getElementById('scoreCardText').textContent = `結果： ${total}問中 ${correctCount}問正解 （正答率: ${Math.round((correctCount/total)*100)}%）`;
+}
+
+function renderResultGrid() {
+    const grid = document.getElementById('resultGrid');
+    grid.innerHTML = '';
+
+    practiceResults.forEach((res, idx) => {
+        const badge = document.createElement('div');
+        let statusClass = res.isCorrect ? 'correct' : 'incorrect';
+        let mark = res.isCorrect ? '◎' : '✕';
+
+        if (!res.isCorrect && res.retryCorrect === true) {
+            statusClass = 'retry-correct';
+            mark = '○';
+        } else if (!res.isCorrect && res.retryCorrect === false) {
+            mark = '✕';
+        }
+
+        badge.className = `result-item-badge ${statusClass}`;
+        badge.textContent = `${idx + 1}問 [${mark}]`;
+        badge.addEventListener('click', () => {
+            showExamDetail(idx);
+        });
+        grid.appendChild(badge);
+    });
+
+    const retryWrongBtn = document.getElementById('retryWrongBtn');
+    const hasIncorrect = practiceResults.some(r => !r.isCorrect && r.retryCorrect !== true);
+    if (hasIncorrect && currentMode === 'exam') {
+        retryWrongBtn.style.display = 'block';
+    } else {
+        retryWrongBtn.style.display = 'none';
+    }
+}
+
+function showExamSummary() {
+    document.getElementById('questionText').style.display = 'none';
+    document.getElementById('inputArea').style.display = 'none';
+    document.getElementById('numpadArea').style.display = 'none';
+    document.getElementById('resultBox').style.display = 'none';
+    document.getElementById('exitBtn').style.display = 'none';
+    document.getElementById('subjectSelectBtn').style.display = 'none';
+
+    const dashboard = document.getElementById('summaryDashboard');
+    dashboard.style.display = 'block';
+
+    updateScoreCard();
+    renderResultGrid();
+    showExamDetail(0);
+    dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showExamDetail(idx) {
+    currentDetailIndex = idx;
+    const res = practiceResults[idx];
+    const detailCard = document.getElementById('detailViewCard');
+    detailCard.style.display = 'block';
+
+    document.getElementById('detailTitle').textContent = `第 ${idx + 1} 問 の詳細`;
+    document.getElementById('detailQuestion').innerHTML = `問題： ${res.question.text}`;
+
+    let initialMark = res.isCorrect ? '◎' : '✕';
+    let initialColor = res.isCorrect ? 'var(--success-color)' : 'var(--error-color)';
+
+    document.getElementById('detailUserAns').innerHTML = `あなたの回答: <strong>${res.userAns}</strong> - <span style="color:${initialColor}; font-weight:bold;">${initialMark}</span>`;
+
+    const historyContainer = document.getElementById('detailHistoryContainer');
+    historyContainer.innerHTML = '';
+    if (res.retryHistory && res.retryHistory.length > 0) {
+        res.retryHistory.forEach((hItem, hIdx) => {
+            let hMark = hItem.isCorrect ? '○' : '✕';
+            let hColor = hItem.isCorrect ? 'var(--retry-success-color)' : 'var(--error-color)';
+
+            const historyDiv = document.createElement('div');
+            historyDiv.style.marginTop = '8px';
+            historyDiv.style.padding = '8px';
+            historyDiv.style.background = '#f8f9fa';
+            historyDiv.style.borderLeft = '3px solid #f29900';
+            historyDiv.style.borderRadius = '0 4px 4px 0';
+            historyDiv.style.fontSize = '0.95rem';
+            historyDiv.innerHTML = `再挑戦(${hIdx + 1}): <strong>${hItem.userAns}</strong> - <span style="color:${hColor}; font-weight:bold;">${hMark}</span>`;
+            historyContainer.appendChild(historyDiv);
+        });
+    }
+
+    if (res.isCorrect || res.retryCorrect === true) {
+        document.getElementById('detailExplanationText').innerHTML = `${res.question.formula}${res.question.calcAndAnswer}`;
+    } else {
+        document.getElementById('detailExplanationText').innerHTML = `${res.question.formula}<button class="btn btn-reveal" id="detailRevealBtn">計算式と解答を表示</button><div id="detailHiddenCalcContainer" style="display:none;">${res.question.calcAndAnswer}</div>`;
+        const detailRevealBtn = document.getElementById('detailRevealBtn');
+        detailRevealBtn.addEventListener('click', () => {
+            document.getElementById('detailHiddenCalcContainer').style.display = 'block';
+            detailRevealBtn.style.display = 'none';
+        });
+    }
+
+    const detailRetryBtn = document.getElementById('detailRetryBtn');
+    if (!res.isCorrect && res.retryCorrect !== true && currentMode === 'exam') {
+        detailRetryBtn.style.display = 'block';
+    } else {
+        detailRetryBtn.style.display = 'none';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const modeButtons = document.querySelectorAll('#modeButtonGroup .select-btn');
+    const typeButtons = document.querySelectorAll('#typeButtonGroup .select-btn');
+    const countButtons = document.querySelectorAll('#countButtonGroup .select-btn');
+    const customCountInput = document.getElementById('customCountInput');
+    const customCountWrapper = document.getElementById('customCountWrapper');
+    const countRow = document.getElementById('countRow');
+    const modeDescText = document.getElementById('modeDescText');
+
+    const generateBtn = document.getElementById('generateBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const retrySameBtn = document.getElementById('retrySameBtn');
+    const practiceExitBtn = document.getElementById('practiceExitBtn');
+    const retryWrongBtn = document.getElementById('retryWrongBtn');
+    const detailRetryBtn = document.getElementById('detailRetryBtn');
+    const exitBtn = document.getElementById('exitBtn');
+    const userAnswerInput = document.getElementById('userAnswer');
+
+    const subjectSelectBtn = document.getElementById('subjectSelectBtn');
+    if (subjectSelectBtn) {
+        subjectSelectBtn.style.display = 'inline-block';
+    }
+    if (exitBtn) {
+        exitBtn.style.display = 'none';
+    }
+
+    modeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            modeButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentMode = btn.getAttribute('data-mode');
+
+            if (currentMode === 'practice') {
+                countRow.style.display = 'none';
+                modeDescText.textContent = '一問ごとに解説が表示されます。';
+            } else {
+                countRow.style.display = 'flex';
+                modeDescText.textContent = '最後に解説がまとめて表示されます。';
+            }
+            resetPlatformDisplay();
+        });
+    });
+
+    countRow.style.display = 'none';
+
+    typeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const type = btn.getAttribute('data-type');
+            const allBtn = document.querySelector('#typeButtonGroup .select-btn[data-type="all"]');
+            const subBtns = document.querySelectorAll('#typeButtonGroup .select-btn:not([data-type="all"])');
+
+            if (type === 'all') {
+                typeButtons.forEach(b => b.classList.remove('active'));
+                allBtn.classList.add('active');
+            } else {
+                allBtn.classList.remove('active');
+                btn.classList.toggle('active');
+
+                const anyChecked = Array.from(subBtns).some(b => b.classList.contains('active'));
+                if (!anyChecked) {
+                    allBtn.classList.add('active');
+                }
+            }
+        });
+    });
+
+    countButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            countButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            customCountWrapper.classList.remove('active');
+            customCountInput.value = '';
+        });
+    });
+
+    customCountWrapper.addEventListener('click', () => {
+        countButtons.forEach(b => b.classList.remove('active'));
+        customCountWrapper.classList.add('active');
+        customCountInput.value = '';
+        customCountInput.focus();
+    });
+
+    customCountInput.addEventListener('focus', () => {
+        countButtons.forEach(b => b.classList.remove('active'));
+        customCountWrapper.classList.add('active');
+        customCountInput.value = '';
+    });
+
+    customCountInput.addEventListener('input', () => {
+        if (customCountInput.value !== '') {
+            countButtons.forEach(b => b.classList.remove('active'));
+            customCountWrapper.classList.add('active');
+        }
+    });
+
+    if (generateBtn) {
+        generateBtn.addEventListener('click', startPlatform);
+    }
+
+    if (exitBtn) {
+        exitBtn.addEventListener('click', resetPlatformDisplay);
+    }
+
+    if (practiceExitBtn) {
+        practiceExitBtn.addEventListener('click', resetPlatformDisplay);
+    }
+
+    if (submitBtn) {
+        submitBtn.addEventListener('click', () => {
+            if (currentMode === 'practice') {
+                checkAnswer();
+            } else {
+                if (isFreeRetrySession) {
+                    const userAnsVal = userAnswerInput.value;
+                    if (userAnsVal === "") {
+                        alert("数値を入力するか、計算結果を求めてください。");
+                        return;
+                    }
+                    let userAns;
+                    try {
+                        let sanitized = userAnsVal.replace(/[^0-9\+\-\*/().]/g, '');
+                        userAns = Number(eval(sanitized));
+                    } catch (e) {
+                        alert("正しい数値を入力してください。");
+                        return;
+                    }
+
+                    const res = practiceResults[currentDetailIndex];
+                    let isCorrect = Math.abs(userAns - res.question.answer) < 1.0;
+
+                    res.retryCorrect = isCorrect;
+
+                    if (!res.retryHistory) {
+                        res.retryHistory = [];
+                    }
+                    res.retryHistory.push({
+                        userAns: userAns,
+                        isCorrect: isCorrect
+                    });
+
+                    document.getElementById('questionText').style.display = 'none';
+                    document.getElementById('inputArea').style.display = 'none';
+                    document.getElementById('numpadArea').style.display = 'none';
+                    document.getElementById('resultBox').style.display = 'none';
+                    document.getElementById('exitBtn').style.display = 'none';
+
+                    const dashboard = document.getElementById('summaryDashboard');
+                    dashboard.style.display = 'block';
+
+                    updateScoreCard();
+                    renderResultGrid();
+                    showExamDetail(currentDetailIndex);
+                    dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    isFreeRetrySession = false;
+                } else {
+                    checkAnswer();
+                }
+            }
+        });
+    }
+
+    if (detailRetryBtn) {
+        detailRetryBtn.addEventListener('click', () => {
+            if (currentDetailIndex === null) return;
+            const res = practiceResults[currentDetailIndex];
+
+            document.getElementById('summaryDashboard').style.display = 'none';
+            document.getElementById('questionText').style.display = 'block';
+            document.getElementById('inputArea').style.display = 'flex';
+            document.getElementById('numpadArea').style.display = 'grid';
+            document.getElementById('resultBox').style.display = 'none';
+            document.getElementById('exitBtn').style.display = 'inline-block';
+
+            isFreeRetrySession = true;
+            freeRetryProblem = res.question;
+            currentProblem = res.question;
+
+            document.getElementById('questionText').innerHTML = `<strong>【問題の再挑戦】</strong><br>` + res.question.text;
+            userAnswerInput.value = '';
+            document.getElementById('questionText').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+
+    if (retrySameBtn) {
+        retrySameBtn.addEventListener('click', () => {
+            document.getElementById('resultBox').style.display = 'none';
+            userAnswerInput.value = '';
+            isFreeRetrySession = false;
+            
+            document.getElementById('questionText').innerHTML = `<strong>【${currentProblem.title}】</strong><br>` + currentProblem.text;
+            document.getElementById('questionText').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            document.getElementById('resultBox').style.display = 'none';
+            userAnswerInput.value = '';
+            isFreeRetrySession = false;
+            freeRetryProblem = null;
+
+            currentProblem = generateRandomProblem();
+            document.getElementById('questionText').innerHTML = `<strong>【${currentProblem.title}】</strong><br>` + currentProblem.text;
+            document.getElementById('questionText').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+
+    if (retryWrongBtn) {
+        retryWrongBtn.addEventListener('click', () => {
+            batchRetryQueue = [];
+            batchRetryOriginalIndices = [];
+
+            practiceResults.forEach((res, idx) => {
+                if (!res.isCorrect && res.retryCorrect !== true) {
+                    batchRetryQueue.push(res.question);
+                    batchRetryOriginalIndices.push(idx);
+                }
+            });
+
+            if (batchRetryQueue.length > 0) {
+                isBatchRetrySession = true;
+                batchRetryCurrentStep = 0;
+
+                document.getElementById('summaryDashboard').style.display = 'none';
+                document.getElementById('questionText').style.display = 'block';
+                document.getElementById('inputArea').style.display = 'flex';
+                document.getElementById('numpadArea').style.display = 'grid';
+                document.getElementById('resultBox').style.display = 'none';
+                document.getElementById('exitBtn').style.display = 'inline-block';
+
+                loadExamQuestion();
+                document.getElementById('questionText').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
+
+    const numpadButtons = document.querySelectorAll('.num-btn');
+    numpadButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const val = btn.getAttribute('data-val');
+            if (val === 'clear') {
+                userAnswerInput.value = '';
+            } else if (val === 'back') {
+                userAnswerInput.value = userAnswerInput.value.slice(0, -1);
+            } else if (val === 'calc') {
+                try {
+                    let sanitized = userAnswerInput.value.replace(/[^0-9\+\-\*/().]/g, '');
+                    if (sanitized !== '') {
+                        let evaluated = eval(sanitized);
+                        userAnswerInput.value = evaluated;
+                    }
+                } catch (e) {
+                    alert("計算式の値が無効です。");
+                }
+            } else {
+                userAnswerInput.value += val;
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>
