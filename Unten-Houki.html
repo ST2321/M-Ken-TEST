@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>運転法規(修了)</title>
+<style>
+:root {
+    --primary-color: #1a73e8;
+    --success-color: #34a853;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-color: #202124;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* フローティング形式の戻るボタン（画面左上） */
+.back-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 999;
+    background-color: #ffffff;
+    color: #1a73e8;
+    border: 2px solid #1a73e8;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.back-btn:hover {
+    background-color: #e8f0fe;
+}
+
+/* フローティング形式の表示・非表示ボタン（画面右上） */
+.all-toggle-btn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 999;
+    background-color: #ffffff;
+    color: #1a73e8;
+    border: 2px solid #1a73e8;
+    padding: 6px 16px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.all-toggle-btn:hover {
+    background-color: #e8f0fe;
+}
+
+.container {
+    width: 100%;
+    max-width: 850px;
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    margin-bottom: 30px;
+    margin-top: 15px;
+}
+
+.header-row {
+    border-bottom: 2px solid #1a73e8;
+    padding-bottom: 8px;
+    margin-bottom: 5px;
+}
+
+h1 {
+    font-size: 1.2rem;
+    color: #202124;
+    margin: 0;
+}
+
+.question-section {
+    margin-top: 15px;
+    margin-bottom: 25px;
+    line-height: 2.2;
+    font-size: 1rem;
+}
+
+.q-title {
+    font-weight: bold;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+    color: #1a73e8;
+    border-bottom: 1px dashed #dadce0;
+    padding-bottom: 4px;
+}
+
+.sub-q {
+    margin-left: 10px;
+    margin-bottom: 15px;
+}
+
+.handwrite-slot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    width: 100px;
+    height: 28px;
+    vertical-align: middle;
+    border: 2px dashed #1a73e8;
+    background: #fff;
+    border-radius: 4px;
+    margin: 0 4px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.handwrite-slot:hover {
+    background-color: #e8f0fe;
+}
+
+.slot-image-preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: none;
+    pointer-events: none;
+}
+
+.slot-answer-inline {
+    display: none;
+    font-size: 0.8rem;
+    color: #d93025;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    pointer-events: none;
+    position: absolute;
+    white-space: nowrap;
+    padding: 0 2px;
+}
+
+/* 並び替え問題専用のスタイル */
+.sort-item-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    gap: 8px;
+}
+
+.sort-slot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    border: 2px dashed #1a73e8;
+    background: #fff;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #1a73e8;
+    font-size: 0.95rem;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    flex-shrink: 0;
+}
+
+.sort-slot:hover {
+    background-color: #e8f0fe;
+}
+
+.sort-slot.filled {
+    border-style: solid;
+    background-color: #e8f0fe;
+}
+
+.sort-btn {
+    flex: 1;
+    background: #f8f9fa;
+    border: 1px solid #bdc1c6;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    text-align: left;
+    cursor: pointer;
+    color: #202124;
+    line-height: 1.5;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.sort-btn:hover {
+    background-color: #f1f3f4;
+    border-color: #1a73e8;
+}
+
+.sort-btn.selected {
+    background-color: #e8f0fe;
+    border-color: #1a73e8;
+    font-weight: bold;
+}
+
+/* テーブルスタイル */
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.custom-table th, .custom-table td {
+    border: 1px solid #bdc1c6;
+    padding: 8px;
+    vertical-align: middle;
+}
+
+.custom-table th {
+    background-color: #f1f3f4;
+    text-align: center;
+    font-size: 0.9rem;
+    width: 30%;
+}
+
+/* モーダル */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    width: 95%;
+    max-width: 750px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+}
+
+.modal-header {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #1a73e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-canvas-scroll-container {
+    width: 100%;
+    height: 180px;
+    border: 2px solid #1a73e8;
+    border-radius: 8px;
+    background: #fafafa;
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-canvas-box {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    touch-action: none;
+}
+
+.modal-canvas-box canvas {
+    height: 100%;
+    display: block;
+    cursor: crosshair;
+}
+
+.modal-scroll-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    background: #f1f3f4;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.modal-scroll-control label {
+    font-size: 0.85rem;
+    color: #3c4043;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.modal-scroll-control input[type="range"] {
+    flex: 1;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background-color: #f1f3f4;
+    color: #3c4043;
+    border: 1px solid #dadce0;
+}
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-btn">&larr; 戻る</a>
+<button type="button" class="all-toggle-btn" id="allToggleBtn" onclick="toggleAllAnswers()">表示</button>
+
+<div class="container">
+    <div class="header-row">
+        <h1>運転法規(修了)</h1>
+    </div>
+
+    <!-- 1. 指令救援法の手順 -->
+    <div class="question-section">
+        <div class="q-title">指令救援法の手順 (第67条~第77条)</div>
+        <div class="sub-q">
+            ・救援列車の対応 「複線区間と同一方向」<br><br>
+            ①運転指令から指令救援法による運転の実施と、救援列車とする旨の指令を受ける。<br><br>
+            ②運転指令からの指令 
+            <span class="handwrite-slot" style="width: 130px;" id="slot_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_1"><span class="slot-answer-inline" id="ans_slot_1">乗客の降車扱い</span></span><br><br>
+            ③運転指令からの指令により救援指示票に記載を行い
+            <span class="handwrite-slot" style="width: 100px;" id="slot_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_2"><span class="slot-answer-inline" id="ans_slot_2">内容を復唱</span></span>する<br><br>
+            救援指示票の要点 
+            <span class="handwrite-slot" style="width: 90px;" id="slot_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_3"><span class="slot-answer-inline" id="ans_slot_3">運転区間</span></span>、 
+            <span class="handwrite-slot" style="width: 140px;" id="slot_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_4"><span class="slot-answer-inline" id="ans_slot_4">故障列車の停止位置</span></span>、
+            <span class="handwrite-slot" style="width: 110px;" id="slot_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_5"><span class="slot-answer-inline" id="ans_slot_5">ATCの取扱い</span></span><br><br>
+            ④故障列車の停止位置の通告を受けた後、出発指令により出発する。
+        </div>
+
+        <div class="sub-q" style="margin-top: 20px;">
+            <strong>・故障列車の対応</strong><br>
+            ①運転指令へ報告 併結のため救援列車を運転する場合は、必ず停止位置を報告する。<br>
+            要点: 
+            <span class="handwrite-slot" style="width: 220px;" id="slot_6" data-has-input="false"><img class="slot-image-preview" id="img_slot_6"><span class="slot-answer-inline" id="ans_slot_6">停止している位置を移動しない</span></span><br><br>
+            ②救援列車に対し行うことは? 
+            <span class="handwrite-slot" style="width: 320px;" id="slot_7" data-has-input="false"><img class="slot-image-preview" id="img_slot_7"><span class="slot-answer-inline" id="ans_slot_7">救援列車が進行してくる方向の前照灯を点滅させる。</span></span>
+        </div>
+    </div>
+
+    <!-- 2. 指導指令式の取扱い -->
+    <div class="question-section">
+        <div class="q-title">指導指令式の取扱い(第60条~第63条)</div>
+        <div class="sub-q">
+            ・指導指令式(逆方向の運転) 実施手順 (番号を空欄とし、下の文章ボタンを押して順番に並べ替えてください)<br><br>
+            
+            <!-- ランダムに入れ替わる並び替え問題エリア -->
+            <div id="sortContainer" style="margin-top: 10px;">
+                <!-- JavaScriptでここにシャッフルされて挿入されます -->
+            </div>
+            
+            <div style="margin-top: 10px; text-align: right;">
+                <button type="button" class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="clearSortInputs()">並び替えをリセット</button>
+            </div>
+        </div>
+
+        <div class="sub-q" style="margin-top: 15px;">
+            西神山手線での、指導指令式施行時の運転速度は? (第91条)<br>
+            ・複線運転と同一方向: 
+            <span class="handwrite-slot" style="width: 160px;" id="slot_8" data-has-input="false"><img class="slot-image-preview" id="img_slot_8"><span class="slot-answer-inline" id="ans_slot_8">最高位信号速度以下</span></span><br>
+            ・複線運転と逆方向: 
+            <span class="handwrite-slot" style="width: 110px;" id="slot_9" data-has-input="false"><img class="slot-image-preview" id="img_slot_9"><span class="slot-answer-inline" id="ans_slot_9">45km/h以下</span></span>
+        </div>
+        <div class="sub-q" style="margin-top: 15px;">
+            指導指令式の閉そく区間の境界は?(第53条)<br>
+            ・連動駅: 
+            <span class="handwrite-slot" style="width: 90px;" id="slot_10" data-has-input="false"><img class="slot-image-preview" id="img_slot_10"><span class="slot-answer-inline" id="ans_slot_10">場内標識</span></span> 及び 
+            <span class="handwrite-slot" style="width: 170px;" id="slot_11" data-has-input="false"><img class="slot-image-preview" id="img_slot_11"><span class="slot-answer-inline" id="ans_slot_11">出発標識内方の駅区域標</span></span>
+        </div>
+    </div>
+
+    <!-- 3. 列車防護の方法 -->
+    <div class="question-section">
+        <div class="q-title">列車防護の方法に定められた5種類は?(第133条)</div>
+        <div class="sub-q">
+            (1) 「列車無線による列車防護」<br>
+            (2) 「発光信号の現示」<br>
+            (3) <span class="handwrite-slot" style="width: 120px;" id="slot_12" data-has-input="false"><img class="slot-image-preview" id="img_slot_12"><span class="slot-answer-inline" id="ans_slot_12">防護発報信号</span></span><br>
+            (4) <span class="handwrite-slot" style="width: 120px;" id="slot_13" data-has-input="false"><img class="slot-image-preview" id="img_slot_13"><span class="slot-answer-inline" id="ans_slot_13">発炎信号の現示</span></span><br>
+            (5) <span class="handwrite-slot" style="width: 220px;" id="slot_14" data-has-input="false"><img class="slot-image-preview" id="img_slot_14"><span class="slot-answer-inline" id="ans_slot_14">手信号による停止信号の現示</span></span>
+        </div>
+    </div>
+
+    <!-- 4. 車内合図の種類と表示方式 -->
+    <div class="question-section">
+        <div class="q-title">車内合図の種類と表示方式(第135条)</div>
+        <table class="custom-table">
+            <tr>
+                <th>車掌から運転士に対して行う合図</th>
+                <td>
+                    <span class="handwrite-slot" style="width: 110px;" id="slot_15" data-has-input="false"><img class="slot-image-preview" id="img_slot_15"><span class="slot-answer-inline" id="ans_slot_15">発車せよ:短2点</span></span>、 
+                    <span class="handwrite-slot" style="width: 120px;" id="slot_16" data-has-input="false"><img class="slot-image-preview" id="img_slot_16"><span class="slot-answer-inline" id="ans_slot_16">停止位置を直せ</span></span>:長1点、停止位置に来た: 
+                    <span class="handwrite-slot" style="width: 70px;" id="slot_17" data-has-input="false"><img class="slot-image-preview" id="img_slot_17"><span class="slot-answer-inline" id="ans_slot_17">短1点</span></span>
+                </td>
+            </tr>
+            <tr>
+                <th>運転士から車掌に対して行う合図</th>
+                <td>
+                    <span class="handwrite-slot" style="width: 120px;" id="slot_18" data-has-input="false"><img class="slot-image-preview" id="img_slot_18"><span class="slot-answer-inline" id="ans_slot_18">発車してもよいか</span></span>: 短2点、開扉するな: 
+                    <span class="handwrite-slot" style="width: 70px;" id="slot_19" data-has-input="false"><img class="slot-image-preview" id="img_slot_19"><span class="slot-answer-inline" id="ans_slot_19">長1点</span></span>、閉扉してもよい: 
+                    <span class="handwrite-slot" style="width: 70px;" id="slot_20" data-has-input="false"><img class="slot-image-preview" id="img_slot_20"><span class="slot-answer-inline" id="ans_slot_20">短1点</span></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- 5. 高速鉄道異常気象対策要綱 -->
+    <div class="question-section">
+        <div class="q-title">高速鉄道異常気象対策要綱に定める、風害の運転規制の規定は?(異常気象対策要綱第6条)</div>
+        <div class="sub-q">
+            ①<span class="handwrite-slot" style="width: 480px;" id="slot_21" data-has-input="false"><img class="slot-image-preview" id="img_slot_21"><span class="slot-answer-inline" id="ans_slot_21">瞬間風速が秒速25m以上になったときで列車の運転が危険であると認めたとき。</span></span><br>
+            ②<span class="handwrite-slot" style="width: 320px;" id="slot_22" data-has-input="false"><img class="slot-image-preview" id="img_slot_22"><span class="slot-answer-inline" id="ans_slot_22">突風等で列車の運転が危険であると認めたとき。</span></span>
+        </div>
+    </div>
+
+    <!-- 6. 併結推進運転の手順 -->
+    <div class="question-section">
+        <div class="q-title">併結推進運転の手順 (第94条) (作業要領15. 推進及びけん引運転)</div>
+        <div class="sub-q">
+            ア.連結完了後、故障車と救援車との間で 
+            <span class="handwrite-slot" style="width: 90px;" id="slot_23" data-has-input="false"><img class="slot-image-preview" id="img_slot_23"><span class="slot-answer-inline" id="ans_slot_23">連絡マイク</span></span>、 
+            <span class="handwrite-slot" style="width: 80px;" id="slot_24" data-has-input="false"><img class="slot-image-preview" id="img_slot_24"><span class="slot-answer-inline" id="ans_slot_24">合図ベル</span></span>、MC電話、 
+            <span class="handwrite-slot" style="width: 100px;" id="slot_25" data-has-input="false"><img class="slot-image-preview" id="img_slot_25"><span class="slot-answer-inline" id="ans_slot_25">保安ブレーキ</span></span>の機能試験を行う。<br>
+            イ.連結完了を運転指令区長に報告する。運転指令区長から運転準備の指示を受ける。<br>
+            ウ.救援車側のブレーキ試験を行う。故障車と救援車との間で 
+            <span class="handwrite-slot" style="width: 110px;" id="slot_26" data-has-input="false"><img class="slot-image-preview" id="img_slot_26"><span class="slot-answer-inline" id="ans_slot_26">推進運転合図</span></span>の打合せを行う。<br>
+            エ.運転指令に準備完了の報告を行う。・出発指令を受ける。<br>
+            ・併結推進運転時の運転速度は時速 
+            <span class="handwrite-slot" style="width: 60px;" id="slot_27" data-has-input="false"><img class="slot-image-preview" id="img_slot_27"><span class="slot-answer-inline" id="ans_slot_27">25Km</span></span> 以下の速度で運転する。<br>
+            ・前方確認者は左手で 
+            <span class="handwrite-slot" style="width: 160px;" id="slot_28" data-has-input="false"><img class="slot-image-preview" id="img_slot_28"><span class="slot-answer-inline" id="ans_slot_28">保安ブレーキスイッチ</span></span> を持ち、標識箇所、また必要により 
+            <span class="handwrite-slot" style="width: 60px;" id="slot_29" data-has-input="false"><img class="slot-image-preview" id="img_slot_29"><span class="slot-answer-inline" id="ans_slot_29">気笛</span></span> を鳴動させる体制を保持すること。
+        </div>
+    </div>
+
+    <!-- 7. 地震警報発令時の運転取扱い -->
+    <div class="question-section">
+        <div class="q-title">地震警報発令時の運転取扱いは?(地震対策要綱第6条)</div>
+        <div class="sub-q">
+            <strong>第1次地震警報</strong><br>
+            <span class="handwrite-slot" style="width: 580px;" id="slot_30" data-has-input="false"><img class="slot-image-preview" id="img_slot_30"><span class="slot-answer-inline" id="ans_slot_30">直ちに速度を時速25Km以下として、特に注意して運転し、運転指令区長の指令があるまで継続する。</span></span><br><br>
+            <strong>第2次地震警報</strong><br>
+            <span class="handwrite-slot" style="width: 600px;" id="slot_31" data-has-input="false"><img class="slot-image-preview" id="img_slot_31"><span class="slot-answer-inline" id="ans_slot_31">直ちに速度を時速25Km以下として、特に注意して運転し、次駅到着後、運転指令区長の指令があるまで待機する。</span></span><br><br>
+            <strong>第3次地震警報</strong><br>
+            <span class="handwrite-slot" style="width: 600px;" id="slot_32" data-has-input="false"><img class="slot-image-preview" id="img_slot_32"><span class="slot-answer-inline" id="ans_slot_32">直ちに速度を時速15Km以下として、特に注意して運転し、次駅到着後、運転指令区長の指令があるまで待機する。</span></span>
+        </div>
+    </div>
+
+    <!-- 8. 運転取扱い時の制限速度 -->
+    <div class="question-section">
+        <div class="q-title">運転取扱い時の制限速度は? (第91~96条)(構内運転取扱要領第6条)</div>
+        <div class="sub-q">
+            ・指導指令式で谷上駅を出発し、東行線を逆方向に進行して、新神戸4Sを反位で通過時の制限速度: 
+            <span class="handwrite-slot" style="width: 50px;" id="slot_33" data-has-input="false"><img class="slot-image-preview" id="img_slot_33"><span class="slot-answer-inline" id="ans_slot_33">25</span></span>㎞/h以下<br><br>
+            ・指令救援法で通常運転の逆方向に救援列車を運転する場合の制限速度: 
+            <span class="handwrite-slot" style="width: 50px;" id="slot_34" data-has-input="false"><img class="slot-image-preview" id="img_slot_34"><span class="slot-answer-inline" id="ans_slot_34">15</span></span>km/h以下<br>
+            ・簡易な入換えをする場合の制限速度: 
+            <span class="handwrite-slot" style="width: 50px;" id="slot_35" data-has-input="false"><img class="slot-image-preview" id="img_slot_35"><span class="slot-answer-inline" id="ans_slot_35">15</span></span>km/h以下<br>
+            ・車庫内の検車庫線内の制限速度: 
+            <span class="handwrite-slot" style="width: 50px;" id="slot_36" data-has-input="false"><img class="slot-image-preview" id="img_slot_36"><span class="slot-answer-inline" id="ans_slot_36">10</span></span>km/h以下
+        </div>
+    </div>
+
+</div>
+
+<!-- 手書き入力モーダル -->
+<div class="modal-overlay" id="handwriteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>手書き記入</span>
+            <button type="button" class="btn btn-secondary" style="padding:2px 8px; font-size:0.8rem;" onclick="clearModalCanvas()">全消去</button>
+        </div>
+        <div class="modal-canvas-scroll-container" id="scrollContainer">
+            <div class="modal-canvas-box" id="canvasBox">
+                <canvas id="modalCanvas"></canvas>
+            </div>
+        </div>
+        <div class="modal-scroll-control" id="scrollControlArea">
+            <label>スクロール:</label>
+            <input type="range" id="canvasRange" min="0" max="100" value="0" step="1">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+            <button type="button" class="btn" onclick="confirmModal()">決定</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* --- 並び替え問題の初期化・ランダムシャッフル処理 --- */
+const sortData = [
+    { correct: 1, text: "運転指令区長から指導指令式による運転と施行区間の指令を受ける。" },
+    { correct: 2, text: "運転指令区長から指導者の職氏名の連絡を受ける。" },
+    { correct: 3, text: "運転指令区長に指導者の乗車を報告する。" },
+    { correct: 4, text: "運転指令区長から施行区間の進路確保、閉そく承認の指令を受ける。" },
+    { correct: 5, text: "運転指令区長からATC開放の指令を受ける。" },
+    { correct: 6, text: "運転指令区長にATC開放を報告する。" },
+    { correct: 7, text: "運転指令区長から出発指令を受ける。" }
+];
+
+let userSortSelections = [null, null, null, null, null, null, null];
+const circledNumbers = ['①', '②', '③', '④', '⑤', '⑥', '⑦'];
+
+function initSortSection() {
+    const container = document.getElementById('sortContainer');
+    container.innerHTML = '';
+    userSortSelections = [null, null, null, null, null, null, null];
+
+    // 読み込む度にランダムにシャッフル (Fisher-Yatesアルゴリズム)
+    let shuffled = [...sortData];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    shuffled.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'sort-item-row';
+        row.setAttribute('data-correct', item.correct);
+
+        row.innerHTML = `
+            <div class="sort-slot" onclick="resetSortSlot(this)" data-sort-index="${index}">
+                <span class="slot-number"></span>
+                <span class="sort-answer-inline" style="display:none;">${circledNumbers[item.correct - 1]}</span>
+            </div>
+            <button type="button" class="sort-btn" onclick="handleSortClick(this, ${item.correct})">${item.text}</button>
+        `;
+        container.appendChild(row);
+    });
+}
+
+function handleSortClick(btnElement, itemCorrectNum) {
+    if (isAllAnswersShown) return;
+
+    const rowElement = btnElement.closest('.sort-item-row');
+    const slotElement = rowElement.querySelector('.sort-slot');
+    const slotNumberSpan = slotElement.querySelector('.slot-number');
+    const sortIndex = parseInt(slotElement.getAttribute('data-sort-index'));
+
+    if (userSortSelections[sortIndex] !== null) {
+        userSortSelections[sortIndex] = null;
+        slotNumberSpan.textContent = '';
+        slotElement.classList.remove('filled');
+        btnElement.classList.remove('selected');
+    } else {
+        let availableNum = -1;
+        for (let i = 1; i <= 7; i++) {
+            if (!userSortSelections.includes(i)) {
+                availableNum = i;
+                break;
+            }
+        }
+
+        if (availableNum !== -1) {
+            userSortSelections[sortIndex] = availableNum;
+            slotNumberSpan.textContent = circledNumbers[availableNum - 1];
+            slotElement.classList.add('filled');
+            btnElement.classList.add('selected');
+        }
+    }
+}
+
+function resetSortSlot(slotElement) {
+    if (isAllAnswersShown) return;
+    
+    const sortIndex = parseInt(slotElement.getAttribute('data-sort-index'));
+    const rowElement = slotElement.closest('.sort-item-row');
+    const btnElement = rowElement.querySelector('.sort-btn');
+    const slotNumberSpan = slotElement.querySelector('.slot-number');
+
+    if (userSortSelections[sortIndex] !== null) {
+        userSortSelections[sortIndex] = null;
+        slotNumberSpan.textContent = '';
+        slotElement.classList.remove('filled');
+        btnElement.classList.remove('selected');
+    }
+}
+
+function clearSortInputs() {
+    if (isAllAnswersShown) return;
+    userSortSelections = [null, null, null, null, null, null, null];
+    document.querySelectorAll('.sort-item-row').forEach(row => {
+        const slotNum = row.querySelector('.slot-number');
+        const slot = row.querySelector('.sort-slot');
+        const btn = row.querySelector('.sort-btn');
+        slotNum.textContent = '';
+        slot.classList.remove('filled');
+        btn.classList.remove('selected');
+    });
+}
+
+// ページ読み込み時に並び替え問題をランダム生成
+window.addEventListener('DOMContentLoaded', () => {
+    initSortSection();
+});
+
+
+/* --- 手書き記入モーダル用スクリプト --- */
+let currentActiveSlotId = null;
+const modalCanvas = document.getElementById('modalCanvas');
+const modalCtx = modalCanvas.getContext('2d');
+const canvasBox = document.getElementById('canvasBox');
+const scrollContainer = document.getElementById('scrollContainer');
+const canvasRange = document.getElementById('canvasRange');
+const scrollControlArea = document.getElementById('scrollControlArea');
+
+let isDrawing = false;
+let isAllAnswersShown = false;
+
+const virtualWidthMultiplier = 4.0; 
+let currentVirtualWidth = 0;
+let currentDisplayWidth = 0;
+
+const slotIds = [];
+for (let i = 1; i <= 36; i++) {
+    slotIds.push('slot_' + i);
+}
+
+function initModalCanvasSize(isLongText) {
+    const rect = scrollContainer.getBoundingClientRect();
+    currentDisplayWidth = rect.width;
+    
+    if (isLongText) {
+        currentVirtualWidth = currentDisplayWidth * virtualWidthMultiplier;
+        scrollControlArea.style.display = 'flex';
+    } else {
+        currentVirtualWidth = currentDisplayWidth;
+        scrollControlArea.style.display = 'none';
+    }
+
+    canvasBox.style.width = currentVirtualWidth + 'px';
+    modalCanvas.style.width = currentVirtualWidth + 'px';
+    modalCanvas.style.height = rect.height + 'px';
+
+    modalCanvas.width = currentVirtualWidth * window.devicePixelRatio;
+    modalCanvas.height = rect.height * window.devicePixelRatio;
+    
+    modalCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    modalCtx.strokeStyle = '#202124';
+    modalCtx.lineWidth = 3.0;
+    modalCtx.lineCap = 'round';
+    modalCtx.lineJoin = 'round';
+
+    canvasRange.value = 0;
+    scrollContainer.scrollLeft = 0;
+}
+
+function openModal(slotId) {
+    currentActiveSlotId = slotId;
+    document.getElementById('handwriteModal').style.display = 'flex';
+    
+    const slotEl = document.getElementById(slotId);
+    const width = slotEl ? slotEl.offsetWidth : 100;
+    const isLongText = width > 180;
+
+    setTimeout(() => {
+        initModalCanvasSize(isLongText);
+        modalCtx.clearRect(0, 0, modalCanvas.width, modalCanvas.height);
+    }, 50);
+}
+
+function closeModal() {
+    document.getElementById('handwriteModal').style.display = 'none';
+    currentActiveSlotId = null;
+}
+
+function clearModalCanvas() {
+    modalCtx.clearRect(0, 0, modalCanvas.width, modalCanvas.height);
+}
+
+canvasRange.addEventListener('input', (e) => {
+    const val = e.target.value;
+    const maxScroll = currentVirtualWidth - currentDisplayWidth;
+    scrollContainer.scrollLeft = (val / 100) * maxScroll;
+});
+
+scrollContainer.addEventListener('scroll', () => {
+    const maxScroll = currentVirtualWidth - currentDisplayWidth;
+    if (maxScroll > 0) {
+        canvasRange.value = (scrollContainer.scrollLeft / maxScroll) * 100;
+    }
+});
+
+function getModalPos(e) {
+    const rect = modalCanvas.getBoundingClientRect();
+    let clientX = e.clientX;
+    let clientY = e.clientY;
+    if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    }
+    return { x: clientX - rect.left, y: clientY - rect.top };
+}
+
+modalCanvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    const pos = getModalPos(e);
+    modalCtx.beginPath();
+    modalCtx.moveTo(pos.x, pos.y);
+});
+
+modalCanvas.addEventListener('mousemove', (e) => {
+    if (!isDrawing) return;
+    const pos = getModalPos(e);
+    modalCtx.lineTo(pos.x, pos.y);
+    modalCtx.stroke();
+});
+
+window.addEventListener('mouseup', () => { isDrawing = false; });
+
+modalCanvas.addEventListener('touchstart', (e) => {
+    isDrawing = true;
+    const pos = getModalPos(e);
+    modalCtx.beginPath();
+    modalCtx.moveTo(pos.x, pos.y);
+}, { passive: true });
+
+modalCanvas.addEventListener('touchmove', (e) => {
+    if (!isDrawing) return;
+    const pos = getModalPos(e);
+    modalCtx.lineTo(pos.x, pos.y);
+    modalCtx.stroke();
+}, { passive: true });
+
+modalCanvas.addEventListener('touchend', () => { isDrawing = false; });
+
+slotIds.forEach(id => {
+    const slot = document.getElementById(id);
+    if (!slot) return;
+    slot.addEventListener('click', () => {
+        openModal(id);
+    });
+    slot.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
+});
+
+function confirmModal() {
+    if (!currentActiveSlotId) return;
+    
+    const dataUrl = modalCanvas.toDataURL('image/png');
+    const slot = document.getElementById(currentActiveSlotId);
+    if (!slot) return;
+
+    const imgPreview = slot.querySelector('.slot-image-preview');
+
+    if (imgPreview) {
+        imgPreview.src = dataUrl;
+        if (!isAllAnswersShown) {
+            imgPreview.style.display = 'block';
+        }
+    }
+    
+    slot.setAttribute('data-has-input', 'true');
+    closeModal();
+}
+
+/* --- 全体「表示/非表示」切り替え --- */
+function toggleAllAnswers() {
+    const btn = document.getElementById('allToggleBtn');
+    isAllAnswersShown = !isAllAnswersShown;
+
+    // 通常の手書きスロットの切り替え
+    slotIds.forEach(id => {
+        const slot = document.getElementById(id);
+        if (!slot) return;
+        const imgPreview = slot.querySelector('.slot-image-preview');
+        const answerInline = slot.querySelector('.slot-answer-inline');
+        const hasInput = slot.getAttribute('data-has-input') === 'true';
+
+        if (isAllAnswersShown) {
+            if (imgPreview) imgPreview.style.display = 'none';
+            if (answerInline) answerInline.style.display = 'block';
+        } else {
+            if (answerInline) answerInline.style.display = 'none';
+            if (hasInput) {
+                if (imgPreview) imgPreview.style.display = 'block';
+            } else {
+                if (imgPreview) imgPreview.style.display = 'none';
+            }
+        }
+    });
+
+    // 並び替え問題部分の切り替え
+    document.querySelectorAll('.sort-item-row').forEach(row => {
+        const slotNumberSpan = row.querySelector('.slot-number');
+        const answerInlineSpan = row.querySelector('.sort-answer-inline');
+        const slotElement = row.querySelector('.sort-slot');
+        const sortBtn = row.querySelector('.sort-btn');
+        const sortIndex = parseInt(slotElement.getAttribute('data-sort-index'));
+
+        if (isAllAnswersShown) {
+            slotNumberSpan.style.display = 'none';
+            answerInlineSpan.style.display = 'inline';
+            slotElement.classList.add('filled');
+            sortBtn.style.pointerEvents = 'none';
+        } else {
+            answerInlineSpan.style.display = 'none';
+            slotNumberSpan.style.display = 'inline';
+            sortBtn.style.pointerEvents = 'auto';
+
+            if (userSortSelections[sortIndex] !== null) {
+                slotElement.classList.add('filled');
+            } else {
+                slotElement.classList.remove('filled');
+            }
+        }
+    });
+
+    btn.textContent = isAllAnswersShown ? '非表示' : '表示';
+}
+</script>
+
+</body>
+</html>
