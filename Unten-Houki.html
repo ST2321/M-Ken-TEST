@@ -257,13 +257,18 @@ h1 {
     border: 1px solid #bdc1c6;
     padding: 8px;
     vertical-align: middle;
+    text-align: center;
 }
 
 .custom-table th {
     background-color: #f1f3f4;
-    text-align: center;
     font-size: 0.9rem;
-    width: 30%;
+}
+
+.custom-table td:nth-child(1) {
+    background-color: #f8f9fa;
+    font-size: 0.9rem;
+    line-height: 1.5;
 }
 
 /* モーダル */
@@ -451,28 +456,41 @@ h1 {
     <div class="question-section">
         <div class="q-title">車内合図の種類と表示方式(第135条)</div>
         <table class="custom-table">
-            <tr>
-                <th>車掌から運転士に対して行う合図</th>
-                <td>
-                    発車せよ：
-                    <span class="handwrite-slot" style="width: 80px;" id="slot_15" data-has-input="false"><img class="slot-image-preview" id="img_slot_15"><span class="slot-answer-inline inline-mode" id="ans_slot_15">短2点</span></span>、
-                    停止位置を直せ：
-                    <span class="handwrite-slot" style="width: 80px;" id="slot_16" data-has-input="false"><img class="slot-image-preview" id="img_slot_16"><span class="slot-answer-inline inline-mode" id="ans_slot_16">長1点</span></span>、
-                    停止位置に来た：
-                    <span class="handwrite-slot" style="width: 80px;" id="slot_17" data-has-input="false"><img class="slot-image-preview" id="img_slot_17"><span class="slot-answer-inline inline-mode" id="ans_slot_17">短1点</span></span>
-                </td>
-            </tr>
-            <tr>
-                <th>運転士から車掌に対して行う合図</th>
-                <td>
-                    発車してもよいか：
-                    <span class="handwrite-slot" style="width: 80px;" id="slot_18" data-has-input="false"><img class="slot-image-preview" id="img_slot_18"><span class="slot-answer-inline inline-mode" id="ans_slot_18">短2点</span></span>、
-                    開扉するな：
-                    <span class="handwrite-slot" style="width: 80px;" id="slot_19" data-has-input="false"><img class="slot-image-preview" id="img_slot_19"><span class="slot-answer-inline inline-mode" id="ans_slot_19">長1点</span></span>、
-                    閉扉してもよい：
-                    <span class="handwrite-slot" style="width: 80px;" id="slot_20" data-has-input="false"><img class="slot-image-preview" id="img_slot_20"><span class="slot-answer-inline inline-mode" id="ans_slot_20">短1点</span></span>
-                </td>
-            </tr>
+            <thead>
+                <tr>
+                    <th style="width: 33%;">合図の種類</th>
+                    <th style="width: 37%;">車掌から運転士に対して行う合図</th>
+                    <th style="width: 30%;">表示方式</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="3">車掌から運転士に対して行う合図</td>
+                    <td><span class="handwrite-slot" style="width: 100px;" id="slot_15" data-has-input="false"><img class="slot-image-preview" id="img_slot_15"><span class="slot-answer-inline inline-mode" id="ans_slot_15">発車せよ</span></span></td>
+                    <td>短2点</td>
+                </tr>
+                <tr>
+                    <td><span class="handwrite-slot" style="width: 130px;" id="slot_16" data-has-input="false"><img class="slot-image-preview" id="img_slot_16"><span class="slot-answer-inline inline-mode" id="ans_slot_16">停止位置を直せ</span></span></td>
+                    <td>長1点</td>
+                </tr>
+                <tr>
+                    <td>停止位置にきた</td>
+                    <td><span class="handwrite-slot" style="width: 70px;" id="slot_17" data-has-input="false"><img class="slot-image-preview" id="img_slot_17"><span class="slot-answer-inline inline-mode" id="ans_slot_17">短1点</span></span></td>
+                </tr>
+                <tr>
+                    <td rowspan="3">運転士から車掌に対して行う合図</td>
+                    <td><span class="handwrite-slot" style="width: 130px;" id="slot_18" data-has-input="false"><img class="slot-image-preview" id="img_slot_18"><span class="slot-answer-inline inline-mode" id="ans_slot_18">発車してもよいか</span></span></td>
+                    <td>短2点</td>
+                </tr>
+                <tr>
+                    <td><span class="handwrite-slot" style="width: 90px;" id="slot_19" data-has-input="false"><img class="slot-image-preview" id="img_slot_19"><span class="slot-answer-inline inline-mode" id="ans_slot_19">開扉するな</span></span></td>
+                    <td>長1点</td>
+                </tr>
+                <tr>
+                    <td>閉扉してもよい</td>
+                    <td><span class="handwrite-slot" style="width: 70px;" id="slot_20" data-has-input="false"><img class="slot-image-preview" id="img_slot_20"><span class="slot-answer-inline inline-mode" id="ans_slot_20">短1点</span></span></td>
+                </tr>
+            </tbody>
         </table>
     </div>
 
