@@ -137,6 +137,18 @@ h1 {
     -webkit-touch-callout: none;
 }
 
+/* 長文などで画面幅に収まらない場合の折り返し・ブロック表示用クラス */
+.handwrite-slot.block-slot {
+    display: block;
+    width: 100% !important;
+    min-height: 45px;
+    height: auto;
+    margin: 8px 0;
+    padding: 6px 10px;
+    box-sizing: border-box;
+    text-align: left;
+}
+
 .handwrite-slot:hover {
     background-color: #e8f0fe;
 }
@@ -149,15 +161,25 @@ h1 {
     pointer-events: none;
 }
 
+.slot-image-preview.block-preview {
+    width: 100%;
+    max-height: 120px;
+    object-fit: contain;
+}
+
 .slot-answer-inline {
     display: none;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     color: #d93025;
     font-weight: bold;
-    text-align: center;
     width: 100%;
     pointer-events: none;
+    line-height: 1.5;
+}
+
+.slot-answer-inline.inline-mode {
     position: absolute;
+    text-align: center;
     white-space: nowrap;
     padding: 0 2px;
 }
@@ -361,13 +383,13 @@ h1 {
             ・救援列車の対応 「複線区間と同一方向」<br><br>
             ①運転指令から指令救援法による運転の実施と、救援列車とする旨の指令を受ける。<br><br>
             ②運転指令からの指令 
-            <span class="handwrite-slot" style="width: 130px;" id="slot_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_1"><span class="slot-answer-inline" id="ans_slot_1">乗客の降車扱い</span></span><br><br>
+            <span class="handwrite-slot" style="width: 130px;" id="slot_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_1"><span class="slot-answer-inline inline-mode" id="ans_slot_1">乗客の降車扱い</span></span><br><br>
             ③運転指令からの指令により救援指示票に記載を行い
-            <span class="handwrite-slot" style="width: 100px;" id="slot_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_2"><span class="slot-answer-inline" id="ans_slot_2">内容を復唱</span></span>する<br><br>
+            <span class="handwrite-slot" style="width: 100px;" id="slot_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_2"><span class="slot-answer-inline inline-mode" id="ans_slot_2">内容を復唱</span></span>する<br><br>
             救援指示票の要点 
-            <span class="handwrite-slot" style="width: 90px;" id="slot_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_3"><span class="slot-answer-inline" id="ans_slot_3">運転区間</span></span>、 
-            <span class="handwrite-slot" style="width: 140px;" id="slot_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_4"><span class="slot-answer-inline" id="ans_slot_4">故障列車の停止位置</span></span>、
-            <span class="handwrite-slot" style="width: 110px;" id="slot_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_5"><span class="slot-answer-inline" id="ans_slot_5">ATCの取扱い</span></span><br><br>
+            <span class="handwrite-slot" style="width: 90px;" id="slot_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_3"><span class="slot-answer-inline inline-mode" id="ans_slot_3">運転区間</span></span>、 
+            <span class="handwrite-slot" style="width: 140px;" id="slot_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_4"><span class="slot-answer-inline inline-mode" id="ans_slot_4">故障列車の停止位置</span></span>、
+            <span class="handwrite-slot" style="width: 110px;" id="slot_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_5"><span class="slot-answer-inline inline-mode" id="ans_slot_5">ATCの取扱い</span></span><br><br>
             ④故障列車の停止位置の通告を受けた後、出発指令により出発する。
         </div>
 
@@ -375,9 +397,9 @@ h1 {
             <strong>・故障列車の対応</strong><br>
             ①運転指令へ報告 併結のため救援列車を運転する場合は、必ず停止位置を報告する。<br>
             要点: 
-            <span class="handwrite-slot" style="width: 220px;" id="slot_6" data-has-input="false"><img class="slot-image-preview" id="img_slot_6"><span class="slot-answer-inline" id="ans_slot_6">停止している位置を移動しない</span></span><br><br>
+            <span class="handwrite-slot" style="width: 220px;" id="slot_6" data-has-input="false"><img class="slot-image-preview" id="img_slot_6"><span class="slot-answer-inline inline-mode" id="ans_slot_6">停止している位置を移動しない</span></span><br><br>
             ②救援列車に対し行うことは? 
-            <span class="handwrite-slot" style="width: 320px;" id="slot_7" data-has-input="false"><img class="slot-image-preview" id="img_slot_7"><span class="slot-answer-inline" id="ans_slot_7">救援列車が進行してくる方向の前照灯を点滅させる。</span></span>
+            <span class="handwrite-slot" style="width: 320px;" id="slot_7" data-has-input="false"><img class="slot-image-preview" id="img_slot_7"><span class="slot-answer-inline inline-mode" id="ans_slot_7">救援列車が進行してくる方向の前照灯を点滅させる。</span></span>
         </div>
     </div>
 
@@ -400,15 +422,15 @@ h1 {
         <div class="sub-q" style="margin-top: 15px;">
             西神山手線での、指導指令式施行時の運転速度は? (第91条)<br>
             ・複線運転と同一方向: 
-            <span class="handwrite-slot" style="width: 160px;" id="slot_8" data-has-input="false"><img class="slot-image-preview" id="img_slot_8"><span class="slot-answer-inline" id="ans_slot_8">最高位信号速度以下</span></span><br>
+            <span class="handwrite-slot" style="width: 160px;" id="slot_8" data-has-input="false"><img class="slot-image-preview" id="img_slot_8"><span class="slot-answer-inline inline-mode" id="ans_slot_8">最高位信号速度以下</span></span><br>
             ・複線運転と逆方向: 
-            <span class="handwrite-slot" style="width: 110px;" id="slot_9" data-has-input="false"><img class="slot-image-preview" id="img_slot_9"><span class="slot-answer-inline" id="ans_slot_9">45km/h以下</span></span>
+            <span class="handwrite-slot" style="width: 110px;" id="slot_9" data-has-input="false"><img class="slot-image-preview" id="img_slot_9"><span class="slot-answer-inline inline-mode" id="ans_slot_9">45km/h以下</span></span>
         </div>
         <div class="sub-q" style="margin-top: 15px;">
             指導指令式の閉そく区間の境界は?(第53条)<br>
             ・連動駅: 
-            <span class="handwrite-slot" style="width: 90px;" id="slot_10" data-has-input="false"><img class="slot-image-preview" id="img_slot_10"><span class="slot-answer-inline" id="ans_slot_10">場内標識</span></span> 及び 
-            <span class="handwrite-slot" style="width: 170px;" id="slot_11" data-has-input="false"><img class="slot-image-preview" id="img_slot_11"><span class="slot-answer-inline" id="ans_slot_11">出発標識内方の駅区域標</span></span>
+            <span class="handwrite-slot" style="width: 90px;" id="slot_10" data-has-input="false"><img class="slot-image-preview" id="img_slot_10"><span class="slot-answer-inline inline-mode" id="ans_slot_10">場内標識</span></span> 及び 
+            <span class="handwrite-slot" style="width: 170px;" id="slot_11" data-has-input="false"><img class="slot-image-preview" id="img_slot_11"><span class="slot-answer-inline inline-mode" id="ans_slot_11">出発標識内方の駅区域標</span></span>
         </div>
     </div>
 
@@ -418,9 +440,9 @@ h1 {
         <div class="sub-q">
             (1) 「列車無線による列車防護」<br>
             (2) 「発光信号の現示」<br>
-            (3) <span class="handwrite-slot" style="width: 120px;" id="slot_12" data-has-input="false"><img class="slot-image-preview" id="img_slot_12"><span class="slot-answer-inline" id="ans_slot_12">防護発報信号</span></span><br>
-            (4) <span class="handwrite-slot" style="width: 120px;" id="slot_13" data-has-input="false"><img class="slot-image-preview" id="img_slot_13"><span class="slot-answer-inline" id="ans_slot_13">発炎信号の現示</span></span><br>
-            (5) <span class="handwrite-slot" style="width: 220px;" id="slot_14" data-has-input="false"><img class="slot-image-preview" id="img_slot_14"><span class="slot-answer-inline" id="ans_slot_14">手信号による停止信号の現示</span></span>
+            (3) <span class="handwrite-slot" style="width: 120px;" id="slot_12" data-has-input="false"><img class="slot-image-preview" id="img_slot_12"><span class="slot-answer-inline inline-mode" id="ans_slot_12">防護発報信号</span></span><br>
+            (4) <span class="handwrite-slot" style="width: 120px;" id="slot_13" data-has-input="false"><img class="slot-image-preview" id="img_slot_13"><span class="slot-answer-inline inline-mode" id="ans_slot_13">発炎信号の現示</span></span><br>
+            (5) <span class="handwrite-slot" style="width: 220px;" id="slot_14" data-has-input="false"><img class="slot-image-preview" id="img_slot_14"><span class="slot-answer-inline inline-mode" id="ans_slot_14">手信号による停止信号の現示</span></span>
         </div>
     </div>
 
@@ -431,17 +453,23 @@ h1 {
             <tr>
                 <th>車掌から運転士に対して行う合図</th>
                 <td>
-                    <span class="handwrite-slot" style="width: 110px;" id="slot_15" data-has-input="false"><img class="slot-image-preview" id="img_slot_15"><span class="slot-answer-inline" id="ans_slot_15">発車せよ:短2点</span></span>、 
-                    <span class="handwrite-slot" style="width: 120px;" id="slot_16" data-has-input="false"><img class="slot-image-preview" id="img_slot_16"><span class="slot-answer-inline" id="ans_slot_16">停止位置を直せ</span></span>:長1点、停止位置に来た: 
-                    <span class="handwrite-slot" style="width: 70px;" id="slot_17" data-has-input="false"><img class="slot-image-preview" id="img_slot_17"><span class="slot-answer-inline" id="ans_slot_17">短1点</span></span>
+                    発車せよ：
+                    <span class="handwrite-slot" style="width: 80px;" id="slot_15" data-has-input="false"><img class="slot-image-preview" id="img_slot_15"><span class="slot-answer-inline inline-mode" id="ans_slot_15">短2点</span></span>、
+                    停止位置を直せ：
+                    <span class="handwrite-slot" style="width: 80px;" id="slot_16" data-has-input="false"><img class="slot-image-preview" id="img_slot_16"><span class="slot-answer-inline inline-mode" id="ans_slot_16">長1点</span></span>、
+                    停止位置に来た：
+                    <span class="handwrite-slot" style="width: 80px;" id="slot_17" data-has-input="false"><img class="slot-image-preview" id="img_slot_17"><span class="slot-answer-inline inline-mode" id="ans_slot_17">短1点</span></span>
                 </td>
             </tr>
             <tr>
                 <th>運転士から車掌に対して行う合図</th>
                 <td>
-                    <span class="handwrite-slot" style="width: 120px;" id="slot_18" data-has-input="false"><img class="slot-image-preview" id="img_slot_18"><span class="slot-answer-inline" id="ans_slot_18">発車してもよいか</span></span>: 短2点、開扉するな: 
-                    <span class="handwrite-slot" style="width: 70px;" id="slot_19" data-has-input="false"><img class="slot-image-preview" id="img_slot_19"><span class="slot-answer-inline" id="ans_slot_19">長1点</span></span>、閉扉してもよい: 
-                    <span class="handwrite-slot" style="width: 70px;" id="slot_20" data-has-input="false"><img class="slot-image-preview" id="img_slot_20"><span class="slot-answer-inline" id="ans_slot_20">短1点</span></span>
+                    発車してもよいか：
+                    <span class="handwrite-slot" style="width: 80px;" id="slot_18" data-has-input="false"><img class="slot-image-preview" id="img_slot_18"><span class="slot-answer-inline inline-mode" id="ans_slot_18">短2点</span></span>、
+                    開扉するな：
+                    <span class="handwrite-slot" style="width: 80px;" id="slot_19" data-has-input="false"><img class="slot-image-preview" id="img_slot_19"><span class="slot-answer-inline inline-mode" id="ans_slot_19">長1点</span></span>、
+                    閉扉してもよい：
+                    <span class="handwrite-slot" style="width: 80px;" id="slot_20" data-has-input="false"><img class="slot-image-preview" id="img_slot_20"><span class="slot-answer-inline inline-mode" id="ans_slot_20">短1点</span></span>
                 </td>
             </tr>
         </table>
@@ -451,8 +479,8 @@ h1 {
     <div class="question-section">
         <div class="q-title">高速鉄道異常気象対策要綱に定める、風害の運転規制の規定は?(異常気象対策要綱第6条)</div>
         <div class="sub-q">
-            ①<span class="handwrite-slot" style="width: 480px;" id="slot_21" data-has-input="false"><img class="slot-image-preview" id="img_slot_21"><span class="slot-answer-inline" id="ans_slot_21">瞬間風速が秒速25m以上になったときで列車の運転が危険であると認めたとき。</span></span><br>
-            ②<span class="handwrite-slot" style="width: 320px;" id="slot_22" data-has-input="false"><img class="slot-image-preview" id="img_slot_22"><span class="slot-answer-inline" id="ans_slot_22">突風等で列車の運転が危険であると認めたとき。</span></span>
+            ①<span class="handwrite-slot block-slot" id="slot_21" data-has-input="false"><img class="slot-image-preview block-preview" id="img_slot_21"><span class="slot-answer-inline" id="ans_slot_21">瞬間風速が秒速25m以上になったときで列車の運転が危険であると認めたとき。</span></span><br>
+            ②<span class="handwrite-slot block-slot" id="slot_22" data-has-input="false"><img class="slot-image-preview block-preview" id="img_slot_22"><span class="slot-answer-inline" id="ans_slot_22">突風等で列車の運転が危険であると認めたとき。</span></span>
         </div>
     </div>
 
@@ -461,18 +489,18 @@ h1 {
         <div class="q-title">併結推進運転の手順 (第94条) (作業要領15. 推進及びけん引運転)</div>
         <div class="sub-q">
             ア.連結完了後、故障車と救援車との間で 
-            <span class="handwrite-slot" style="width: 90px;" id="slot_23" data-has-input="false"><img class="slot-image-preview" id="img_slot_23"><span class="slot-answer-inline" id="ans_slot_23">連絡マイク</span></span>、 
-            <span class="handwrite-slot" style="width: 80px;" id="slot_24" data-has-input="false"><img class="slot-image-preview" id="img_slot_24"><span class="slot-answer-inline" id="ans_slot_24">合図ベル</span></span>、MC電話、 
-            <span class="handwrite-slot" style="width: 100px;" id="slot_25" data-has-input="false"><img class="slot-image-preview" id="img_slot_25"><span class="slot-answer-inline" id="ans_slot_25">保安ブレーキ</span></span>の機能試験を行う。<br>
+            <span class="handwrite-slot" style="width: 90px;" id="slot_23" data-has-input="false"><img class="slot-image-preview" id="img_slot_23"><span class="slot-answer-inline inline-mode" id="ans_slot_23">連絡マイク</span></span>、 
+            <span class="handwrite-slot" style="width: 80px;" id="slot_24" data-has-input="false"><img class="slot-image-preview" id="img_slot_24"><span class="slot-answer-inline inline-mode" id="ans_slot_24">合図ベル</span></span>、MC電話、 
+            <span class="handwrite-slot" style="width: 100px;" id="slot_25" data-has-input="false"><img class="slot-image-preview" id="img_slot_25"><span class="slot-answer-inline inline-mode" id="ans_slot_25">保安ブレーキ</span></span>の機能試験を行う。<br>
             イ.連結完了を運転指令区長に報告する。運転指令区長から運転準備の指示を受ける。<br>
             ウ.救援車側のブレーキ試験を行う。故障車と救援車との間で 
-            <span class="handwrite-slot" style="width: 110px;" id="slot_26" data-has-input="false"><img class="slot-image-preview" id="img_slot_26"><span class="slot-answer-inline" id="ans_slot_26">推進運転合図</span></span>の打合せを行う。<br>
+            <span class="handwrite-slot" style="width: 110px;" id="slot_26" data-has-input="false"><img class="slot-image-preview" id="img_slot_26"><span class="slot-answer-inline inline-mode" id="ans_slot_26">推進運転合図</span></span>の打合せを行う。<br>
             エ.運転指令に準備完了の報告を行う。・出発指令を受ける。<br>
             ・併結推進運転時の運転速度は時速 
-            <span class="handwrite-slot" style="width: 60px;" id="slot_27" data-has-input="false"><img class="slot-image-preview" id="img_slot_27"><span class="slot-answer-inline" id="ans_slot_27">25Km</span></span> 以下の速度で運転する。<br>
+            <span class="handwrite-slot" style="width: 60px;" id="slot_27" data-has-input="false"><img class="slot-image-preview" id="img_slot_27"><span class="slot-answer-inline inline-mode" id="ans_slot_27">25Km</span></span> 以下の速度で運転する。<br>
             ・前方確認者は左手で 
-            <span class="handwrite-slot" style="width: 160px;" id="slot_28" data-has-input="false"><img class="slot-image-preview" id="img_slot_28"><span class="slot-answer-inline" id="ans_slot_28">保安ブレーキスイッチ</span></span> を持ち、標識箇所、また必要により 
-            <span class="handwrite-slot" style="width: 60px;" id="slot_29" data-has-input="false"><img class="slot-image-preview" id="img_slot_29"><span class="slot-answer-inline" id="ans_slot_29">気笛</span></span> を鳴動させる体制を保持すること。
+            <span class="handwrite-slot" style="width: 160px;" id="slot_28" data-has-input="false"><img class="slot-image-preview" id="img_slot_28"><span class="slot-answer-inline inline-mode" id="ans_slot_28">保安ブレーキスイッチ</span></span> を持ち、標識箇所、また必要により 
+            <span class="handwrite-slot" style="width: 60px;" id="slot_29" data-has-input="false"><img class="slot-image-preview" id="img_slot_29"><span class="slot-answer-inline inline-mode" id="ans_slot_29">気笛</span></span> を鳴動させる体制を保持すること。
         </div>
     </div>
 
@@ -481,11 +509,11 @@ h1 {
         <div class="q-title">地震警報発令時の運転取扱いは?(地震対策要綱第6条)</div>
         <div class="sub-q">
             <strong>第1次地震警報</strong><br>
-            <span class="handwrite-slot" style="width: 580px;" id="slot_30" data-has-input="false"><img class="slot-image-preview" id="img_slot_30"><span class="slot-answer-inline" id="ans_slot_30">直ちに速度を時速25Km以下として、特に注意して運転し、運転指令区長の指令があるまで継続する。</span></span><br><br>
+            <span class="handwrite-slot block-slot" id="slot_30" data-has-input="false"><img class="slot-image-preview block-preview" id="img_slot_30"><span class="slot-answer-inline" id="ans_slot_30">直ちに速度を時速25Km以下として、特に注意して運転し、運転指令区長の指令があるまで継続する。</span></span><br><br>
             <strong>第2次地震警報</strong><br>
-            <span class="handwrite-slot" style="width: 600px;" id="slot_31" data-has-input="false"><img class="slot-image-preview" id="img_slot_31"><span class="slot-answer-inline" id="ans_slot_31">直ちに速度を時速25Km以下として、特に注意して運転し、次駅到着後、運転指令区長の指令があるまで待機する。</span></span><br><br>
+            <span class="handwrite-slot block-slot" id="slot_31" data-has-input="false"><img class="slot-image-preview block-preview" id="img_slot_31"><span class="slot-answer-inline" id="ans_slot_31">直ちに速度を時速25Km以下として、特に注意して運転し、次駅到着後、運転指令区長の指令があるまで待機する。</span></span><br><br>
             <strong>第3次地震警報</strong><br>
-            <span class="handwrite-slot" style="width: 600px;" id="slot_32" data-has-input="false"><img class="slot-image-preview" id="img_slot_32"><span class="slot-answer-inline" id="ans_slot_32">直ちに速度を時速15Km以下として、特に注意して運転し、次駅到着後、運転指令区長の指令があるまで待機する。</span></span>
+            <span class="handwrite-slot block-slot" id="slot_32" data-has-input="false"><img class="slot-image-preview block-preview" id="img_slot_32"><span class="slot-answer-inline" id="ans_slot_32">直ちに速度を時速15Km以下として、特に注意して運転し、次駅到着後、運転指令区長の指令があるまで待機する。</span></span>
         </div>
     </div>
 
@@ -494,13 +522,13 @@ h1 {
         <div class="q-title">運転取扱い時の制限速度は? (第91~96条)(構内運転取扱要領第6条)</div>
         <div class="sub-q">
             ・指導指令式で谷上駅を出発し、東行線を逆方向に進行して、新神戸4Sを反位で通過時の制限速度: 
-            <span class="handwrite-slot" style="width: 50px;" id="slot_33" data-has-input="false"><img class="slot-image-preview" id="img_slot_33"><span class="slot-answer-inline" id="ans_slot_33">25</span></span>㎞/h以下<br><br>
+            <span class="handwrite-slot" style="width: 50px;" id="slot_33" data-has-input="false"><img class="slot-image-preview" id="img_slot_33"><span class="slot-answer-inline inline-mode" id="ans_slot_33">25</span></span>㎞/h以下<br><br>
             ・指令救援法で通常運転の逆方向に救援列車を運転する場合の制限速度: 
-            <span class="handwrite-slot" style="width: 50px;" id="slot_34" data-has-input="false"><img class="slot-image-preview" id="img_slot_34"><span class="slot-answer-inline" id="ans_slot_34">15</span></span>km/h以下<br>
+            <span class="handwrite-slot" style="width: 50px;" id="slot_34" data-has-input="false"><img class="slot-image-preview" id="img_slot_34"><span class="slot-answer-inline inline-mode" id="ans_slot_34">15</span></span>km/h以下<br>
             ・簡易な入換えをする場合の制限速度: 
-            <span class="handwrite-slot" style="width: 50px;" id="slot_35" data-has-input="false"><img class="slot-image-preview" id="img_slot_35"><span class="slot-answer-inline" id="ans_slot_35">15</span></span>km/h以下<br>
+            <span class="handwrite-slot" style="width: 50px;" id="slot_35" data-has-input="false"><img class="slot-image-preview" id="img_slot_35"><span class="slot-answer-inline inline-mode" id="ans_slot_35">15</span></span>km/h以下<br>
             ・車庫内の検車庫線内の制限速度: 
-            <span class="handwrite-slot" style="width: 50px;" id="slot_36" data-has-input="false"><img class="slot-image-preview" id="img_slot_36"><span class="slot-answer-inline" id="ans_slot_36">10</span></span>km/h以下
+            <span class="handwrite-slot" style="width: 50px;" id="slot_36" data-has-input="false"><img class="slot-image-preview" id="img_slot_36"><span class="slot-answer-inline inline-mode" id="ans_slot_36">10</span></span>km/h以下
         </div>
     </div>
 
@@ -549,7 +577,6 @@ function initSortSection() {
     container.innerHTML = '';
     userSortSelections = [null, null, null, null, null, null, null];
 
-    // 読み込む度にランダムにシャッフル (Fisher-Yatesアルゴリズム)
     let shuffled = [...sortData];
     for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -564,7 +591,7 @@ function initSortSection() {
         row.innerHTML = `
             <div class="sort-slot" onclick="resetSortSlot(this)" data-sort-index="${index}">
                 <span class="slot-number"></span>
-                <span class="sort-answer-inline" style="display:none;">${circledNumbers[item.correct - 1]}</span>
+                <span class="sort-answer-inline" style="display:none; color: #d93025;">${circledNumbers[item.correct - 1]}</span>
             </div>
             <button type="button" class="sort-btn" onclick="handleSortClick(this, ${item.correct})">${item.text}</button>
         `;
@@ -632,7 +659,6 @@ function clearSortInputs() {
     });
 }
 
-// ページ読み込み時に並び替え問題をランダム生成
 window.addEventListener('DOMContentLoaded', () => {
     initSortSection();
 });
@@ -694,7 +720,7 @@ function openModal(slotId) {
     
     const slotEl = document.getElementById(slotId);
     const width = slotEl ? slotEl.offsetWidth : 100;
-    const isLongText = width > 180;
+    const isLongText = width > 180 || slotEl.classList.contains('block-slot');
 
     setTimeout(() => {
         initModalCanvasSize(isLongText);
@@ -803,7 +829,6 @@ function toggleAllAnswers() {
     const btn = document.getElementById('allToggleBtn');
     isAllAnswersShown = !isAllAnswersShown;
 
-    // 通常の手書きスロットの切り替え
     slotIds.forEach(id => {
         const slot = document.getElementById(id);
         if (!slot) return;
@@ -824,7 +849,6 @@ function toggleAllAnswers() {
         }
     });
 
-    // 並び替え問題部分の切り替え
     document.querySelectorAll('.sort-item-row').forEach(row => {
         const slotNumberSpan = row.querySelector('.slot-number');
         const answerInlineSpan = row.querySelector('.sort-answer-inline');
