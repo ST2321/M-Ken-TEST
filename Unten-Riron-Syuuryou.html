@@ -1232,8 +1232,7 @@ function checkAnswer() {
         resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
     } else {
-        let isCorrect = Math.abs(userAns - currentProblem.answer) < 1.0;
-
+        let isCorrect = Math.abs(userAns - targetProb.answer) < 1.0;
         let displayUserAnsStr = targetProb.isKm ? formatKilometer(userAns) : userAns;
 
         if (isBatchRetrySession) {
@@ -1641,15 +1640,12 @@ document.addEventListener('DOMContentLoaded', () => {
     numpadButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const val = btn.getAttribute('data-val');
+
             if (val === 'clear') {
                 userAnswerInput.value = '';
             } else if (val === 'back') {
                 userAnswerInput.value = userAnswerInput.value.slice(0, -1);
             } else if (val === 'calc') {
-                let targetProb = isFreeRetrySession ? freeRetryProblem : currentProblem;
-                if (targetProb && targetProb.isKm) {
-                    return;
-                }
                 try {
                     let sanitized = userAnswerInput.value.replace(/[^0-9\+\-\*/().]/g, '');
                     if (sanitized !== '') {
