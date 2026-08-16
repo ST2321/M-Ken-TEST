@@ -110,6 +110,25 @@ h1 {
     overflow-x: auto;
 }
 
+/* 上下分数のスタイル */
+.fraction {
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 0.9em;
+    padding: 0 2px;
+}
+
+.fraction > span {
+    display: block;
+    padding: 0 2px;
+}
+
+.fraction .numerator {
+    border-bottom: 1px solid #000;
+}
+
 .calc-block {
     display: inline-block;
     text-align: left;
@@ -119,13 +138,13 @@ h1 {
 .calc-row {
     display: flex;
     align-items: center;
-    margin: 2px 0;
+    margin: 4px 0;
     white-space: nowrap;
 }
 
 .calc-label {
     text-align: right;
-    padding-right: 4px;
+    padding-right: 6px;
 }
 
 .calc-symbol {
@@ -601,7 +620,7 @@ h1 {
 .explanation {
     margin-top: 8px;
     font-size: 0.85rem;
-    line-height: 1.6;
+    line-height: 1.8;
     color: #3c4043;
     overflow-x: auto;
 }
@@ -679,13 +698,13 @@ h1 {
         <summary>公式一覧</summary>
         <p>
             <strong>1. 所要時間（加速時）：</strong>
-            <div class="math-block">t = V / &alpha;</div>
+            <div class="math-block">t = <span class="fraction"><span class="numerator">V</span><span class="denominator">&alpha;</span></span></div>
             <strong>2. 走行抵抗（R<sub>r</sub>）：</strong>
             <div class="math-block">R<sub>r</sub> = r<sub>r</sub> × W</div>
             <strong>3. 引張力（F）：</strong>
             <div class="math-block">F = R = R<sub>r</sub> + R<sub>g</sub> (R<sub>g</sub> = 9.8 × i × W)</div>
             <strong>4. 非常制動（勾配補正）：</strong>
-            <div class="math-block">&beta;&apos; = &beta; + (9.8 × i) / 305.6</div>
+            <div class="math-block">&beta;&apos; = &beta; + <span class="fraction"><span class="numerator">9.8 × i</span><span class="denominator">305.6</span></span></div>
         </p>
     </details>
 
@@ -729,7 +748,7 @@ h1 {
     </div>
 
     <div class="input-group" id="inputArea" style="display: none;">
-        <input type="text" id="userAnswer" placeholder="答を入力（例: 1K006M または 数値）">
+        <input type="text" id="userAnswer" placeholder="答を入力">
         <button class="btn" id="submitBtn" style="width: auto; min-width: 90px;">回答</button>
     </div>
 
@@ -805,6 +824,22 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// 最大公約数（約分用）
+function gcd(a, b) {
+    return b === 0 ? a : gcd(b, a % b);
+}
+
+// 分数をHTML要素として生成（上下に分かれる形式）
+function createFractionHtml(num, denom) {
+    if (denom === 1) return `${num}`;
+    let g = gcd(Math.abs(num), Math.abs(denom));
+    let n = num / g;
+    let d = denom / g;
+    if (d < 0) { n = -n; d = -d; }
+    if (d === 1) return `${n}`;
+    return `<span class="fraction"><span class="numerator">${n}</span><span class="denominator">${d}</span></span>`;
+}
+
 function parseKilometer(str) {
     if (!str) return NaN;
     let match = str.toUpperCase().match(/^(\d+)K(\d+)M?$/);
@@ -825,11 +860,16 @@ function formatKilometer(totalMeters) {
 function generateDynamicProblem(category) {
     if (category === '力行・定速') {
         const subType = Math.random() < 0.5 ? 1 : 2;
-        const alpha = (Math.floor(Math.random() * 5) + 1) * 0.5;
+        const alpha = (Math.floor(Math.random() * 5) + 1) * 0.5; // 0.5 ~ 2.5
         const v = getRandomSpeed();
 
         if (subType === 1) {
-            const ans = Math.ceil(v / alpha);
+            let alphaNum = alpha * 10;
+            let alphaDenom = 10;
+            let fracHtml = createFractionHtml(v * alphaDenom, alphaNum);
+            let ansVal = v / alpha;
+            let ans = Math.ceil(ansVal);
+
             return {
                 id: 'q1_1',
                 title: '力行・定速',
@@ -837,24 +877,35 @@ function generateDynamicProblem(category) {
                 text: `電車が出発後、平均加速度 ${alpha} km/h/s で力行し、${v} km/h で定速運転とした。出発から定速運転に入るまでの所要時間を求めよ。ただし, 解はすべて切り上げ整数のこと。`,
                 answer: ans,
                 isKm: false,
-                formula: '<strong>【使用する公式】</strong><div class="math-block">t = V / &alpha;</div>',
+                formula: '<strong>【使用する公式】</strong><div class="math-block">t = <span class="fraction"><span class="numerator">V</span><span class="denominator">&alpha;</span></span></div>',
                 calcAndAnswer: `<strong>【計算式】</strong>
                     <div class="math-block">
                         <div class="calc-block">
-                            <div class="calc-row"><span class="calc-label">t</span><span class="calc-symbol">=</span><span class="calc-content">${v} / ${alpha}</span></div>
-                            <div class="calc-row"><span class="calc-label"></span><span class="calc-symbol">=</span><span class="calc-content">${v / alpha} 秒</span></div>
+                            <div class="calc-row"><span class="calc-label">t</span><span class="calc-symbol">=</span><span class="calc-content">${v} ÷ ${alpha} = ${fracHtml}</span></div>
+                            <div class="calc-row"><span class="calc-label">切り上げ</span><span class="calc-symbol">=</span><span class="calc-content">${ans} 秒</span></div>
                         </div>
                     </div>
                     <div style="margin-top:4px; font-weight:bold; color:var(--primary-color);">A: ${ans} 秒</div>`
             };
         } else {
-            const accelDist = getRandomInt(100, 300);
-            const totalDist = accelDist + getRandomInt(100, 400);
+            const totalDist = getRandomInt(200, 600);
             const t1 = v / alpha;
-            const dist1 = (v * v) / (7.2 * alpha);
-            const constDist = totalDist - dist1;
-            const t2 = constDist > 0 ? (constDist * 3.6) / v : 0;
-            const totalT = Math.ceil(t1 + t2);
+            
+            let denomCommon = Math.round(7.2 * alpha * 10);
+            let fracDist1 = createFractionHtml(v * v * 10, denomCommon);
+            
+            let numerConst = totalDist * denomCommon - (v * v * 10);
+            let fracConstDist = createFractionHtml(numerConst, denomCommon);
+
+            let numerT2 = numerConst * 36;
+            let denomT2 = denomCommon * v * 10;
+            let fracT2 = createFractionHtml(numerT2, denomT2);
+
+            let exactDist1 = (v * v) / (7.2 * alpha);
+            let constDistVal = totalDist - exactDist1;
+            let t2Val = constDistVal > 0 ? (constDistVal * 3.6) / v : 0;
+            let totalTVal = t1 + t2Val;
+            let totalT = Math.ceil(totalTVal);
 
             return {
                 id: 'q1_2',
@@ -863,14 +914,15 @@ function generateDynamicProblem(category) {
                 text: `電車が平均加速度 ${alpha} km/h/s で力行し、${v} km/h で定速運転としたとき、出発から ${totalDist} m 走行した時点までの所要時間を求めよ。ただし, 解はすべて切り上げ整数のこと。`,
                 answer: totalT,
                 isKm: false,
-                formula: '<strong>【使用する公式】</strong><div class="math-block">s = V<sup>2</sup> / (7.2&alpha;) + (V &times; t<sub>c</sub>) / 3.6</div>',
+                formula: '<strong>【使用する公式】</strong><div class="math-block">s = <span class="fraction"><span class="numerator">V²</span><span class="denominator">7.2 &times; &alpha;</span></span> + <span class="fraction"><span class="numerator">V &times; t<sub>c</sub></span><span class="denominator">3.6</span></span></div>',
                 calcAndAnswer: `<strong>【計算式】</strong>
                     <div class="math-block">
                         <div class="calc-block">
-                            <div class="calc-row"><span class="calc-label">加速距離</span><span class="calc-symbol">=</span><span class="calc-content">${v}<sup>2</sup> / (7.2 &times; ${alpha}) ≒ ${dist1.toFixed(1)} m</span></div>
-                            <div class="calc-row"><span class="calc-label">定速距離</span><span class="calc-symbol">=</span><span class="calc-content">${totalDist} - ${dist1.toFixed(1)} = ${constDist.toFixed(1)} m</span></div>
-                            <div class="calc-row"><span class="calc-label">定速時間</span><span class="calc-symbol">=</span><span class="calc-content">(${constDist.toFixed(1)} &times; 3.6) / ${v} ≒ ${t2.toFixed(1)} 秒</span></div>
-                            <div class="calc-row"><span class="calc-label">総時間</span><span class="calc-symbol">=</span><span class="calc-content">${t1.toFixed(1)} + ${t2.toFixed(1)} = ${(t1+t2).toFixed(1)} 秒</span></div>
+                            <div class="calc-row"><span class="calc-label">加速距離</span><span class="calc-symbol">=</span><span class="calc-content"><span class="fraction"><span class="numerator">${v}²</span><span class="denominator">7.2 &times; ${alpha}</span></span> = ${fracDist1} m</span></div>
+                            <div class="calc-row"><span class="calc-label">定速距離</span><span class="calc-symbol">=</span><span class="calc-content">${totalDist} - ${fracDist1} = ${fracConstDist} m</span></div>
+                            <div class="calc-row"><span class="calc-label">定速時間</span><span class="calc-symbol">=</span><span class="calc-content"><span class="fraction"><span class="numerator">${fracConstDist} &times; 3.6</span><span class="denominator">${v}</span></span> = ${fracT2} 秒</span></div>
+                            <div class="calc-row"><span class="calc-label">総時間</span><span class="calc-symbol">=</span><span class="calc-content">${createFractionHtml(v, alpha)} + ${fracT2}</span></div>
+                            <div class="calc-row"><span class="calc-label">切り上げ</span><span class="calc-symbol">=</span><span class="calc-content">${totalT} 秒</span></div>
                         </div>
                     </div>
                     <div style="margin-top:4px; font-weight:bold; color:var(--primary-color);">A: ${totalT} 秒</div>`
@@ -902,13 +954,13 @@ function generateDynamicProblem(category) {
                 text: `列車編成 3M3T、一両当たりの質量（M車 ${mMass} t、T車 ${tMass} t）、単位質量当たりの走行抵抗（M車 ${mRes} N/t、T車 ${tRes} N/t）の列車が、+${grade} ‰ の直線路上を ${v} km/h の一定の速度で運転していた。この時の列車の走行抵抗 Rᵣ はいくらか。`,
                 answer: ans,
                 isKm: false,
-                formula: '<strong>【使用する公式】</strong><div class="math-block">R<sub>r</sub> = r<sub>r</sub> &times; W</div>',
+                formula: '<strong>【使用する公式】</strong><div class="math-block">R<sub>r</sub> = r<sub>r</sub> × W</div>',
                 calcAndAnswer: `<strong>【計算式】</strong>
                     <div class="math-block">
                         <div class="calc-block">
-                            <div class="calc-row"><span class="calc-label">M車抵抗</span><span class="calc-symbol">=</span><span class="calc-content">${mRes} &times; ${mMass} &times; ${mCount} = ${mRes * totalMWeight} N</span></div>
-                            <div class="calc-row"><span class="calc-label">T車抵抗</span><span class="calc-symbol">=</span><span class="calc-content">${tRes} &times; ${tMass} &times; ${tCount} = ${tRes * totalTWeight} N</span></div>
-                            <div class="calc-row"><span class="calc-label">合計($R_r$)</span><span class="calc-symbol">=</span><span class="calc-content">${rR} N</span></div>
+                            <div class="calc-row"><span class="calc-label">M車抵抗</span><span class="calc-symbol">=</span><span class="calc-content">${mRes} × ${mMass} × ${mCount} = ${mRes * totalMWeight} N</span></div>
+                            <div class="calc-row"><span class="calc-label">T車抵抗</span><span class="calc-symbol">=</span><span class="calc-content">${tRes} × ${tMass} × ${tCount} = ${tRes * totalTWeight} N</span></div>
+                            <div class="calc-row"><span class="calc-label">合計(R<sub>r</sub>)</span><span class="calc-symbol">=</span><span class="calc-content">${rR} N</span></div>
                         </div>
                     </div>
                     <div style="margin-top:4px; font-weight:bold; color:var(--primary-color);">A: ${ans} N</div>`
@@ -924,14 +976,14 @@ function generateDynamicProblem(category) {
                 text: `列車編成 3M3T（M車 ${mMass} t・${mRes} N/t、T車 ${tMass} t・${tRes} N/t）、+${grade} ‰ 勾配、${v} km/h 定速の条件において、この時の列車の引張力 F はいくらか。`,
                 answer: ans,
                 isKm: false,
-                formula: '<strong>【使用する公式】</strong><div class="math-block">F = R = R<sub>r</sub> + R<sub>g</sub><br>R<sub>g</sub> = 9.8 &times; i &times; W</div>',
+                formula: '<strong>【使用する公式】</strong><div class="math-block">F = R = R<sub>r</sub> + R<sub>g</sub><br>R<sub>g</sub> = 9.8 × i × W</div>',
                 calcAndAnswer: `<strong>【計算式】</strong>
                     <div class="math-block">
                         <div class="calc-block">
-                            <div class="calc-row"><span class="calc-label">総重量($W$)</span><span class="calc-symbol">=</span><span class="calc-content">(${mMass} &times; 3) + (${tMass} &times; 3) = ${totalWeight} t</span></div>
-                            <div class="calc-row"><span class="calc-label">走行抵抗($R_r$)</span><span class="calc-symbol">=</span><span class="calc-content">${rR} N</span></div>
-                            <div class="calc-row"><span class="calc-label">勾配抵抗($R_g$)</span><span class="calc-symbol">=</span><span class="calc-content">9.8 &times; ${grade} &times; ${totalWeight} = ${rG.toFixed(1)} N</span></div>
-                            <div class="calc-row"><span class="calc-label">引張力($F$)</span><span class="calc-symbol">=</span><span class="calc-content">${rR} + ${rG.toFixed(1)} = ${f.toFixed(1)} N</span></div>
+                            <div class="calc-row"><span class="calc-label">総重量(W)</span><span class="calc-symbol">=</span><span class="calc-content">(${mMass} × 3) + (${tMass} × 3) = ${totalWeight} t</span></div>
+                            <div class="calc-row"><span class="calc-label">走行抵抗(R<sub>r</sub>)</span><span class="calc-symbol">=</span><span class="calc-content">${rR} N</span></div>
+                            <div class="calc-row"><span class="calc-label">勾配抵抗(R<sub>g</sub>)</span><span class="calc-symbol">=</span><span class="calc-content">9.8 × ${grade} × ${totalWeight} = ${rG} N</span></div>
+                            <div class="calc-row"><span class="calc-label">引張力(F)</span><span class="calc-symbol">=</span><span class="calc-content">${rR} + ${rG} = ${f} N</span></div>
                         </div>
                     </div>
                     <div style="margin-top:4px; font-weight:bold; color:var(--primary-color);">A: ${ans} N</div>`
@@ -946,10 +998,26 @@ function generateDynamicProblem(category) {
         const baseKM = 1;
         const baseM = 447;
 
-        const betaPrime = beta + (9.8 * grade) / 305.6;
-        const idleDist = (v * t0) / 3.6;
-        const brakeDist = (v * v) / (7.2 * betaPrime);
-        const totalDist = Math.ceil(idleDist + brakeDist);
+        let betaNum = beta * 10;
+        let betaDenom = 10;
+        let addNum = 98 * grade;
+        let addDenom = 3056;
+        
+        let commonD = betaDenom * addDenom;
+        let totalBetaNum = (betaNum * addDenom) + (addNum * betaDenom);
+        let fracBetaPrime = createFractionHtml(totalBetaNum, commonD);
+
+        let fracIdleDist = createFractionHtml(v * t0 * 10, 36);
+
+        let brakeNum = v * v * commonD * 10;
+        let brakeDenom = 72 * totalBetaNum;
+        let fracBrakeDist = createFractionHtml(brakeNum, brakeDenom);
+
+        let betaPrimeVal = beta + (9.8 * grade) / 305.6;
+        let idleDistVal = (v * t0) / 3.6;
+        let brakeDistVal = (v * v) / (7.2 * betaPrimeVal);
+        let totalDistVal = idleDistVal + brakeDistVal;
+        let totalDist = Math.ceil(totalDistVal);
 
         let totalMeters = baseKM * 1000 + baseM - totalDist;
         const bKM = Math.floor(totalMeters / 1000);
@@ -986,14 +1054,14 @@ function generateDynamicProblem(category) {
             text: `直線路上を ${v} km/h で走行中の列車を、<span class="target-box">B</span>地点からブレーキを投入し、図のA駅<span class="framed-number">6</span>地点（1K447M）に停止させる。<span class="target-box">B</span>地点のキロ程を求めよ。ただし、ブレーキによって生じる減速度は ${beta} km/h/s、空走時間は ${t0} 秒、滑走はないものとする。勾配はA駅側から +${grade} ‰、途中 0K810M 地点から -20 ‰ とする。<br>` + diagramHtml,
             answer: ansMeters,
             isKm: true,
-            formula: '<strong>【使用する公式】</strong><div class="math-block">s = (V_1 &times; t_0) / 3.6 + V_1^2 / (7.2 &times; &beta;&apos;)<br>&beta;&apos; = &beta; + (9.8 &times; i) / 305.6</div>',
+            formula: '<strong>【使用する公式】</strong><div class="math-block">s = <span class="fraction"><span class="numerator">V<sub>1</sub> &times; t<sub>0</sub></span><span class="denominator">3.6</span></span> + <span class="fraction"><span class="numerator">V<sub>1</sub>²</span><span class="denominator">7.2 &times; &beta;&apos;</span></span><br>&beta;&apos; = &beta; + <span class="fraction"><span class="numerator">9.8 &times; i</span><span class="denominator">305.6</span></span></div>',
             calcAndAnswer: `<strong>【計算式】</strong>
                 <div class="math-block">
                     <div class="calc-block">
-                        <div class="calc-row"><span class="calc-label">実効減速度(&beta;&apos;)</span><span class="calc-symbol">=</span><span class="calc-content">${beta} + (9.8 &times; ${grade}) / 305.6 ≒ ${betaPrime.toFixed(3)} km/h/s</span></div>
-                        <div class="calc-row"><span class="calc-label">空走距離</span><span class="calc-symbol">=</span><span class="calc-content">(${v} &times; ${t0}) / 3.6 ≒ ${idleDist.toFixed(2)} m</span></div>
-                        <div class="calc-row"><span class="calc-label">制動距離</span><span class="calc-symbol">=</span><span class="calc-content">${v}<sup>2</sup> / (7.2 &times; ${betaPrime.toFixed(3)}) ≒ ${brakeDist.toFixed(2)} m</span></div>
-                        <div class="calc-row"><span class="calc-label">総停止距離(s)</span><span class="calc-symbol">=</span><span class="calc-content">${idleDist.toFixed(2)} + ${brakeDist.toFixed(2)} = ${totalDist} m</span></div>
+                        <div class="calc-row"><span class="calc-label">実効減速度(&beta;&apos;)</span><span class="calc-symbol">=</span><span class="calc-content">${beta} + <span class="fraction"><span class="numerator">9.8 &times; ${grade}</span><span class="denominator">305.6</span></span> = ${fracBetaPrime} km/h/s</span></div>
+                        <div class="calc-row"><span class="calc-label">空走距離</span><span class="calc-symbol">=</span><span class="calc-content"><span class="fraction"><span class="numerator">${v} &times; ${t0}</span><span class="denominator">3.6</span></span> = ${fracIdleDist} m</span></div>
+                        <div class="calc-row"><span class="calc-label">制動距離</span><span class="calc-symbol">=</span><span class="calc-content"><span class="fraction"><span class="numerator">${v}²</span><span class="denominator">7.2 &times; ${fracBetaPrime}</span></span> = ${fracBrakeDist} m</span></div>
+                        <div class="calc-row"><span class="calc-label">総停止距離(s)</span><span class="calc-symbol">=</span><span class="calc-content">${fracIdleDist} + ${fracBrakeDist} = ${totalDist} m（切り上げ）</span></div>
                         <div class="calc-row"><span class="calc-label">B地点キロ程</span><span class="calc-symbol">=</span><span class="calc-content">${baseKM}K${baseM}M - ${totalDist}m = ${bKM}K${String(bM).padStart(3,'0')}M</span></div>
                     </div>
                 </div>
