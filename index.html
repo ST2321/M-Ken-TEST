@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>第48期 運転士研修 試験対策</title>
+    <title>第48期 運転士研修 試験対策アプリ</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -25,22 +25,51 @@
             width: 100%;
             max-width: 950px;
             box-sizing: border-box;
+            overflow-x: hidden;
+        }
+        /* タイトルエリア */
+        .title-wrapper {
+            margin-bottom: 30px;
+            text-align: center;
+            width: 100%;
         }
         h1 {
-            margin-bottom: 24px;
-            font-size: 22px;
+            margin: 0;
+            font-size: clamp(14px, 3vw, 22px);
             color: #2c3e50;
-            text-align: center;
             white-space: nowrap;
+            letter-spacing: -0.5px;
+            transform: scaleY(1.25);
+            display: inline-block;
         }
-        /* セクション全体（初期状態は縦画面用：縦並び） */
+        /* A.O.I. 特殊文字デザイン */
+        .aoi-main {
+            font-size: 45px;
+            color: #3498db;
+            margin: 12px 0 0 0;
+            line-height: 1;
+        }
+        /* 下の小さな文字（一行に収める） */
+        .aoi-sub {
+            font-size: clamp(11px, 1.8vw, 16px);
+            color: #7f8c8d;
+            margin: 6px 0 0 0;
+            white-space: nowrap;
+            width: 100%;
+            display: block;
+        }
+        .blue-text {
+            color: #3498db;
+            font-size: 1.2em; /* 青文字の部分だけ少し大きく調整 */
+        }
+
+        /* セクション全体 */
         .sections-wrapper {
             display: flex;
             flex-direction: column;
             gap: 24px;
         }
         
-        /* 横画面（landscape）またはパソコン画面（幅768px以上）の場合に横並びにする */
         @media screen and (min-width: 768px), screen and (orientation: landscape) {
             .sections-wrapper {
                 flex-direction: row;
@@ -68,7 +97,6 @@
             padding-bottom: 6px;
             white-space: nowrap;
         }
-        /* ボタンリスト（縦横関わらず縦並び） */
         .menu-list {
             display: flex;
             flex-direction: column;
@@ -94,7 +122,13 @@
 <body>
 
     <div class="container">
-        <h1>第48期 運転士研修 試験対策</h1>
+        <div class="title-wrapper">
+            <h1>第48期 運転士研修 試験対策アプリ</h1>
+            <p class="aoi-main">𝑨.𝑶.𝑰.</p>
+            <p class="aoi-sub">
+                <span class="blue-text">𝑨</span>𝒑𝒑𝒍𝒊𝒄𝒂𝒕𝒊𝒐𝒏 𝒇𝒐𝒓 <span class="blue-text">𝑶</span>𝒑𝒆𝒓𝒂𝒕𝒐𝒓'𝒔 <span class="blue-text">𝑰</span>𝒏𝒅𝒆𝒑𝒆𝒏𝒅𝒆𝒏𝒕 𝒍𝒆𝒂𝒓𝒏𝒊𝒏𝒈
+            </p>
+        </div>
         
         <div class="sections-wrapper">
             <!-- 適正検査 -->
