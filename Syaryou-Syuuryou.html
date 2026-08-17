@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>鉄道車両 - 学習アプリ</title>
+<style>
+:root {
+    --primary-color: #1a73e8;
+    --secondary-color: #e8f0fe;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-color: #202124;
+    --success-color: #34a853;
+    --error-color: #ea4335;
+    --border-color: #dadce0;
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+.container {
+    width: 100%;
+    max-width: 900px;
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    margin-bottom: 30px;
+}
+h1 {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    margin: 0 0 10px 0;
+    text-align: center;
+}
+.instruction {
+    font-size: 0.85rem;
+    color: #5f6368;
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+.section-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 4px;
+    margin-top: 30px;
+    margin-bottom: 12px;
+}
+.question-card {
+    background: #f8f9fa;
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    line-height: 2.2;
+    font-size: 0.95rem;
+}
+.formation-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    overflow-x: auto;
+    gap: 4px;
+}
+.car-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #bdc1c6;
+    background: #f8f9fa;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-align: center;
+    min-width: 45px;
+}
+.car-item span {
+    font-size: 0.8rem;
+    color: #5f6368;
+    font-weight: normal;
+}
+.coupler {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+.word-bank-container {
+    background: var(--secondary-color);
+    border: 1px solid #d2e3fc;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+.word-bank-title {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #174ea6;
+    margin-bottom: 6px;
+}
+.word-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.word-chip {
+    background: #ffffff;
+    border: 1px solid #b0c4de;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+.word-chip:hover {
+    background: #e8f0fe;
+    border-color: var(--primary-color);
+}
+.blank-slot {
+    display: inline-block;
+    min-width: 80px;
+    height: 26px;
+    line-height: 24px;
+    border: 1px dashed #1a73e8;
+    background: #ffffff;
+    border-radius: 4px;
+    text-align: center;
+    padding: 0 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #174ea6;
+    font-weight: bold;
+    margin: 0 2px;
+    vertical-align: middle;
+}
+.blank-slot.active {
+    border-style: solid;
+    border-color: var(--error-color);
+    box-shadow: 0 0 0 2px rgba(234, 67, 53, 0.2);
+}
+.blank-slot.filled {
+    border-style: solid;
+    border-color: #bdc1c6;
+    background: #f1f3f4;
+    color: #202124;
+}
+.correction-text {
+    color: var(--error-color);
+    font-size: 0.7rem;
+    display: block;
+    line-height: 1;
+    margin-top: 1px;
+}
+.ox-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.ox-group {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: auto;
+}
+.ox-btn {
+    padding: 4px 14px;
+    border: 1px solid #bdc1c6;
+    background: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #5f6368;
+}
+.ox-btn.active-o {
+    background: var(--error-color);
+    color: #fff;
+    border-color: var(--error-color);
+}
+.ox-btn.active-x {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+.circuit-box {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-family: monospace;
+    font-size: 0.9rem;
+    line-height: 1.8;
+    white-space: nowrap;
+    margin: 10px 0;
+}
+.circuit-row {
+    display: block;
+}
+.btn-submit {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(26, 115, 232, 0.3);
+    transition: background 0.2s;
+}
+.btn-submit:hover {
+    background-color: #1557b0;
+}
+.result-box {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background: #e6f4ea;
+    color: var(--success-color);
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.1rem;
+    display: none;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>鉄道車両</h1>
+    <div class="instruction">
+        空欄を選択してから、下の語群から該当する語句を選択して当てはめてください。<br>
+        正誤問題は〇×ボタンを選択してください。
+    </div>
+
+    <!-- 1. 空気漏れ -->
+    <div class="section-title">空気漏れ対策</div>
+    <div class="word-bank-container">
+        <div class="word-bank-title">語群</div>
+        <div class="word-chips" id="bank-1"></div>
+    </div>
+    <div class="question-card">
+        <div class="formation-box">
+            <div class="car-item">Tc1<span>6100</span></div>
+            <div class="coupler">①─②</div>
+            <div class="car-item">M1<span>6200</span></div>
+            <div class="coupler">③─④</div>
+            <div class="car-item">M2<span>6300</span></div>
+            <div class="coupler">⑤─⑥</div>
+            <div class="car-item">T<span>6400</span></div>
+            <div class="coupler">⑦─⑧</div>
+            <div class="car-item">M3<span>6500</span></div>
+            <div class="coupler">⑨─⑩</div>
+            <div class="car-item">Tc2<span>6600</span></div>
+        </div>
+        <br>
+        6500(M3)で空気漏れが発生した場合はMRコック（<span class="blank-slot" data-ans="⑦" data-alt-ans="⑩" onclick="activateBlank(this)"></span>と<span class="blank-slot" data-ans="⑩" data-alt-ans="⑦" onclick="activateBlank(this)"></span>）カット後、<span class="blank-slot" data-ans="A" onclick="activateBlank(this)"></span>配電盤の<span class="blank-slot" data-ans="コンプ同期" onclick="activateBlank(this)"></span>NFBを「切」、<span class="blank-slot" data-ans="C" onclick="activateBlank(this)"></span>配電盤の<span class="blank-slot" data-ans="非常ブレーキ異常短絡" onclick="activateBlank(this)"></span>NFBを「入」とする。<br>
+        6100(Tc1)、6600(Tc2)で空気漏れが発生した場合はMRコック（6100の場合は<span class="blank-slot" data-ans="②" onclick="activateBlank(this)"></span>、6600の場合は<span class="blank-slot" data-ans="⑨" onclick="activateBlank(this)"></span>）カット後、<span class="blank-slot" data-ans="A" onclick="activateBlank(this)"></span>配電盤の<span class="blank-slot" data-ans="コンプ同期" onclick="activateBlank(this)"></span>NFBを「切」、<span class="blank-slot" data-ans="コンプ元" onclick="activateBlank(this)"></span>NFBを「切」とする。<br>
+        車両床下からの漏気で元空気管を切放したときは当該車両の<span class="blank-slot" data-ans="扉は全て施錠" onclick="activateBlank(this)"></span>すること。
+    </div>
+
+    <!-- 2. 基礎装置・正誤問題 -->
+    <div class="section-title">基礎装置 正誤問題</div>
+    <div class="question-card ox-container">
+        <div>車輪は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">一体圧延波打車輪</span> が用いられている。</div>
+        <div class="ox-group" data-ans="o" data-target-text="一体圧延波打車輪、弾性車輪">
+            <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+            <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+        </div>
+    </div>
+    <div class="question-card ox-container">
+        <div>ドレン弁は電動空気圧縮機停止時に <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">排出</span> する。</div>
+        <div class="ox-group" data-ans="o" data-target-text="排出、閉鎖">
+            <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+            <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+        </div>
+    </div>
+    <div class="question-card ox-container">
+        <div>保安ブレーキは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">応荷重なし</span> の <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;">一定圧力</span> の <span class="ox-target-text-3" style="padding: 2px 4px; border-radius: 4px;">一段ブレーキ</span> である。</div>
+        <div class="ox-group" data-ans="o" data-target-text="応荷重なし、応荷重あり" data-target-text-2="一定圧力、可変圧力" data-target-text-3="一段ブレーキ、多段ブレーキ">
+            <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+            <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+        </div>
+    </div>
+    <div class="question-card ox-container">
+        <div>保安ブレーキと非常ブレーキとは電気的に逆だが、電磁弁は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">OFF型電磁弁</span> である。</div>
+        <div class="ox-group" data-ans="o" data-target-text="OFF型電磁弁、ON型">
+            <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+            <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+        </div>
+    </div>
+
+    <!-- 3. 監視機能 -->
+    <div class="section-title">監視機能</div>
+    <div class="word-bank-container">
+        <div class="word-bank-title">語群</div>
+        <div class="word-chips" id="bank-3"></div>
+    </div>
+    <div class="question-card">
+        不足検知は常用最大ブレーキ、ATC常用ブレーキ時に<span class="blank-slot" data-ans="BC圧力" onclick="activateBlank(this)"></span>が規定時間内に規定圧力まで<span class="blank-slot" data-ans="上昇" onclick="activateBlank(this)"></span>しない場合に<span class="blank-slot" data-ans="補償ブレーキ" onclick="activateBlank(this)"></span>として<span class="blank-slot" data-ans="非常ブレーキ" onclick="activateBlank(this)"></span>を作用させる。<br>
+        不緩解検知は、全てのブレーキが<span class="blank-slot" data-ans="弛め" onclick="activateBlank(this)"></span>状態の時、<span class="blank-slot" data-ans="BC圧力" onclick="activateBlank(this)"></span>が規定時間内に規定圧力まで<span class="blank-slot" data-ans="下降" onclick="activateBlank(this)"></span>しない場合に検知する。これを検知すると<span class="blank-slot" data-ans="力行回路" onclick="activateBlank(this)"></span>を遮断し、当該車両のブレーキ受量器が<span class="blank-slot" data-ans="強制開放回路" onclick="activateBlank(this)"></span>を構成するが、この場合であっても<span class="blank-slot" data-ans="非常ブレーキ" onclick="activateBlank(this)"></span>は確実に作用する。
+    </div>
+
+    <!-- 4. 戸閉表示灯回路 -->
+    <div class="section-title">戸閉表示灯回路</div>
+    <div class="word-bank-container">
+        <div class="word-bank-title">語群</div>
+        <div class="word-chips" id="bank-circuit"></div>
+    </div>
+    <div class="question-card">
+        <div class="circuit-box">
+            <span class="circuit-row">──<span class="blank-slot" data-ans="戸閉表示灯" onclick="activateBlank(this)"></span>NFB──<span class="blank-slot" data-ans="MCR" onclick="activateBlank(this)"></span>──各扉の<span class="blank-slot" data-ans="戸閉スイッチ" onclick="activateBlank(this)"></span>──<span class="blank-slot" data-ans="MCR" onclick="activateBlank(this)"></span>─┬──<span class="blank-slot" data-ans="戸閉表示灯" onclick="activateBlank(this)"></span>──┬────</span>
+            <span class="circuit-row">		　 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 　　　　　　　　　└──<span class="blank-slot" data-ans="DR" onclick="activateBlank(this)"></span>──┘</span>
+            <span class="circuit-row">						　　　　　　　　　　　　　　　　　　　　　　　　　　　　			　　　　　　　　　　　　	　 　　　　　├───力行回路───┬─</span>
+            <span class="circuit-row">										　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 └─<span class="blank-slot" data-ans="戸閉連動短絡" onclick="activateBlank(this)"></span>─┘</span>
+        </div>
+    </div>
+
+    <!-- 5. 制御理論・特性 正誤問題 -->
+    <div class="section-title">制御理論・特性 正誤問題</div>
+    <div class="question-card ox-container">
+        <div>回転磁界と回転子の速度が一定の場合トルクは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">発生しない</span>。</div>
+        <div class="ox-group" data-ans="o" data-target-text="発生しない、発生する">
+            <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+            <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+        </div>
+    </div>
+    <div class="question-card ox-container">
+        <div>安定領域とは、すべりとトルクが <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">正比例</span> している状態である。</div>
+        <div class="ox-group" data-ans="o" data-target-text="正比例、反比例">
+            <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+            <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+        </div>
+    </div>
+    <div class="question-card ox-container">
+        <div>PWM方式とは、 <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">パルス幅</span> を変化させる。</div>
+        <div class="ox-group" data-ans="o" data-target-text="パルス幅、電圧、電流">
+            <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+            <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+        </div>
+    </div>
+    <div class="question-card ox-container">
+        <div>抑速ブレーキ中に、何らかの要因により回生ブレーキが失効した場合は運転台モニタに <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">回生失効</span> が表示される。</div>
+        <div class="ox-group" data-ans="o" data-target-text="回生失効、勾配起動、回生開放">
+            <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+            <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+        </div>
+    </div>
+    <div class="question-card ox-container">
+        <div>雨天時は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">運転速度切換スイッチ</span> を <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;">空転防止</span> とする。</div>
+        <div class="ox-group" data-ans="o" data-target-text="運転速度切換スイッチ、運転切換スイッチ" data-target-text-2="空転防止、回復、平常、非設、ATC">
+            <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+            <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+        </div>
+    </div>
+    <div class="question-card ox-container">
+        <div>VVVFインバータ装置は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">直流1500ｖ</span> から <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;">三相交流</span> を作り出す。</div>
+        <div class="ox-group" data-ans="o" data-target-text="直流1500ｖ、交流1500ｖ、交流440ｖ、直流100ｖ" data-target-text-2="三相交流、単相交流、直流電流">
+            <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+            <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+        </div>
+    </div>
+    <div class="question-card ox-container">
+        <div>VVVFは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">可変電圧可変周波数</span> で、CVVFは <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;">定電圧可変周波数</span> である。</div>
+        <div class="ox-group" data-ans="o" data-target-text="可変電圧可変周波数、定電圧可変周波数、可変電圧定周波数、定電圧定周波数" data-target-text-2="定電圧可変周波数、可変電圧可変周波数、可変電圧定周波数、定電圧定周波数">
+            <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+            <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+        </div>
+    </div>
+
+    <!-- 6. 運転モードとインバータ制御 -->
+    <div class="section-title">運転モードとインバータ制御</div>
+    <div class="word-bank-container">
+        <div class="word-bank-title">語群</div>
+        <div class="word-chips" id="bank-6"></div>
+    </div>
+    <div class="question-card">
+        モードⅠ一定トルク制御：運転士がマスコンを<span class="blank-slot" data-ans="力行位置" onclick="activateBlank(this)"></span>に操作することで<span class="blank-slot" data-ans="力行制御" onclick="activateBlank(this)"></span>が開始する。<br>
+        <span class="blank-slot" data-ans="励磁電流" onclick="activateBlank(this)"></span>が立ち上がりモータに印加される電圧が<span class="blank-slot" data-ans="100v" onclick="activateBlank(this)"></span>程度まで上昇すると、<span class="blank-slot" data-ans="トルク" onclick="activateBlank(this)"></span>が立ち上がり電車は徐々に動き出す。この時<span class="blank-slot" data-ans="IGBT" onclick="activateBlank(this)"></span>のスイッチング周波数は<span class="blank-slot" data-ans="525Hz" onclick="activateBlank(this)"></span>一定で<span class="blank-slot" data-ans="バイポーラ変調" onclick="activateBlank(this)"></span>モードである。<br>
+        電車の速度が上昇するとインバータは<span class="blank-slot" data-ans="出力電圧" onclick="activateBlank(this)"></span>と<span class="blank-slot" data-ans="周波数" onclick="activateBlank(this)"></span>のおよび<span class="blank-slot" data-ans="すべり周波数" onclick="activateBlank(this)"></span>を一定に保ち<span class="blank-slot" data-ans="モータ電流" onclick="activateBlank(this)"></span>を一定にする制御を行なう。<br>
+        変調モードが<span class="blank-slot" data-ans="バイポーラ" onclick="activateBlank(this)"></span>→<span class="blank-slot" data-ans="同期9パルス" onclick="activateBlank(this)"></span>→<span class="blank-slot" data-ans="同期5パルス" onclick="activateBlank(this)"></span>→<span class="blank-slot" data-ans="同期3パルス" onclick="activateBlank(this)"></span>と段階的に切り替わっていく。<br>
+        モードⅡ一定トルク制御：<span class="blank-slot" data-ans="3パルスモード" onclick="activateBlank(this)"></span>に切り替わると、モータには<span class="blank-slot" data-ans="最大電圧" onclick="activateBlank(this)"></span>が印加される。<br>
+        モードⅢ一定電力制御：モータ電流が最大に達し、以降は<span class="blank-slot" data-ans="一定" onclick="activateBlank(this)"></span>となるように<span class="blank-slot" data-ans="モータ電流" onclick="activateBlank(this)"></span>を制御する。インバータの<span class="blank-slot" data-ans="出力電力" onclick="activateBlank(this)"></span>は一定に保たれる。
+    </div>
+
+    <!-- 7. 圧力計 -->
+    <div class="section-title">圧力計</div>
+    <div class="word-bank-container">
+        <div class="word-bank-title">語群</div>
+        <div class="word-chips" id="bank-7"></div>
+    </div>
+    <div class="question-card">
+        黒針は<span class="blank-slot" data-ans="ブレーキシリンダ圧" onclick="activateBlank(this)"></span>、赤針は<span class="blank-slot" data-ans="元空気タンク圧" onclick="activateBlank(this)"></span>を示す。
+    </div>
+
+    <button type="button" class="btn-submit" onclick="checkAnswers()">解答合わせ</button>
+    <div class="result-box" id="resultBox"></div>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+    // 1. 〇×問題のランダム変更処理
+    const oxGroups = document.querySelectorAll('.ox-group');
+    oxGroups.forEach(group => {
+        // 複数ターゲット属性の処理に対応
+        ['data-target-text', 'data-target-text-2', 'data-target-text-3'].forEach((attrName, idx) => {
+            const candidatesStr = group.getAttribute(attrName);
+            if (candidatesStr && candidatesStr.includes('、')) {
+                const list = candidatesStr.split('、');
+                const randomChoice = list[Math.floor(Math.random() * list.length)];
+                
+                const isCorrect = (randomChoice === list[0]);
+                if (idx === 0) {
+                    group.setAttribute('data-ans', isCorrect ? 'o' : 'x');
+                }
+                group.setAttribute(attrName + '-current', randomChoice);
+                group.setAttribute(attrName + '-correct', list[0]);
+                
+                const selector = idx === 0 ? '.ox-target-text' : `.ox-target-text-${idx + 1}`;
+                const textSpan = group.parentElement.querySelector(selector);
+                if (textSpan) {
+                    textSpan.textContent = randomChoice;
+                }
+            }
+        });
+    });
+
+    // 2. 各語群のセットアップ
+    setupWordBank('bank-1', [
+        "コンプヒータ", "試運転非常ブレーキ", "非常ブレーキスイッチ", "保安ブレーキスイッチ", 
+        "③", "④", "⑤", "⑥", "⑧", "B", "B'", "D", "E", "F", 
+        "⑦", "⑩", "A", "C", "コンプ同期", "非常ブレーキ異常短絡", "②", "⑨", "コンプ元", "扉は全て施錠","扉は全て開扉"
+    ]);
+
+    setupWordBank('bank-3', [
+        "MR圧力", "保安ブレーキ", "常用", "非常", 
+        "BC圧力", "上昇", "補償ブレーキ", "非常ブレーキ", "弛め", "下降", "力行回路", "強制開放回路"
+    ]);
+
+    setupWordBank('bank-circuit', [
+        "戸閉表示灯", "戸閉表示灯", "MCR", "戸閉スイッチ", "DR", "戸閉連動短絡",
+        "戸閉保安表示灯", "戸閉保安短絡", "MRS", "MCRR", "車掌スイッチ", "非常ブレーキスイッチ"
+    ]);
+
+    setupWordBank('bank-6', [
+        "制動位置", "抑速位置", "1500v", "440v", "回転数", "GTO", 
+        "力行位置", "力行制御", "励磁電流", "100v", "トルク", "IGBT", 
+        "525Hz", "バイポーラ変調", "出力電圧", "周波数", "すべり周波数", 
+        "モータ電流", "バイポーラ", "同期9パルス", "同期5パルス", "同期3パルス", 
+        "3パルスモード", "最大電圧", "一定", "出力電力"
+    ]);
+
+    setupWordBank('bank-7', [
+        "モータ電流", "架線電圧", "バッテリ電圧", "制御空気タンク圧", 
+        "ブレーキシリンダ圧", "元空気タンク圧"
+    ]);
+});
+
+function setupWordBank(containerId, words) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const shuffled = [...words].sort(() => Math.random() - 0.5);
+    shuffled.forEach(word => {
+        const chip = document.createElement('div');
+        chip.className = 'word-chip';
+        chip.textContent = word;
+        chip.onclick = function() { selectChip(this); };
+        container.appendChild(chip);
+    });
+}
+
+let activeBlank = null;
+
+function activateBlank(el) {
+    if (activeBlank) {
+        activeBlank.classList.remove('active');
+    }
+    activeBlank = el;
+    activeBlank.classList.add('active');
+}
+
+function selectChip(chip) {
+    if (!activeBlank) {
+        alert('先に空欄を選択してください。');
+        return;
+    }
+    activeBlank.textContent = chip.textContent;
+    activeBlank.classList.remove('active');
+    activeBlank.classList.add('filled');
+    activeBlank = null;
+}
+
+function setOx(btn, val) {
+    const group = btn.parentElement;
+    group.querySelectorAll('.ox-btn').forEach(b => {
+        b.classList.remove('active-o', 'active-x');
+    });
+    if (val === 'o') {
+        btn.classList.add('active-o');
+    } else {
+        btn.classList.add('active-x');
+    }
+}
+
+function checkAnswers() {
+    let correctCount = 0;
+    let totalCount = 0;
+
+    document.querySelectorAll('.correction-text').forEach(el => el.remove());
+    document.querySelectorAll('[class^="ox-target-text"]').forEach(el => {
+        el.style.backgroundColor = 'transparent';
+        el.style.color = 'inherit';
+    });
+
+    // 1. 穴埋め判定
+    const blanks = document.querySelectorAll('.blank-slot');
+    totalCount += blanks.length;
+    blanks.forEach(b => {
+        const userAns = b.textContent.trim();
+        const correctAns = b.getAttribute('data-ans');
+        const altAns = b.getAttribute('data-alt-ans');
+        
+        let isCorrect = (userAns === correctAns);
+        if (!isCorrect && altAns && userAns === altAns) {
+            isCorrect = true;
+        }
+
+        if (isCorrect) {
+            correctCount++;
+            b.style.borderColor = 'var(--success-color)';
+            b.style.backgroundColor = '#e6f4ea';
+        } else {
+            b.style.borderColor = 'var(--error-color)';
+            b.style.backgroundColor = '#fce8e6';
+            const correction = document.createElement('span');
+            correction.className = 'correction-text';
+            correction.textContent = `正: ${correctAns}`;
+            b.appendChild(correction);
+        }
+    });
+
+    // 2. 〇×判定
+    const oxGroups = document.querySelectorAll('.ox-group');
+    totalCount += oxGroups.length;
+    oxGroups.forEach(group => {
+        let isGroupCorrect = true;
+        
+        // 複数パーツがある場合の判定
+        ['data-target-text', 'data-target-text-2', 'data-target-text-3'].forEach((attrName, idx) => {
+            const current = group.getAttribute(attrName + '-current');
+            const correct = group.getAttribute(attrName + '-correct');
+            if (current && correct && current !== correct) {
+                // ランダムで×に変更されている場合、ユーザーは「×」を選ぶべき
+                // 初期のdata-ansは常に'o'基準（正解リストの1番目）なので、リストの1番目以外なら正解は'x'
+            }
+        });
+
+        // 単一または複数項目の判定
+        const expected = group.getAttribute('data-ans');
+        const activeBtn = group.querySelector('.active-o, .active-x');
+        let selectedVal = '';
+        if (activeBtn) {
+            selectedVal = activeBtn.classList.contains('active-o') ? 'o' : 'x';
+        }
+
+        // 各ターゲットの正誤判定を厳密に行う
+        let allSubCorrect = true;
+        ['data-target-text', 'data-target-text-2', 'data-target-text-3'].forEach((attrName, idx) => {
+            const current = group.getAttribute(attrName + '-current');
+            const correct = group.getAttribute(attrName + '-correct');
+            if (current && correct) {
+                const shouldBe = (current === correct) ? 'o' : 'x';
+                if (selectedVal !== shouldBe) {
+                    allSubCorrect = false;
+                }
+            }
+        });
+
+        // フォールバック
+        if (!group.hasAttribute('data-target-text-current') && selectedVal !== expected) {
+            allSubCorrect = false;
+        }
+
+        if (allSubCorrect && selectedVal !== '') {
+            correctCount++;
+            group.style.outline = '2px solid var(--success-color)';
+            group.querySelectorAll('[class^="ox-target-text"]').forEach(el => {
+                el.style.backgroundColor = '#e6f4ea';
+                el.style.color = 'var(--success-color)';
+            });
+        } else {
+            group.style.outline = '2px solid var(--error-color)';
+            group.querySelectorAll('[class^="ox-target-text"]').forEach((el, idx) => {
+                const attrName = idx === 0 ? 'data-target-text' : `data-target-text-${idx + 1}`;
+                const correctText = group.getAttribute(attrName + '-correct');
+                if (correctText) {
+                    el.style.backgroundColor = '#fce8e6';
+                    el.style.color = 'var(--error-color)';
+                    el.title = `正解: ${correctText}`;
+                }
+            });
+        }
+    });
+
+    const resultBox = document.getElementById('resultBox');
+    resultBox.style.display = 'block';
+    resultBox.textContent = `判定結果: 全 ${totalCount} 問中 ${correctCount} 問正解！`;
+    resultBox.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
