@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>運転理論記述(修了)</title>
+<style>
+:root {
+    --primary-color: #1a73e8;
+    --success-color: #34a853;
+    --success-bg: #e6f4ea;
+    --error-color: #ea4335;
+    --error-bg: #fce8e6;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-color: #202124;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.back-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 999;
+    background-color: #ffffff;
+    color: #1a73e8;
+    border: 2px solid #1a73e8;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.back-btn:hover {
+    background-color: #e8f0fe;
+}
+
+.all-toggle-btn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 999;
+    background-color: #ffffff;
+    color: #1a73e8;
+    border: 2px solid #1a73e8;
+    padding: 6px 16px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.all-toggle-btn:hover {
+    background-color: #e8f0fe;
+}
+
+.container {
+    width: 100%;
+    max-width: 850px;
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    margin-bottom: 30px;
+    margin-top: 15px;
+}
+
+.header-row {
+    border-bottom: 2px solid #1a73e8;
+    padding-bottom: 8px;
+    margin-bottom: 5px;
+}
+
+h1 {
+    font-size: 1.2rem;
+    color: #202124;
+    margin: 0;
+}
+
+.question-section {
+    margin-top: 15px;
+    margin-bottom: 25px;
+    line-height: 2.2;
+    font-size: 1rem;
+}
+
+.q-title {
+    font-weight: bold;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 4px;
+}
+
+.sub-q {
+    margin-left: 15px;
+    margin-bottom: 22px;
+}
+
+.handwrite-slot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    width: 90px;
+    height: 28px;
+    vertical-align: middle;
+    border: 2px dashed #1a73e8;
+    background: #fff;
+    border-radius: 4px;
+    margin: 0 4px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.handwrite-slot:hover {
+    background-color: #e8f0fe;
+}
+
+.slot-image-preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: none;
+    pointer-events: none;
+}
+
+.slot-answer-inline {
+    display: none;
+    font-size: 0.8rem;
+    color: #d93025;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    pointer-events: none;
+    position: absolute;
+    white-space: nowrap;
+}
+
+.ox-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: #f8f9fa;
+    border: 1px solid #dadce0;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: background-color 0.3s, border 0.3s;
+}
+.ox-group {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: auto;
+}
+.ox-btn {
+    padding: 4px 14px;
+    border: 1px solid #bdc1c6;
+    background: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #5f6368;
+}
+.ox-btn.active-o {
+    background: var(--success-color);
+    color: #fff;
+    border-color: var(--success-color);
+}
+.ox-btn.active-x {
+    background: var(--error-color);
+    color: #fff;
+    border-color: var(--error-color);
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    width: 95%;
+    max-width: 750px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+}
+
+.modal-header {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #1a73e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-canvas-scroll-container {
+    width: 100%;
+    height: 180px;
+    border: 2px solid #1a73e8;
+    border-radius: 8px;
+    background: #fafafa;
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-canvas-box {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    touch-action: none;
+}
+
+.modal-canvas-box canvas {
+    height: 100%;
+    display: block;
+    cursor: crosshair;
+}
+
+.modal-scroll-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    background: #f1f3f4;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.modal-scroll-control label {
+    font-size: 0.85rem;
+    color: #3c4043;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.modal-scroll-control input[type="range"] {
+    flex: 1;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background-color: #f1f3f4;
+    color: #3c4043;
+    border: 1px solid #dadce0;
+}
+</style>
+</head>
+<body>
+
+<a href="Unten-Riron.html" class="back-btn">&larr; 戻る</a>
+<button type="button" class="all-toggle-btn" id="allToggleBtn" onclick="toggleAllAnswers()">表示</button>
+
+<div class="container">
+    <div class="header-row">
+        <h1>運転理論記述(修了)</h1>
+    </div>
+
+    <!-- 合成制輪子 -->
+    <div class="question-section">
+        <div class="q-title">合成制輪子</div>
+        <div class="sub-q">
+            合成制輪子は
+            <span class="handwrite-slot" style="width: 100px;" id="slot_comp1" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_comp1" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_comp1">金属微粉末</span>
+            </span>
+            や
+            <span class="handwrite-slot" style="width: 70px;" id="slot_comp2" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_comp2" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_comp2">黒鉛</span>
+            </span>
+            等を
+            <span class="handwrite-slot" style="width: 70px;" id="slot_comp3" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_comp3" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_comp3">樹脂</span>
+            </span>
+            で結合して作ったもの。<br>
+            ・鋳鉄制輪子と比べて速度変化に対する
+            <span class="handwrite-slot" style="width: 90px;" id="slot_comp4" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_comp4" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_comp4">摩擦係数</span>
+            </span>
+            の変化が少ないことから、一定減速度を保つ制動操作が容易にできる。<br>
+            ・高速時にも大きな
+            <span class="handwrite-slot" style="width: 80px;" id="slot_comp5" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_comp5" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_comp5">減速度</span>
+            </span>
+            を得ることができる。<br>
+            ・
+            <span class="handwrite-slot" style="width: 80px;" id="slot_comp6" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_comp6" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_comp6">摩耗量</span>
+            </span>
+            が極めて少なく、しかも軽量であるので
+            <span class="handwrite-slot" style="width: 90px;" id="slot_comp7" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_comp7" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_comp7">車両保守</span>
+            </span>
+            も容易である。
+        </div>
+    </div>
+
+    <!-- 直流電動機の制御 -->
+    <div class="question-section">
+        <div class="q-title">直流電動機の制御</div>
+        <div class="sub-q">
+            ・
+            <span class="handwrite-slot" style="width: 100px;" id="slot_dc1" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_dc1" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_dc1">抵抗制御法</span>
+            </span><br>
+            ・
+            <span class="handwrite-slot" style="width: 100px;" id="slot_dc2" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_dc2" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_dc2">直並列制御法</span>
+            </span><br>
+            ・
+            <span class="handwrite-slot" style="width: 110px;" id="slot_dc3" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_dc3" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_dc3">弱め界磁制御法</span>
+            </span><br>
+            ・
+            <span class="handwrite-slot" style="width: 160px;" id="slot_dc4" data-has-input="false">
+                <img class="slot-image-preview" id="img_slot_dc4" alt="手書き解答">
+                <span class="slot-answer-inline" id="ans_slot_dc4">サイリスタ・チョッパ制御法</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- 経済運転：車両条件と電力量 -->
+    <div class="question-section">
+        <div class="q-title">車両条件と電力量</div>
+        
+        <div class="ox-container">
+            <div>～車両の軽量化～<br>車両重量が <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="重く" data-original-wrong="軽く">重く</span> なるほど各列車抵抗が <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="増加" data-original-wrong="減少">増加</span> するから、これに比例して電力量は <span class="ox-target-text-3" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="増加" data-original-wrong="減少">増加</span> する。</div>
+            <div class="ox-group" data-correct="重く" data-wrong="軽く" data-correct-2="増加" data-wrong-2="減少" data-correct-3="増加" data-wrong-3="減少">
+                <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+                <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+            </div>
+        </div>
+
+        <div class="ox-container">
+            <div>～走行抵抗の減少～<br>走行抵抗を減少するためには軸受部に <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="コロ軸受" data-original-wrong="制輪子、心皿">コロ軸受</span> を採用したり、車体形状に対する空気抵抗の減少等を図っている。走行抵抗を減量すると力行時には加速度が大きくなり、惰行時には速度の低下が少なくなる。その結果、同じ電力消費量であれば運転時分が短縮され、同じ運転時分であれば電力消費量が減少する。</div>
+            <div class="ox-group" data-correct="コロ軸受" data-wrong="制輪子,心皿">
+                <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+                <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+            </div>
+        </div>
+
+        <div class="ox-container">
+            <div>～高加速度～<br>一定の距離を一定の表定速度で運転する場合、加速度を大きくすると電流の遮断が <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="早く" data-original-wrong="遅く">早く</span> なり、惰行時間が <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="長く" data-original-wrong="短く">長く</span> なるから電力消費量は減少する。特に駅間距離の短い路線では車両性能として高加速度が要望される。</div>
+            <div class="ox-group" data-correct="早く" data-wrong="遅く" data-correct-2="長く" data-wrong-2="短く">
+                <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+                <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+            </div>
+        </div>
+
+        <div class="ox-container">
+            <div>～高減速度～<br>ブレーキ時の減速度を大にすると同一加速度であっても、電流遮断が <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="早く" data-original-wrong="遅く">早く</span> なり惰行時間を長くとることができるから電力消費量は <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="少なく" data-original-wrong="多く">少なく</span> なる。</div>
+            <div class="ox-group" data-correct="早く" data-wrong="遅く" data-correct-2="少なく" data-wrong-2="多く">
+                <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+                <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+            </div>
+        </div>
+
+        <div class="ox-container">
+            <div>～歯車比の適切～<br>同じ平均起動電流であっても、歯車比の <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="大きい" data-original-wrong="小さい">大きい</span> ほど起動加速度は <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="大きい" data-original-wrong="小さい">大きい</span> から、駅間距離の短い区間に常用する電動車の歯車比は比較的大きいものを用いることが電力経済の上から有利である。また駅間距離の長い区間では大きな歯車比は平均速度が低いので不利となる。したがって実状に即して、できるだけ経済的な歯車比の選定が必要である。</div>
+            <div class="ox-group" data-correct="大きい" data-wrong="小さい" data-correct-2="大きい" data-wrong-2="小さい">
+                <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+                <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 経済運転：運転条件と電力量 -->
+    <div class="question-section">
+        <div class="q-title">運転条件と電力量</div>
+
+        <div class="ox-container">
+            <div>～ブレーキ時分を短縮する～<br>同駅間を同運転時分で運転する場合、ブレーキ減速度を <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="大きく" data-original-wrong="小さく">大きく</span>してブレーキ時分を短縮し得ることは明かであるが、この場合注意することは、ブレーキ距離よりもブレーキ時分を短縮するように心がけることである。しかし、いかにブレーキ時分を短縮できても停車に衝動を伴うことは乗客サービス上造計ねばならないから、ブレーキ操作の一層の向上が望まれる。</div>
+            <div class="ox-group" data-correct="大きく" data-wrong="小さく">
+                <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+                <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+            </div>
+        </div>
+
+        <div class="ox-container">
+            <div>～停車時分を短縮する～<br>運転時分は定まっているが、もし停車時分を所定より <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="短縮" data-original-wrong="拡大">短縮</span> してこれを運転時分に繰り入れることは、 惰行時分が延びるから電力消費量の節約になる。特に混雑時には、車掌・駅係員の協力により、できるだけ短縮に努め電車の遅延を防ぐことが必要である。</div>
+            <div class="ox-group" data-correct="短縮" data-wrong="拡大">
+                <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+                <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+            </div>
+        </div>
+
+        <div class="ox-container">
+            <div>～早着運転を避けること～<br>早着運転には無駄な <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="力行" data-original-wrong="惰行">力行</span> 運転をした結果であるから、電力消費量を余分に高めるのは当然である。したがって、常に定時運転の確保に努めねばならない。</div>
+            <div class="ox-group" data-correct="力行" data-wrong="惰行">
+                <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+                <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+            </div>
+        </div>
+
+        <div class="ox-container">
+            <div>～無理な回復運転はしない～<br>後続列車に及ぼす影響もあるため、ある程度の回復運転も必要であるが、いわゆる <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="オフ" data-original-wrong="オン">オフ</span> ブレーキや、 これに近い力行率の非常に大きくなる回復運転は避けなければならない。電力消費量の激増するのは無論であるが、その他にも停止位置の行き過ぎ等を生じ易くなる。</div>
+            <div class="ox-group" data-correct="オフ" data-wrong="オン">
+                <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+                <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+            </div>
+        </div>
+
+        <div class="ox-container">
+            <div>～制限,徐行速度の適確なこと～<br>速度制限箇所、徐行箇所を通過する場合制限速度をこえることはできないが、必要以上に速度を低下し過ぎることも好ましくない。したがって制限または徐行箇所の通過速度はできるだけ <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-original-correct="指示速度" data-original-wrong="下回った速度">指示速度</span> で運転することが必要である。</div>
+            <div class="ox-group" data-correct="指示速度" data-wrong="下回った速度">
+                <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+                <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 手書き入力モーダル -->
+<div class="modal-overlay" id="handwriteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>手書き記入</span>
+            <button type="button" class="btn btn-secondary" style="padding:2px 8px; font-size:0.8rem;" onclick="clearModalCanvas()">全消去</button>
+        </div>
+        <div class="modal-canvas-scroll-container" id="scrollContainer">
+            <div class="modal-canvas-box" id="canvasBox">
+                <canvas id="modalCanvas"></canvas>
+            </div>
+        </div>
+        <div class="modal-scroll-control" id="scrollControlArea">
+            <label>スクロール:</label>
+            <input type="range" id="canvasRange" min="0" max="100" value="0" step="1">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+            <button type="button" class="btn" onclick="confirmModal()">決定</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentActiveSlotId = null;
+const modalCanvas = document.getElementById('modalCanvas');
+const modalCtx = modalCanvas.getContext('2d');
+const canvasBox = document.getElementById('canvasBox');
+const scrollContainer = document.getElementById('scrollContainer');
+const canvasRange = document.getElementById('canvasRange');
+const scrollControlArea = document.getElementById('scrollControlArea');
+
+let isDrawing = false;
+let isAllAnswersShown = false;
+
+const virtualWidthMultiplier = 4.0; 
+let currentVirtualWidth = 0;
+let currentDisplayWidth = 0;
+
+const slotIds = [
+    'slot_comp1', 'slot_comp2', 'slot_comp3', 'slot_comp4', 'slot_comp5', 'slot_comp6', 'slot_comp7',
+    'slot_dc1', 'slot_dc2', 'slot_dc3', 'slot_dc4'
+];
+
+window.addEventListener('DOMContentLoaded', () => {
+    const oxGroups = document.querySelectorAll('.ox-group');
+    
+    oxGroups.forEach((group) => {
+        const isCircle = Math.random() < 0.5;
+        group.setAttribute('data-ans', isCircle ? 'o' : 'x');
+
+        const targets = group.parentElement.querySelectorAll('[class^="ox-target-text"]');
+        targets.forEach((textSpan) => {
+            const correctItem = textSpan.getAttribute('data-original-correct');
+            const wrongAttr = textSpan.getAttribute('data-original-wrong');
+
+            if (correctItem) {
+                let displayWrong = wrongAttr;
+                if (wrongAttr.includes(',')) {
+                    const wrongOptions = wrongAttr.split(',');
+                    displayWrong = wrongOptions[Math.floor(Math.random() * wrongOptions.length)];
+                    textSpan.setAttribute('data-selected-wrong', displayWrong);
+                } else {
+                    textSpan.setAttribute('data-selected-wrong', wrongAttr);
+                }
+
+                textSpan.textContent = isCircle ? correctItem : displayWrong;
+                textSpan.setAttribute('data-current-state', isCircle ? 'correct' : 'wrong');
+            }
+        });
+    });
+});
+
+function initModalCanvasSize(isLongText) {
+    const rect = scrollContainer.getBoundingClientRect();
+    currentDisplayWidth = rect.width;
+    
+    if (isLongText) {
+        currentVirtualWidth = currentDisplayWidth * virtualWidthMultiplier;
+        scrollControlArea.style.display = 'flex';
+    } else {
+        currentVirtualWidth = currentDisplayWidth;
+        scrollControlArea.style.display = 'none';
+    }
+
+    canvasBox.style.width = currentVirtualWidth + 'px';
+    modalCanvas.style.width = currentVirtualWidth + 'px';
+    modalCanvas.style.height = rect.height + 'px';
+
+    modalCanvas.width = currentVirtualWidth * window.devicePixelRatio;
+    modalCanvas.height = rect.height * window.devicePixelRatio;
+    
+    modalCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    modalCtx.strokeStyle = '#202124';
+    modalCtx.lineWidth = 3.0;
+    modalCtx.lineCap = 'round';
+    modalCtx.lineJoin = 'round';
+
+    canvasRange.value = 0;
+    scrollContainer.scrollLeft = 0;
+}
+
+function openModal(slotId) {
+    currentActiveSlotId = slotId;
+    document.getElementById('handwriteModal').style.display = 'flex';
+    
+    setTimeout(() => {
+        initModalCanvasSize(false);
+        modalCtx.clearRect(0, 0, modalCanvas.width, modalCanvas.height);
+    }, 50);
+}
+
+function closeModal() {
+    document.getElementById('handwriteModal').style.display = 'none';
+    currentActiveSlotId = null;
+}
+
+function clearModalCanvas() {
+    modalCtx.clearRect(0, 0, modalCanvas.width, modalCanvas.height);
+}
+
+canvasRange.addEventListener('input', (e) => {
+    const val = e.target.value;
+    const maxScroll = currentVirtualWidth - currentDisplayWidth;
+    scrollContainer.scrollLeft = (val / 100) * maxScroll;
+});
+
+scrollContainer.addEventListener('scroll', () => {
+    const maxScroll = currentVirtualWidth - currentDisplayWidth;
+    if (maxScroll > 0) {
+        canvasRange.value = (scrollContainer.scrollLeft / maxScroll) * 100;
+    }
+});
+
+function getModalPos(e) {
+    const rect = modalCanvas.getBoundingClientRect();
+    let clientX = e.clientX;
+    let clientY = e.clientY;
+    if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    }
+    return { x: clientX - rect.left, y: clientY - rect.top };
+}
+
+modalCanvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    const pos = getModalPos(e);
+    modalCtx.beginPath();
+    modalCtx.moveTo(pos.x, pos.y);
+});
+
+modalCanvas.addEventListener('mousemove', (e) => {
+    if (!isDrawing) return;
+    const pos = getModalPos(e);
+    modalCtx.lineTo(pos.x, pos.y);
+    modalCtx.stroke();
+});
+
+window.addEventListener('mouseup', () => { isDrawing = false; });
+
+modalCanvas.addEventListener('touchstart', (e) => {
+    isDrawing = true;
+    const pos = getModalPos(e);
+    modalCtx.beginPath();
+    modalCtx.moveTo(pos.x, pos.y);
+}, { passive: true });
+
+modalCanvas.addEventListener('touchmove', (e) => {
+    if (!isDrawing) return;
+    const pos = getModalPos(e);
+    modalCtx.lineTo(pos.x, pos.y);
+    modalCtx.stroke();
+}, { passive: true });
+
+modalCanvas.addEventListener('touchend', () => { isDrawing = false; });
+
+slotIds.forEach(id => {
+    const slot = document.getElementById(id);
+    if (!slot) return;
+
+    slot.addEventListener('click', () => {
+        openModal(id);
+    });
+
+    slot.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
+});
+
+function confirmModal() {
+    if (!currentActiveSlotId) return;
+    
+    const dataUrl = modalCanvas.toDataURL('image/png');
+    const slot = document.getElementById(currentActiveSlotId);
+    if (!slot) return;
+
+    const imgPreview = slot.querySelector('.slot-image-preview');
+
+    if (imgPreview) {
+        imgPreview.src = dataUrl;
+        if (!isAllAnswersShown) {
+            imgPreview.style.display = 'block';
+        }
+    }
+    
+    slot.setAttribute('data-has-input', 'true');
+
+    closeModal();
+}
+
+function toggleAllAnswers() {
+    const btn = document.getElementById('allToggleBtn');
+    isAllAnswersShown = !isAllAnswersShown;
+
+    slotIds.forEach(id => {
+        const slot = document.getElementById(id);
+        if (!slot) return;
+        const imgPreview = slot.querySelector('.slot-image-preview');
+        const answerInline = slot.querySelector('.slot-answer-inline');
+        const hasInput = slot.getAttribute('data-has-input') === 'true';
+
+        if (isAllAnswersShown) {
+            if (imgPreview) imgPreview.style.display = 'none';
+            if (answerInline) answerInline.style.display = 'block';
+        } else {
+            if (answerInline) answerInline.style.display = 'none';
+            if (hasInput) {
+                if (imgPreview) imgPreview.style.display = 'block';
+            } else {
+                if (imgPreview) imgPreview.style.display = 'none';
+            }
+        }
+    });
+
+    if (isAllAnswersShown) {
+        btn.textContent = '非表示';
+    } else {
+        btn.textContent = '表示';
+    }
+}
+
+function setOx(btn, val) {
+    const group = btn.parentElement;
+    group.querySelectorAll('.ox-btn').forEach(b => {
+        b.classList.remove('active-o', 'active-x');
+    });
+    if (val === 'o') {
+        btn.classList.add('active-o');
+    } else {
+        btn.classList.add('active-x');
+    }
+
+    const container = group.closest('.ox-container');
+    const correctAns = group.getAttribute('data-ans');
+    const isCorrect = (val === correctAns);
+
+    if (isCorrect) {
+        container.style.border = '2.5px solid var(--success-color)';
+        container.style.backgroundColor = 'var(--success-bg)';
+    } else {
+        container.style.border = '2.5px solid var(--error-color)';
+        container.style.backgroundColor = 'var(--error-bg)';
+    }
+    
+    container.querySelectorAll('[class^="ox-target-text"]').forEach((el) => {
+        const correctText = el.getAttribute('data-original-correct');
+        const wrongText = el.getAttribute('data-selected-wrong') || el.getAttribute('data-original-wrong');
+        const currentState = el.getAttribute('data-current-state');
+        const isFixed = el.getAttribute('data-fixed') === 'true';
+
+        if (currentState === 'wrong') {
+            if (!isFixed) {
+                el.style.backgroundColor = '#ffffff';
+                el.innerHTML = `<span style="text-decoration: line-through; color: var(--error-color); margin-right: 4px;">${wrongText}</span><strong style="color: var(--success-color);">${correctText}</strong>`;
+                el.setAttribute('data-fixed', 'true');
+            }
+        } else {
+            el.style.backgroundColor = '';
+            el.textContent = correctText;
+            el.setAttribute('data-fixed', 'false');
+        }
+    });
+}
+</script>
+
+</body>
+</html>
