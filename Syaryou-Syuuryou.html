@@ -272,10 +272,8 @@ h1 {
     <h1>鉄道車両(修了)</h1>
     <div class="instruction">
         空欄を選択してから、下の語群から該当する語句を選択して当てはめてください。<br>
-        正誤問題は〇×ボタンを選択してください。(×の場合は解答合わせで正しい答えを表示します)
     </div>
 
-    <!-- 空気漏れ -->
     <div class="section-title">空気漏れ対策</div>
     <div class="word-bank-container">
         <div class="word-bank-title">語群</div>
@@ -301,7 +299,6 @@ h1 {
         車両床下からの漏気で元空気管を切放したときは当該車両の<span class="blank-slot" data-ans="扉は全て施錠" onclick="activateBlank(this)"></span>すること。
     </div>
 
-    <!-- 車輪 -->
     <div class="section-title">車輪</div>
     <div class="question-card ox-container">
         <div>車輪は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">一体圧延波打車輪</span> が用いられている。</div>
@@ -311,7 +308,6 @@ h1 {
         </div>
     </div>
 
-    <!-- 電動空気圧縮機 -->
     <div class="section-title">電動空気圧縮機</div>
     <div class="question-card ox-container">
         <div>ドレン弁は電動空気圧縮機停止時に <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">排出</span> する。</div>
@@ -321,7 +317,6 @@ h1 {
         </div>
     </div>
 
-    <!-- 保安ブレーキ -->
     <div class="section-title">保安ブレーキ</div>
     <div class="question-card ox-container">
         <div>保安ブレーキは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">応荷重なし</span> の <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;">一定圧力</span> の <span class="ox-target-text-3" style="padding: 2px 4px; border-radius: 4px;">一段ブレーキ</span> である。</div>
@@ -338,7 +333,29 @@ h1 {
         </div>
     </div>
 
-    <!-- 監視機能 -->
+    <div class="section-title">確認・非常運転</div>
+    <div class="word-bank-container">
+        <div class="word-bank-title">語群</div>
+        <div class="word-chips" id="bank-unten"></div>
+    </div>
+    <div class="question-card">
+        <strong>確認運転</strong><br>
+        信号を受信し、停車状態で「確認運転ボタン」を押下すると、“確認運転” が成立し、緩和ブレーキ・常用最大ブレーキは緩解し、<span class="blank-slot" data-ans="15km/h" onclick="activateBlank(this)"></span>以下の速度で走行可能となる。<br>
+        確認運転は、<span class="blank-slot" data-ans="無信号" onclick="activateBlank(this)"></span>または<span class="blank-slot" data-ans="15信号" onclick="activateBlank(this)"></span>以上の信号を受信した場合解除となる。<br><br>
+        <strong>非常運転</strong><br>
+        <span class="blank-slot" data-ans="02信号(無信号)" data-alt-ans="無信号" onclick="activateBlank(this)"></span>時、停車状態でブレーキハンドルを<span class="blank-slot" data-ans="非常" onclick="activateBlank(this)"></span>位置、運転切換スイッチを<span class="blank-slot" data-ans="ATC" onclick="activateBlank(this)"></span>位置に操作したうえで、「非常運転ボタン」を押下すると、 “非常運転”が成立し、非常ブレーキは緩解し、<span class="blank-slot" data-ans="15km/h" onclick="activateBlank(this)"></span>以下の速度で走行可能となる。<br>
+        非常運転は、<span class="blank-slot" data-ans="01信号" onclick="activateBlank(this)"></span>以上の信号を受信または運転切換スイッチを<span class="blank-slot" data-ans="ATO" onclick="activateBlank(this)"></span>位置に操作した場合解除となる。
+    </div>
+
+    <div class="section-title">停車検知</div>
+    <div class="word-bank-container">
+        <div class="word-bank-title">語群</div>
+        <div class="word-chips" id="bank-teisha"></div>
+    </div>
+    <div class="question-card">
+        駅出発後10秒(またはインチング出発後5秒)経過し、検知速度1.2km/h以下を1秒継続すると停車を検知する。この時<span class="blank-slot" data-ans="転動防止" onclick="activateBlank(this)"></span>ブレーキを出力する。
+    </div>
+
     <div class="section-title">監視機能</div>
     <div class="word-bank-container">
         <div class="word-bank-title">語群</div>
@@ -349,8 +366,7 @@ h1 {
         不緩解検知は、全てのブレーキが<span class="blank-slot" data-ans="弛め" onclick="activateBlank(this)"></span>状態の時、<span class="blank-slot" data-ans="BC圧力" onclick="activateBlank(this)"></span>が規定時間内に規定圧力まで<span class="blank-slot" data-ans="下降" onclick="activateBlank(this)"></span>しない場合に検知する。これを検知すると<span class="blank-slot" data-ans="力行回路" onclick="activateBlank(this)"></span>を遮断し、当該車両のブレーキ受量器が<span class="blank-slot" data-ans="強制開放回路" onclick="activateBlank(this)"></span>を構成するが、この場合であっても<span class="blank-slot" data-ans="非常ブレーキ" onclick="activateBlank(this)"></span>は確実に作用する。
     </div>
 
-      <!-- 4. 戸閉表示灯回路 -->
-    <div class="section-title">戸閉表示灯回路</div>
+      <div class="section-title">戸閉表示灯回路</div>
     <div class="word-bank-container">
         <div class="word-bank-title">語群</div>
         <div class="word-chips" id="bank-circuit"></div>
@@ -365,7 +381,6 @@ h1 {
     </div>
 
 
-    <!-- すべり -->
     <div class="section-title">すべり</div>
     <div class="question-card ox-container">
         <div>回転磁界と回転子の速度が一定の場合トルクは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">発生しない</span>。</div>
@@ -382,7 +397,6 @@ h1 {
         </div>
     </div>
 
-    <!-- PWM方式 -->
     <div class="section-title">PWM方式</div>
     <div class="question-card ox-container">
         <div>PWM方式とは、 <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">パルス幅</span> を変化させる。</div>
@@ -392,7 +406,6 @@ h1 {
         </div>
     </div>
 
-    <!-- 抑速ブレーキ -->
     <div class="section-title">抑速ブレーキ</div>
     <div class="question-card ox-container">
         <div>抑速ブレーキ中に、何らかの要因により回生ブレーキが失効した場合は運転台モニタに <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">回生失効</span> が表示される。</div>
@@ -402,7 +415,6 @@ h1 {
         </div>
     </div>
 
-    <!-- 空転防止制御 -->
     <div class="section-title">空転防止制御</div>
     <div class="question-card ox-container">
         <div>雨天時は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">運転速度切換スイッチ</span> を <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;">空転防止</span> とする。</div>
@@ -412,7 +424,6 @@ h1 {
         </div>
     </div>
 
-    <!-- VVVFインバータ -->
     <div class="section-title">VVVFインバータ</div>
     <div class="question-card ox-container">
         <div>VVVFインバータ装置は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">直流1500ｖ</span> から <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;">三相交流</span> を作り出す。</div>
@@ -422,7 +433,6 @@ h1 {
         </div>
     </div>
 
-    <!-- VVVFとCVVF -->
     <div class="section-title">VVVFとCVVF</div>
     <div class="question-card ox-container">
         <div>VVVFは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">可変電圧可変周波数</span> で、CVVFは <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;">定電圧可変周波数</span> である。</div>
@@ -432,7 +442,6 @@ h1 {
         </div>
     </div>
 
-    <!-- 運転モードとインバータ制御 -->
     <div class="section-title">運転モードとインバータ制御</div>
     <div class="word-bank-container">
         <div class="word-bank-title">語群</div>
@@ -447,7 +456,38 @@ h1 {
         モードⅢ一定電力制御：モータ電流が最大に達し、以降は<span class="blank-slot" data-ans="一定" onclick="activateBlank(this)"></span>となるように<span class="blank-slot" data-ans="モータ電流" onclick="activateBlank(this)"></span>を制御する。インバータの<span class="blank-slot" data-ans="出力電力" onclick="activateBlank(this)"></span>は一定に保たれる。
     </div>
 
-    <!-- 圧力計 -->
+    <div class="section-title">SIV・SIV故障</div>
+    <div class="word-bank-container">
+        <div class="word-bank-title">語群</div>
+        <div class="word-chips" id="bank-siv"></div>
+    </div>
+    <div class="question-card">
+        SIV装置は架線の<span class="blank-slot" data-ans="DC1500V" onclick="activateBlank(this)"></span>を電源として、三相インバータにより<span class="blank-slot" data-ans="三相AC440V" onclick="activateBlank(this)"></span>に変換する為の装置である。<br>
+        整流装置は、インバータ装置より電力変換され<span class="blank-slot" data-ans="三相AC440V" onclick="activateBlank(this)"></span>を<span class="blank-slot" data-ans="AC100V" data-alt-ans="DC100V" onclick="activateBlank(this)"></span>、<span class="blank-slot" data-ans="DC100V" data-alt-ans="AC100V" onclick="activateBlank(this)"></span>に変換し、負荷に供給する装置である。<br><br>
+        軽故障故障が発生した場合、SIV装置を一旦停止させ、<span class="blank-slot" data-ans="3秒" onclick="activateBlank(this)"></span>後に自動再起動を開始する。(冷却器温度上昇の場合は冷却器の温度が復帰温度まで低下した時に自動再起動)。<br>
+        さらに自動再起動開始から<span class="blank-slot" data-ans="60秒" onclick="activateBlank(this)"></span>間は重故障判定タイマーがはたらき、この間で再度故障が発生しなければ定常運転に戻る。この場合TIMSには<span class="blank-slot" data-ans="交流故障" onclick="activateBlank(this)"></span>が表示される。<br>
+        重故障が発生した場合、あるいは軽故障再起動後<span class="blank-slot" data-ans="60秒" onclick="activateBlank(this)"></span>以内に再度故障が発生した場合には重故障となり、SIV装置は停止した状態でロックする。この場合、TIMSには<span class="blank-slot" data-ans="交流解放" onclick="activateBlank(this)"></span>が表示される。<br>
+        編成中1台のSIV装置が重故障等により動作不能となった場合(軽負荷休止制御によるSIVの停止は除く)、編成負荷に対する電力の供給が不足するため、SIV 装置からTIMSを経由して<span class="blank-slot" data-ans="空調装置" onclick="activateBlank(this)"></span>に対して<span class="blank-slot" data-ans="負荷半減指令" onclick="activateBlank(this)"></span>を出力し、<span class="blank-slot" data-ans="冷暖房装置" onclick="activateBlank(this)"></span>動作の制限を行う。
+    </div>
+
+    <div class="section-title">空調装置</div>
+    <div class="word-bank-container">
+        <div class="word-bank-title">語群</div>
+        <div class="word-chips" id="bank-kucho"></div>
+    </div>
+    <div class="question-card">
+        <span class="blank-slot" data-ans="高温" data-alt-ans="高圧" onclick="activateBlank(this)"></span>・<span class="blank-slot" data-ans="高圧" data-alt-ans="高温" onclick="activateBlank(this)"></span>の冷媒ガスを室外送風機より送られる室外空気で冷却して<span class="blank-slot" data-ans="常温" data-alt-ans="高圧" onclick="activateBlank(this)"></span>・<span class="blank-slot" data-ans="高圧" data-alt-ans="常温" onclick="activateBlank(this)"></span>の冷媒液にする。
+    </div>
+
+    <div class="section-title">乗務員室ファン</div>
+    <div class="question-card ox-container">
+        <div>乗務員室ファンは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">単相交流100v</span> である。</div>
+        <div class="ox-group" data-ans="o" data-target-text="単相交流100v、三相交流100v、直流100v、直流200v">
+            <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
+            <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
+        </div>
+    </div>
+
     <div class="section-title">圧力計</div>
     <div class="word-bank-container">
         <div class="word-bank-title">語群</div>
@@ -491,6 +531,15 @@ window.addEventListener('DOMContentLoaded', () => {
         "⑦", "⑩", "A", "C", "コンプ同期", "非常ブレーキ異常短絡", "②", "⑨", "コンプ元", "扉は全て施錠"
     ]);
 
+    setupWordBank('bank-unten', [
+        "15km/h", "無信号", "15信号", "02信号(無信号)", "非常", "ATC", "01信号", "ATO",
+        "非設", "入換", "75信号", "25km/h", "45km/h"
+    ]);
+
+    setupWordBank('bank-teisha', [
+        "転動防止", "非常", "常用", "抑速"
+    ]);
+
     setupWordBank('bank-3', [
         "MR圧力", "保安ブレーキ", "常用", "非常", 
         "BC圧力", "上昇", "補償ブレーキ", "非常ブレーキ", "弛め", "下降", "力行回路", "強制開放回路"
@@ -507,6 +556,17 @@ window.addEventListener('DOMContentLoaded', () => {
         "525Hz", "バイポーラ変調", "出力電圧", "周波数", "すべり周波数", 
         "モータ電流", "バイポーラ", "同期9パルス", "同期5パルス", "同期3パルス", 
         "3パルスモード", "最大電圧", "一定", "出力電力"
+    ]);
+
+    setupWordBank('bank-siv', [
+        "DC1500V", "三相AC440V", "AC100V", "DC100V", "3秒", "60秒", "交流故障", "交流解放",
+        "空調装置", "負荷半減指令", "冷暖房装置",
+        "DC600v", "AC1500v", "単相AC440v", "三相AC100v", "AC200v", "DC200v",
+        "10秒", "30秒", "5秒", "回生解放", "SIV故障", "制御装置", "ブレーキ"
+    ]);
+
+    setupWordBank('bank-kucho', [
+        "高温", "高圧", "常温", "低圧", "低温"
     ]);
 
     setupWordBank('bank-7', [
