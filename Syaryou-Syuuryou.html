@@ -12,7 +12,9 @@
     --card-bg: #ffffff;
     --text-color: #202124;
     --success-color: #34a853;
+    --success-bg: #e6f4ea;
     --error-color: #ea4335;
+    --error-bg: #fce8e6;
     --border-color: #dadce0;
 }
 body {
@@ -194,6 +196,12 @@ h1 {
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 10px;
+    transition: background-color 0.3s, border 0.3s;
+    border-radius: 8px;
+    padding: 15px;
+    background: #f8f9fa;
+    border: 1px solid var(--border-color);
+    margin-bottom: 15px;
 }
 .ox-group {
     display: inline-flex;
@@ -211,14 +219,14 @@ h1 {
     color: #5f6368;
 }
 .ox-btn.active-o {
+    background: var(--success-color);
+    color: #fff;
+    border-color: var(--success-color);
+}
+.ox-btn.active-x {
     background: var(--error-color);
     color: #fff;
     border-color: var(--error-color);
-}
-.ox-btn.active-x {
-    background: var(--primary-color);
-    color: #fff;
-    border-color: var(--primary-color);
 }
 .circuit-box {
     background: #ffffff;
@@ -272,6 +280,7 @@ h1 {
     <h1>鉄道車両(修了)</h1>
     <div class="instruction">
         空欄を選択してから、下の語群から該当する語句を選択して当てはめてください。<br>
+        正誤問題は〇×ボタンを選択してください。(答え合わせで正誤判定と正しい表現が表示されます)
     </div>
 
     <div class="section-title">空気漏れ対策</div>
@@ -294,15 +303,15 @@ h1 {
             <div class="car-item">Tc2<span>6600</span></div>
         </div>
         <br>
-        6500(M3)で空気漏れが発生した場合はMRコック（<span class="blank-slot" data-ans="⑦" data-alt-ans="⑩" onclick="activateBlank(this)"></span>と<span class="blank-slot" data-ans="⑩" data-alt-ans="⑦" onclick="activateBlank(this)"></span>）カット後、<span class="blank-slot" data-ans="A" onclick="activateBlank(this)"></span>配電盤の<span class="blank-slot" data-ans="コンプ同期" onclick="activateBlank(this)"></span>NFBを「切」、<span class="blank-slot" data-ans="C" onclick="activateBlank(this)"></span>配電盤の<span class="blank-slot" data-ans="非常ブレーキ異常短絡" onclick="activateBlank(this)"></span>NFBを「入」とする。<br>
-        6100(Tc1)、6600(Tc2)で空気漏れが発生した場合はMRコック（6100の場合は<span class="blank-slot" data-ans="②" onclick="activateBlank(this)"></span>、6600の場合は<span class="blank-slot" data-ans="⑨" onclick="activateBlank(this)"></span>）カット後、<span class="blank-slot" data-ans="A" onclick="activateBlank(this)"></span>配電盤の<span class="blank-slot" data-ans="コンプ同期" onclick="activateBlank(this)"></span>NFBを「切」、<span class="blank-slot" data-ans="コンプ元" onclick="activateBlank(this)"></span>NFBを「切」とする。<br>
+        6500(M3)で空気漏れが発生した場合はMRコック（<span class="blank-slot" data-ans="⑦" data-alt-ans="⑩" onclick="activateBlank(this)"></span>と<span class="blank-slot" data-ans="⑩" data-alt-ans="⑦" onclick="activateBlank(this)"></span>）カット後、<span class="blank-slot" data-ans="A" onclick="activateBlank(this)"></span>配電盤の<span class="blank-slot" data-ans="コンプ同期" data-alt-ans="コンプ元" onclick="activateBlank(this)"></span>NFBを「切」、<span class="blank-slot" data-ans="C" onclick="activateBlank(this)"></span>配電盤の<span class="blank-slot" data-ans="非常ブレーキ異常短絡" onclick="activateBlank(this)"></span>NFBを「入」とする。<br>
+        6100(Tc1)、6600(Tc2)で空気漏れが発生した場合はMRコック（6100の場合は<span class="blank-slot" data-ans="②" onclick="activateBlank(this)"></span>、6600の場合は<span class="blank-slot" data-ans="⑨" onclick="activateBlank(this)"></span>）カット後、<span class="blank-slot" data-ans="A" onclick="activateBlank(this)"></span>配電盤の<span class="blank-slot" data-ans="コンプ同期" data-alt-ans="コンプ元" onclick="activateBlank(this)"></span>NFBを「切」、<span class="blank-slot" data-ans="コンプ元" data-alt-ans="コンプ同期" onclick="activateBlank(this)"></span>NFBを「切」とする。<br>
         車両床下からの漏気で元空気管を切放したときは当該車両の<span class="blank-slot" data-ans="扉は全て施錠" onclick="activateBlank(this)"></span>すること。
     </div>
 
     <div class="section-title">車輪</div>
     <div class="question-card ox-container">
-        <div>車輪は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">一体圧延波打車輪</span> が用いられている。</div>
-        <div class="ox-group" data-ans="o" data-target-text="一体圧延波打車輪、一体波打車輪、弾性車輪">
+        <div>車輪は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-correct="一体圧延波打車輪" data-wrong="弾性車輪,輪心付車輪">一体圧延波打車輪</span> が用いられている。</div>
+        <div class="ox-group" data-wrong-text="弾性車輪,輪心付車輪">
             <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
             <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
         </div>
@@ -310,8 +319,8 @@ h1 {
 
     <div class="section-title">電動空気圧縮機</div>
     <div class="question-card ox-container">
-        <div>ドレン弁は電動空気圧縮機停止時に <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">排出</span> する。</div>
-        <div class="ox-group" data-ans="o" data-target-text="排出、閉鎖">
+        <div>ドレン弁は電動空気圧縮機停止時に <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-correct="排出" data-wrong="閉鎖,保持">排出</span> する。</div>
+        <div class="ox-group" data-wrong-text="閉鎖,保持">
             <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
             <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
         </div>
@@ -319,15 +328,15 @@ h1 {
 
     <div class="section-title">保安ブレーキ</div>
     <div class="question-card ox-container">
-        <div>保安ブレーキは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">応荷重なし</span> の <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;">一定圧力</span> の <span class="ox-target-text-3" style="padding: 2px 4px; border-radius: 4px;">一段ブレーキ</span> である。</div>
-        <div class="ox-group" data-ans="o" data-target-text="応荷重なし、応荷重あり" data-target-text-2="一定圧力、可変圧力" data-target-text-3="一段ブレーキ、多段ブレーキ">
+        <div>保安ブレーキは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-correct="応荷重なし" data-wrong="応荷重あり,機械式">応荷重なし</span> の <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;" data-correct="一定圧力" data-wrong="可変圧力,変動圧力">一定圧力</span> の <span class="ox-target-text-3" style="padding: 2px 4px; border-radius: 4px;" data-correct="一段ブレーキ" data-wrong="多段ブレーキ,二段ブレーキ">一段ブレーキ</span> である。</div>
+        <div class="ox-group" data-wrong-text="応荷重あり,可変圧力,多段ブレーキ">
             <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
             <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
         </div>
     </div>
     <div class="question-card ox-container">
-        <div>保安ブレーキと非常ブレーキとは電気的に逆だが、電磁弁は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">OFF型電磁弁</span> である。</div>
-        <div class="ox-group" data-ans="o" data-target-text="OFF型電磁弁、ON型">
+        <div>保安ブレーキと非常ブレーキとは電気的に逆だが、電磁弁は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-correct="OFF型電磁弁" data-wrong="ON型電磁弁,両動型電磁弁">OFF型電磁弁</span> である。</div>
+        <div class="ox-group" data-wrong-text="ON型電磁弁,両動型電磁弁">
             <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
             <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
         </div>
@@ -341,7 +350,7 @@ h1 {
     <div class="question-card">
         <strong>確認運転</strong><br>
         信号を受信し、停車状態で「確認運転ボタン」を押下すると、“確認運転” が成立し、緩和ブレーキ・常用最大ブレーキは緩解し、<span class="blank-slot" data-ans="15km/h" onclick="activateBlank(this)"></span>以下の速度で走行可能となる。<br>
-        確認運転は、<span class="blank-slot" data-ans="無信号" onclick="activateBlank(this)"></span>または<span class="blank-slot" data-ans="15信号" onclick="activateBlank(this)"></span>以上の信号を受信した場合解除となる。<br><br>
+        確認運転は、<span class="blank-slot" data-ans="02信号(無信号)" data-alt-ans="無信号" onclick="activateBlank(this)"></span>または<span class="blank-slot" data-ans="15信号" onclick="activateBlank(this)"></span>以上の信号を受信した場合解除となる。<br><br>
         <strong>非常運転</strong><br>
         <span class="blank-slot" data-ans="02信号(無信号)" data-alt-ans="無信号" onclick="activateBlank(this)"></span>時、停車状態でブレーキハンドルを<span class="blank-slot" data-ans="非常" onclick="activateBlank(this)"></span>位置、運転切換スイッチを<span class="blank-slot" data-ans="ATC" onclick="activateBlank(this)"></span>位置に操作したうえで、「非常運転ボタン」を押下すると、 “非常運転”が成立し、非常ブレーキは緩解し、<span class="blank-slot" data-ans="15km/h" onclick="activateBlank(this)"></span>以下の速度で走行可能となる。<br>
         非常運転は、<span class="blank-slot" data-ans="01信号" onclick="activateBlank(this)"></span>以上の信号を受信または運転切換スイッチを<span class="blank-slot" data-ans="ATO" onclick="activateBlank(this)"></span>位置に操作した場合解除となる。
@@ -366,7 +375,7 @@ h1 {
         不緩解検知は、全てのブレーキが<span class="blank-slot" data-ans="弛め" onclick="activateBlank(this)"></span>状態の時、<span class="blank-slot" data-ans="BC圧力" onclick="activateBlank(this)"></span>が規定時間内に規定圧力まで<span class="blank-slot" data-ans="下降" onclick="activateBlank(this)"></span>しない場合に検知する。これを検知すると<span class="blank-slot" data-ans="力行回路" onclick="activateBlank(this)"></span>を遮断し、当該車両のブレーキ受量器が<span class="blank-slot" data-ans="強制開放回路" onclick="activateBlank(this)"></span>を構成するが、この場合であっても<span class="blank-slot" data-ans="非常ブレーキ" onclick="activateBlank(this)"></span>は確実に作用する。
     </div>
 
-      <div class="section-title">戸閉表示灯回路</div>
+    <div class="section-title">戸閉表示灯回路</div>
     <div class="word-bank-container">
         <div class="word-bank-title">語群</div>
         <div class="word-chips" id="bank-circuit"></div>
@@ -383,15 +392,15 @@ h1 {
 
     <div class="section-title">すべり</div>
     <div class="question-card ox-container">
-        <div>回転磁界と回転子の速度が一定の場合トルクは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">発生しない</span>。</div>
-        <div class="ox-group" data-ans="o" data-target-text="発生しない、発生する">
+        <div>回転磁界と回転子の速度が一定の場合トルクは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-correct="発生しない" data-wrong="発生する,常に一定">発生しない</span>。</div>
+        <div class="ox-group" data-wrong-text="発生する,常に一定">
             <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
             <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
         </div>
     </div>
     <div class="question-card ox-container">
-        <div>安定領域とは、すべりとトルクが <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">正比例</span> している状態である。</div>
-        <div class="ox-group" data-ans="o" data-target-text="正比例、反比例">
+        <div>安定領域とは、すべりとトルクが <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-correct="正比例" data-wrong="反比例,無関係">正比例</span> している状態である。</div>
+        <div class="ox-group" data-wrong-text="反比例,無関係">
             <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
             <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
         </div>
@@ -399,8 +408,8 @@ h1 {
 
     <div class="section-title">PWM方式</div>
     <div class="question-card ox-container">
-        <div>PWM方式とは、 <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">パルス幅</span> を変化させる。</div>
-        <div class="ox-group" data-ans="o" data-target-text="パルス幅、電圧、電流">
+        <div>PWM方式とは、 <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-correct="パルス幅" data-wrong="電圧,周波数">パルス幅</span> を変化させる。</div>
+        <div class="ox-group" data-wrong-text="電圧,周波数">
             <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
             <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
         </div>
@@ -408,8 +417,8 @@ h1 {
 
     <div class="section-title">抑速ブレーキ</div>
     <div class="question-card ox-container">
-        <div>抑速ブレーキ中に、何らかの要因により回生ブレーキが失効した場合は運転台モニタに <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">回生失効</span> が表示される。</div>
-        <div class="ox-group" data-ans="o" data-target-text="回生失効、勾配起動、回生開放">
+        <div>抑速ブレーキ中に、何らかの要因により回生ブレーキが失効した場合は運転台モニタに <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-correct="回生失効" data-wrong="回生開放,回生遮断">回生失効</span> が表示される。</div>
+        <div class="ox-group" data-wrong-text="回生開放,回生遮断">
             <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
             <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
         </div>
@@ -417,8 +426,8 @@ h1 {
 
     <div class="section-title">空転防止制御</div>
     <div class="question-card ox-container">
-        <div>雨天時は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">運転速度切換スイッチ</span> を <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;">空転防止</span> とする。</div>
-        <div class="ox-group" data-ans="o" data-target-text="運転速度切換スイッチ、運転切換スイッチ" data-target-text-2="空転防止、回復、平常、非設、ATC">
+        <div>雨天時は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-correct="運転速度切換スイッチ" data-wrong="運転切換スイッチ,主幹制御器">運転速度切換スイッチ</span> を <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;" data-correct="空転防止" data-wrong="回復,滑走防止">空転防止</span> とする。</div>
+        <div class="ox-group" data-wrong-text="運転切換スイッチ,回復">
             <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
             <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
         </div>
@@ -426,8 +435,8 @@ h1 {
 
     <div class="section-title">VVVFインバータ</div>
     <div class="question-card ox-container">
-        <div>VVVFインバータ装置は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">直流1500ｖ</span> から <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;">三相交流</span> を作り出す。</div>
-        <div class="ox-group" data-ans="o" data-target-text="直流1500ｖ、交流1500ｖ、交流440ｖ、直流100ｖ" data-target-text-2="三相交流、単相交流、直流電流">
+        <div>VVVFインバータ装置は <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-correct="直流1500v" data-wrong="交流1500v,直流600v">直流1500v</span> から <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;" data-correct="三相交流" data-wrong="単相交流,直流">三相交流</span> を作り出す。</div>
+        <div class="ox-group" data-wrong-text="交流1500v,単相交流">
             <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
             <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
         </div>
@@ -435,8 +444,8 @@ h1 {
 
     <div class="section-title">VVVFとCVVF</div>
     <div class="question-card ox-container">
-        <div>VVVFは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">可変電圧可変周波数</span> で、CVVFは <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;">定電圧可変周波数</span> である。</div>
-        <div class="ox-group" data-ans="o" data-target-text="可変電圧可変周波数、定電圧可変周波数、可変電圧定周波数、定電圧定周波数" data-target-text-2="定電圧可変周波数、可変電圧可変周波数、可変電圧定周波数、定電圧定周波数">
+        <div>VVVFは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-correct="可変電圧可変周波数" data-wrong="定電圧可変周波数,可変電圧定周波数">可変電圧可変周波数</span> で、CVVFは <span class="ox-target-text-2" style="padding: 2px 4px; border-radius: 4px;" data-correct="定電圧可変周波数" data-wrong="可変電圧可変周波数,定電圧定周波数">定電圧可変周波数</span> である。</div>
+        <div class="ox-group" data-wrong-text="定電圧可変周波数,可変電圧可変周波数">
             <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
             <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
         </div>
@@ -481,8 +490,8 @@ h1 {
 
     <div class="section-title">乗務員室ファン</div>
     <div class="question-card ox-container">
-        <div>乗務員室ファンは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;">単相交流100v</span> である。</div>
-        <div class="ox-group" data-ans="o" data-target-text="単相交流100v、三相交流100v、直流100v、直流200v">
+        <div>乗務員室ファンは <span class="ox-target-text" style="padding: 2px 4px; border-radius: 4px;" data-correct="単相交流100v" data-wrong="三相交流100v,直流100v">単相交流100v</span> である。</div>
+        <div class="ox-group" data-wrong-text="三相交流100v,直流100v">
             <button type="button" class="ox-btn" onclick="setOx(this, 'o')">〇</button>
             <button type="button" class="ox-btn" onclick="setOx(this, 'x')">×</button>
         </div>
@@ -503,28 +512,52 @@ h1 {
 
 <script>
 window.addEventListener('DOMContentLoaded', () => {
-    // 1. 〇×問題のランダム変更処理
+    // 〇×問題のランダム変更処理（全て○または全て×にならないように強制調整するロジック）
     const oxGroups = document.querySelectorAll('.ox-group');
-    oxGroups.forEach(group => {
-        ['data-target-text', 'data-target-text-2', 'data-target-text-3'].forEach((attrName, idx) => {
-            const candidatesStr = group.getAttribute(attrName);
-            if (candidatesStr && candidatesStr.includes('、')) {
-                const list = candidatesStr.split('、');
-                const randomChoice = list[Math.floor(Math.random() * list.length)];
-                
-                group.setAttribute(attrName + '-current', randomChoice);
-                group.setAttribute(attrName + '-correct', list[0]); // リストの1番目が正しい答え(○)
-                
-                const selector = idx === 0 ? '.ox-target-text' : `.ox-target-text-${idx + 1}`;
-                const textSpan = group.parentElement.querySelector(selector);
-                if (textSpan) {
-                    textSpan.textContent = randomChoice;
-                }
+    const totalOx = oxGroups.length;
+    
+    // あらかじめランダムな真偽値の配列を作るが、すべてtrue（○）またはすべてfalse（×）にならないよう担保する
+    let resultsArray = [];
+    let allSame = true;
+    
+    while (allSame && totalOx > 1) {
+        resultsArray = [];
+        for (let i = 0; i < totalOx; i++) {
+            resultsArray.push(Math.random() < 0.5);
+        }
+        const first = resultsArray[0];
+        allSame = resultsArray.every(val => val === first);
+    }
+    // 万が一 totalOx が 1 以下の場合はそのまま
+    if (totalOx <= 1 && totalOx === 1) {
+        resultsArray = [Math.random() < 0.5];
+    }
+
+    oxGroups.forEach((group, index) => {
+        const targets = group.parentElement.querySelectorAll('[class^="ox-target-text"]');
+        const wrongTextsAttr = group.getAttribute('data-wrong-text');
+        const wrongList = wrongTextsAttr ? wrongTextsAttr.split(',') : [];
+
+        targets.forEach((targetSpan, idx) => {
+            const correctText = targetSpan.getAttribute('data-correct');
+            const currentWrongCandidates = targetSpan.getAttribute('data-wrong') ? targetSpan.getAttribute('data-wrong').split(',') : wrongList;
+            const chosenWrongText = currentWrongCandidates[Math.floor(Math.random() * currentWrongCandidates.length)] || "誤りの文言";
+
+            const isCircle = resultsArray[index];
+            
+            if (isCircle) {
+                targetSpan.textContent = correctText;
+                group.setAttribute('data-actual-type', 'o');
+            } else {
+                targetSpan.textContent = chosenWrongText;
+                group.setAttribute('data-actual-type', 'x');
+                targetSpan.setAttribute('data-wrong-content', chosenWrongText);
+                targetSpan.setAttribute('data-correct-content', correctText);
             }
         });
     });
 
-    // 2. 各語群のセットアップ
+    // 各語群のセットアップ
     setupWordBank('bank-1', [
         "コンプヒータ", "試運転非常ブレーキ", "非常ブレーキスイッチ", "保安ブレーキスイッチ", 
         "③", "④", "⑤", "⑥", "⑧", "B", "B'", "D", "E", "F", 
@@ -626,10 +659,11 @@ function checkAnswers() {
     let totalCount = 0;
 
     document.querySelectorAll('.correction-text').forEach(el => el.remove());
-    document.querySelectorAll('.ox-correction').forEach(el => el.remove());
     document.querySelectorAll('[class^="ox-target-text"]').forEach(el => {
-        el.style.backgroundColor = 'transparent';
         el.style.color = 'inherit';
+        if (el.hasAttribute('data-wrong-content')) {
+            el.innerHTML = el.getAttribute('data-actual-type') === 'o' ? el.getAttribute('data-correct-content') : el.getAttribute('data-wrong-content');
+        }
     });
 
     // 1. 穴埋め判定
@@ -648,10 +682,10 @@ function checkAnswers() {
         if (isCorrect) {
             correctCount++;
             b.style.borderColor = 'var(--success-color)';
-            b.style.backgroundColor = '#e6f4ea';
+            b.style.backgroundColor = 'var(--success-bg)';
         } else {
             b.style.borderColor = 'var(--error-color)';
-            b.style.backgroundColor = '#fce8e6';
+            b.style.backgroundColor = 'var(--error-bg)';
             const correction = document.createElement('span');
             correction.className = 'correction-text';
             correction.textContent = `正: ${correctAns}`;
@@ -659,7 +693,7 @@ function checkAnswers() {
         }
     });
 
-    // 2. 〇×判定
+    // 2. 〇×判定（背景色反映・取消線＆正しい答の表示）
     const oxGroups = document.querySelectorAll('.ox-group');
     totalCount += oxGroups.length;
     oxGroups.forEach(group => {
@@ -669,52 +703,30 @@ function checkAnswers() {
             selectedVal = activeBtn.classList.contains('active-o') ? 'o' : 'x';
         }
 
-        let allSubCorrect = true;
+        const actualType = group.getAttribute('data-actual-type'); 
+        const isGroupCorrect = (selectedVal === actualType);
 
-        ['data-target-text', 'data-target-text-2', 'data-target-text-3'].forEach((attrName) => {
-            const current = group.getAttribute(attrName + '-current');
-            const correct = group.getAttribute(attrName + '-correct');
-            if (current && correct) {
-                const shouldBe = (current === correct) ? 'o' : 'x';
-                if (selectedVal !== shouldBe) {
-                    allSubCorrect = false;
-                }
+        const container = group.closest('.ox-container');
+
+        if (isGroupCorrect && selectedVal !== '') {
+            correctCount++;
+            container.style.border = '2.5px solid var(--success-color)';
+            container.style.backgroundColor = 'var(--success-bg)';
+        } else {
+            container.style.border = '2.5px solid var(--error-color)';
+            container.style.backgroundColor = 'var(--error-bg)';
+        }
+
+        group.parentElement.querySelectorAll('[class^="ox-target-text"]').forEach(el => {
+            const actual = el.getAttribute('data-actual-type') || actualType;
+            if (actual === 'x') {
+                const wrongText = el.getAttribute('data-wrong-content');
+                const correctText = el.getAttribute('data-correct-content');
+                el.innerHTML = `<span style="text-decoration: line-through; color: var(--error-color); margin-right: 4px;">${wrongText}</span><strong style="color: var(--success-color);">${correctText}</strong>`;
+            } else {
+                el.style.color = 'var(--success-color)';
             }
         });
-
-        if (allSubCorrect && selectedVal !== '') {
-            correctCount++;
-            group.style.outline = '2px solid var(--success-color)';
-            group.querySelectorAll('[class^="ox-target-text"]').forEach(el => {
-                el.style.backgroundColor = '#e6f4ea';
-                el.style.color = 'var(--success-color)';
-            });
-        } else {
-            group.style.outline = '2px solid var(--error-color)';
-            group.querySelectorAll('[class^="ox-target-text"]').forEach((el, idx) => {
-                const attrName = idx === 0 ? 'data-target-text' : `data-target-text-${idx + 1}`;
-                const correctText = group.getAttribute(attrName + '-correct');
-                if (correctText) {
-                    el.style.backgroundColor = '#fce8e6';
-                    el.style.color = 'var(--error-color)';
-                }
-            });
-
-            // ❌の場合、正しい答え(○の答え)を表示する要素を追加
-            if (!group.querySelector('.ox-correction')) {
-                const correctionDiv = document.createElement('div');
-                correctionDiv.className = 'ox-correction';
-                correctionDiv.style.cssText = 'font-size: 0.8rem; color: var(--error-color); margin-top: 4px; width: 100%; text-align: right;';
-                
-                let correctStrs = [];
-                ['data-target-text', 'data-target-text-2', 'data-target-text-3'].forEach((attrName) => {
-                    const c = group.getAttribute(attrName + '-correct');
-                    if (c) correctStrs.push(c);
-                });
-                correctionDiv.textContent = `【正しい答え】 ${correctStrs.join(' / ')}`;
-                group.parentElement.appendChild(correctionDiv);
-            }
-        }
     });
 
     const resultBox = document.getElementById('resultBox');
