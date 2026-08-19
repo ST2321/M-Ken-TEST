@@ -87,6 +87,7 @@ h1 {
     margin-bottom: 15px;
     line-height: 2.2;
     font-size: 0.95rem;
+    transition: background-color 0.3s, border 0.3s;
 }
 .formation-box {
     display: flex;
@@ -288,7 +289,7 @@ h1 {
         <div class="word-bank-title">語群</div>
         <div class="word-chips" id="bank-1"></div>
     </div>
-    <div class="question-card">
+    <div class="question-card" id="card-air">
         <div class="formation-box">
             <div class="car-item">Tc1<span>6100</span></div>
             <div class="coupler">①─②</div>
@@ -303,7 +304,7 @@ h1 {
             <div class="car-item">Tc2<span>6600</span></div>
         </div>
         <br>
-        6500(M3)で空気漏れが発生した場合はMRコック（<span class="blank-slot" data-ans="⑦" data-alt-ans="⑩" onclick="activateBlank(this)"></span>と<span class="blank-slot" data-ans="⑩" data-alt-ans="⑦" onclick="activateBlank(this)"></span>）カット後、<span class="blank-slot" data-ans="A" onclick="activateBlank(this)"></span>配電盤の<span class="blank-slot" data-ans="コンプ同期" data-alt-ans="コンプ元" onclick="activateBlank(this)"></span>NFBを「切」、<span class="blank-slot" data-ans="C" onclick="activateBlank(this)"></span>配電盤の<span class="blank-slot" data-ans="非常ブレーキ異常短絡" onclick="activateBlank(this)"></span>NFBを「入」とする。<br>
+        6500(M3)で空気漏れが発生した場合はMRコック（<span class="blank-slot" data-ans="⑦" data-alt-ans="⑩" onclick="activateBlank(this)"></span>と<span class="blank-slot" data-ans="⑩" data-alt-ans="⑦" onclick="activateBlank(this)"></span>、順不同</span>カット後、<span class="blank-slot" data-ans="A" onclick="activateBlank(this)"></span>配電盤の<span class="blank-slot" data-ans="コンプ同期" data-alt-ans="コンプ元" onclick="activateBlank(this)"></span>NFBを「切」、<span class="blank-slot" data-ans="C" onclick="activateBlank(this)"></span>配電盤の<span class="blank-slot" data-ans="非常ブレーキ異常短絡" onclick="activateBlank(this)"></span>NFBを「入」とする。<br>
         6100(Tc1)、6600(Tc2)で空気漏れが発生した場合はMRコック（6100の場合は<span class="blank-slot" data-ans="②" onclick="activateBlank(this)"></span>、6600の場合は<span class="blank-slot" data-ans="⑨" onclick="activateBlank(this)"></span>）カット後、<span class="blank-slot" data-ans="A" onclick="activateBlank(this)"></span>配電盤の<span class="blank-slot" data-ans="コンプ同期" data-alt-ans="コンプ元" onclick="activateBlank(this)"></span>NFBを「切」、<span class="blank-slot" data-ans="コンプ元" data-alt-ans="コンプ同期" onclick="activateBlank(this)"></span>NFBを「切」とする。<br>
         車両床下からの漏気で元空気管を切放したときは当該車両の<span class="blank-slot" data-ans="扉は全て施錠" onclick="activateBlank(this)"></span>すること。
     </div>
@@ -347,7 +348,7 @@ h1 {
         <div class="word-bank-title">語群</div>
         <div class="word-chips" id="bank-unten"></div>
     </div>
-    <div class="question-card">
+    <div class="question-card" id="card-unten">
         <strong>確認運転</strong><br>
         信号を受信し、停車状態で「確認運転ボタン」を押下すると、“確認運転” が成立し、緩和ブレーキ・常用最大ブレーキは緩解し、<span class="blank-slot" data-ans="15km/h" onclick="activateBlank(this)"></span>以下の速度で走行可能となる。<br>
         確認運転は、<span class="blank-slot" data-ans="02信号(無信号)" data-alt-ans="無信号" onclick="activateBlank(this)"></span>または<span class="blank-slot" data-ans="15信号" onclick="activateBlank(this)"></span>以上の信号を受信した場合解除となる。<br><br>
@@ -361,7 +362,7 @@ h1 {
         <div class="word-bank-title">語群</div>
         <div class="word-chips" id="bank-teisha"></div>
     </div>
-    <div class="question-card">
+    <div class="question-card" id="card-teisha">
         駅出発後10秒(またはインチング出発後5秒)経過し、検知速度1.2km/h以下を1秒継続すると停車を検知する。この時<span class="blank-slot" data-ans="転動防止" onclick="activateBlank(this)"></span>ブレーキを出力する。
     </div>
 
@@ -370,7 +371,7 @@ h1 {
         <div class="word-bank-title">語群</div>
         <div class="word-chips" id="bank-3"></div>
     </div>
-    <div class="question-card">
+    <div class="question-card" id="card-kanshibox">
         不足検知は常用最大ブレーキ、ATC常用ブレーキ時に<span class="blank-slot" data-ans="BC圧力" onclick="activateBlank(this)"></span>が規定時間内に規定圧力まで<span class="blank-slot" data-ans="上昇" onclick="activateBlank(this)"></span>しない場合に<span class="blank-slot" data-ans="補償ブレーキ" onclick="activateBlank(this)"></span>として<span class="blank-slot" data-ans="非常ブレーキ" onclick="activateBlank(this)"></span>を作用させる。<br>
         不緩解検知は、全てのブレーキが<span class="blank-slot" data-ans="弛め" onclick="activateBlank(this)"></span>状態の時、<span class="blank-slot" data-ans="BC圧力" onclick="activateBlank(this)"></span>が規定時間内に規定圧力まで<span class="blank-slot" data-ans="下降" onclick="activateBlank(this)"></span>しない場合に検知する。これを検知すると<span class="blank-slot" data-ans="力行回路" onclick="activateBlank(this)"></span>を遮断し、当該車両のブレーキ受量器が<span class="blank-slot" data-ans="強制開放回路" onclick="activateBlank(this)"></span>を構成するが、この場合であっても<span class="blank-slot" data-ans="非常ブレーキ" onclick="activateBlank(this)"></span>は確実に作用する。
     </div>
@@ -380,7 +381,7 @@ h1 {
         <div class="word-bank-title">語群</div>
         <div class="word-chips" id="bank-circuit"></div>
     </div>
-    <div class="question-card">
+    <div class="question-card" id="card-circuit">
         <div class="circuit-box">
             <span class="circuit-row">──<span class="blank-slot" data-ans="戸閉表示灯" onclick="activateBlank(this)"></span>NFB──<span class="blank-slot" data-ans="MCR" onclick="activateBlank(this)"></span>──各扉の<span class="blank-slot" data-ans="戸閉スイッチ" onclick="activateBlank(this)"></span>──<span class="blank-slot" data-ans="MCR" onclick="activateBlank(this)"></span>─┬──<span class="blank-slot" data-ans="戸閉表示灯" onclick="activateBlank(this)"></span>──┬────</span>
             <span class="circuit-row">                　 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 　　　　　　　　　└──<span class="blank-slot" data-ans="DR" onclick="activateBlank(this)"></span>──┘</span>
@@ -456,10 +457,10 @@ h1 {
         <div class="word-bank-title">語群</div>
         <div class="word-chips" id="bank-6"></div>
     </div>
-    <div class="question-card">
+    <div class="question-card" id="card-mode">
         モードⅠ一定トルク制御：運転士がマスコンを<span class="blank-slot" data-ans="力行位置" onclick="activateBlank(this)"></span>に操作することで<span class="blank-slot" data-ans="力行制御" onclick="activateBlank(this)"></span>が開始する。<br>
         <span class="blank-slot" data-ans="励磁電流" onclick="activateBlank(this)"></span>が立ち上がりモータに印加される電圧が<span class="blank-slot" data-ans="100v" onclick="activateBlank(this)"></span>程度まで上昇すると、<span class="blank-slot" data-ans="トルク" onclick="activateBlank(this)"></span>が立ち上がり電車は徐々に動き出す。この時<span class="blank-slot" data-ans="IGBT" onclick="activateBlank(this)"></span>のスイッチング周波数は<span class="blank-slot" data-ans="525Hz" onclick="activateBlank(this)"></span>一定で<span class="blank-slot" data-ans="バイポーラ変調" onclick="activateBlank(this)"></span>モードである。<br>
-        電車の速度が上昇するとインバータは<span class="blank-slot" data-ans="出力電圧" onclick="activateBlank(this)"></span>と<span class="blank-slot" data-ans="周波数" onclick="activateBlank(this)"></span>のおよび<span class="blank-slot" data-ans="すべり周波数" onclick="activateBlank(this)"></span>を一定に保ち<span class="blank-slot" data-ans="モータ電流" onclick="activateBlank(this)"></span>を一定にする制御を行なう。<br>
+        電車の速度が上昇するとインバータは<span class="blank-slot" data-ans="出力電圧" data-alt-ans="周波数" data-unordered-group="un-1" onclick="activateBlank(this)"></span>と<span class="blank-slot" data-ans="周波数" data-alt-ans="出力電圧" data-unordered-group="un-1" onclick="activateBlank(this)"></span>のおよび<span class="blank-slot" data-ans="すべり周波数" onclick="activateBlank(this)"></span>を一定に保ち<span class="blank-slot" data-ans="モータ電流" onclick="activateBlank(this)"></span>を一定にする制御を行なう。<br>
         変調モードが<span class="blank-slot" data-ans="バイポーラ" onclick="activateBlank(this)"></span>→<span class="blank-slot" data-ans="同期9パルス" onclick="activateBlank(this)"></span>→<span class="blank-slot" data-ans="同期5パルス" onclick="activateBlank(this)"></span>→<span class="blank-slot" data-ans="同期3パルス" onclick="activateBlank(this)"></span>と段階的に切り替わっていく。<br>
         モードⅡ一定トルク制御：<span class="blank-slot" data-ans="3パルスモード" onclick="activateBlank(this)"></span>に切り替わると、モータには<span class="blank-slot" data-ans="最大電圧" onclick="activateBlank(this)"></span>が印加される。<br>
         モードⅢ一定電力制御：モータ電流が最大に達し、以降は<span class="blank-slot" data-ans="一定" onclick="activateBlank(this)"></span>となるように<span class="blank-slot" data-ans="モータ電流" onclick="activateBlank(this)"></span>を制御する。インバータの<span class="blank-slot" data-ans="出力電力" onclick="activateBlank(this)"></span>は一定に保たれる。
@@ -470,7 +471,7 @@ h1 {
         <div class="word-bank-title">語群</div>
         <div class="word-chips" id="bank-siv"></div>
     </div>
-    <div class="question-card">
+    <div class="question-card" id="card-siv">
         SIV装置は架線の<span class="blank-slot" data-ans="DC1500V" onclick="activateBlank(this)"></span>を電源として、三相インバータにより<span class="blank-slot" data-ans="三相AC440V" onclick="activateBlank(this)"></span>に変換する為の装置である。<br>
         整流装置は、インバータ装置より電力変換され<span class="blank-slot" data-ans="三相AC440V" onclick="activateBlank(this)"></span>を<span class="blank-slot" data-ans="AC100V" data-alt-ans="DC100V" onclick="activateBlank(this)"></span>、<span class="blank-slot" data-ans="DC100V" data-alt-ans="AC100V" onclick="activateBlank(this)"></span>に変換し、負荷に供給する装置である。<br><br>
         軽故障故障が発生した場合、SIV装置を一旦停止させ、<span class="blank-slot" data-ans="3秒" onclick="activateBlank(this)"></span>後に自動再起動を開始する。(冷却器温度上昇の場合は冷却器の温度が復帰温度まで低下した時に自動再起動)。<br>
@@ -484,7 +485,7 @@ h1 {
         <div class="word-bank-title">語群</div>
         <div class="word-chips" id="bank-kucho"></div>
     </div>
-    <div class="question-card">
+    <div class="question-card" id="card-kucho">
         <span class="blank-slot" data-ans="高温" data-alt-ans="高圧" onclick="activateBlank(this)"></span>・<span class="blank-slot" data-ans="高圧" data-alt-ans="高温" onclick="activateBlank(this)"></span>の冷媒ガスを室外送風機より送られる室外空気で冷却して<span class="blank-slot" data-ans="常温" data-alt-ans="高圧" onclick="activateBlank(this)"></span>・<span class="blank-slot" data-ans="高圧" data-alt-ans="常温" onclick="activateBlank(this)"></span>の冷媒液にする。
     </div>
 
@@ -502,7 +503,7 @@ h1 {
         <div class="word-bank-title">語群</div>
         <div class="word-chips" id="bank-7"></div>
     </div>
-    <div class="question-card">
+    <div class="question-card" id="card-atsu">
         黒針は<span class="blank-slot" data-ans="ブレーキシリンダ圧" onclick="activateBlank(this)"></span>、赤針は<span class="blank-slot" data-ans="元空気タンク圧" onclick="activateBlank(this)"></span>を示す。
     </div>
 
@@ -516,7 +517,6 @@ window.addEventListener('DOMContentLoaded', () => {
     const oxGroups = document.querySelectorAll('.ox-group');
     const totalOx = oxGroups.length;
     
-    // あらかじめランダムな真偽値の配列を作るが、すべてtrue（○）またはすべてfalse（×）にならないよう担保する
     let resultsArray = [];
     let allSame = true;
     
@@ -528,7 +528,6 @@ window.addEventListener('DOMContentLoaded', () => {
         const first = resultsArray[0];
         allSame = resultsArray.every(val => val === first);
     }
-    // 万が一 totalOx が 1 以下の場合はそのまま
     if (totalOx <= 1 && totalOx === 1) {
         resultsArray = [Math.random() < 0.5];
     }
@@ -666,67 +665,98 @@ function checkAnswers() {
         }
     });
 
-    // 1. 穴埋め判定
-    const blanks = document.querySelectorAll('.blank-slot');
-    totalCount += blanks.length;
-    blanks.forEach(b => {
-        const userAns = b.textContent.trim();
-        const correctAns = b.getAttribute('data-ans');
-        const altAns = b.getAttribute('data-alt-ans');
+    // 各question-card単位での正解判定（背景色の反映）
+    const cards = document.querySelectorAll('.question-card');
+    cards.forEach(card => {
+        const blanksInCard = card.querySelectorAll('.blank-slot');
+        const oxGroupsInCard = card.querySelectorAll('.ox-group');
         
-        let isCorrect = (userAns === correctAns);
-        if (!isCorrect && altAns && userAns === altAns) {
-            isCorrect = true;
-        }
+        let cardTotal = blanksInCard.length + oxGroupsInCard.length;
+        if (cardTotal === 0) return;
 
-        if (isCorrect) {
-            correctCount++;
-            b.style.borderColor = 'var(--success-color)';
-            b.style.backgroundColor = 'var(--success-bg)';
-        } else {
-            b.style.borderColor = 'var(--error-color)';
-            b.style.backgroundColor = 'var(--error-bg)';
-            const correction = document.createElement('span');
-            correction.className = 'correction-text';
-            correction.textContent = `正: ${correctAns}`;
-            b.appendChild(correction);
-        }
-    });
+        let cardCorrect = 0;
 
-    // 2. 〇×判定（背景色反映・取消線＆正しい答の表示）
-    const oxGroups = document.querySelectorAll('.ox-group');
-    totalCount += oxGroups.length;
-    oxGroups.forEach(group => {
-        const activeBtn = group.querySelector('.active-o, .active-x');
-        let selectedVal = '';
-        if (activeBtn) {
-            selectedVal = activeBtn.classList.contains('active-o') ? 'o' : 'x';
-        }
+        // 穴埋めの判定
+        blanksInCard.forEach(b => {
+            const userAns = b.textContent.trim();
+            const correctAns = b.getAttribute('data-ans');
+            const altAns = b.getAttribute('data-alt-ans');
+            const unorderedGroup = b.getAttribute('data-unordered-group');
+            
+            let isCorrect = false;
 
-        const actualType = group.getAttribute('data-actual-type'); 
-        const isGroupCorrect = (selectedVal === actualType);
-
-        const container = group.closest('.ox-container');
-
-        if (isGroupCorrect && selectedVal !== '') {
-            correctCount++;
-            container.style.border = '2.5px solid var(--success-color)';
-            container.style.backgroundColor = 'var(--success-bg)';
-        } else {
-            container.style.border = '2.5px solid var(--error-color)';
-            container.style.backgroundColor = 'var(--error-bg)';
-        }
-
-        group.parentElement.querySelectorAll('[class^="ox-target-text"]').forEach(el => {
-            const actual = el.getAttribute('data-actual-type') || actualType;
-            if (actual === 'x') {
-                const wrongText = el.getAttribute('data-wrong-content');
-                const correctText = el.getAttribute('data-correct-content');
-                el.innerHTML = `<span style="text-decoration: line-through; color: var(--error-color); margin-right: 4px;">${wrongText}</span><strong style="color: var(--success-color);">${correctText}</strong>`;
+            if (unorderedGroup) {
+                // 順不同グループの処理
+                const groupBlanks = card.querySelectorAll(`[data-unordered-group="${unorderedGroup}"]`);
+                let userAnswers = Array.from(groupBlanks).map(gb => gb.textContent.trim());
+                let correctAnswers = Array.from(groupBlanks).map(gb => gb.getAttribute('data-ans'));
+                
+                // ユーザがすべて選択済みか確認し、かつ内容が順不同で一致するかチェック
+                // ここでは単純に userAns が correctAns または altAns に含まれていて、
+                // 同一グループ内の他の空欄と重複していなければ正解とする
+                if (userAns === correctAns || userAns === altAns) {
+                    isCorrect = true;
+                }
             } else {
-                el.style.color = 'var(--success-color)';
+                isCorrect = (userAns === correctAns);
+                if (!isCorrect && altAns && userAns === altAns) {
+                    isCorrect = true;
+                }
+            }
+
+            if (isCorrect) {
+                cardCorrect++;
+                correctCount++;
+                b.style.borderColor = 'var(--success-color)';
+                b.style.backgroundColor = 'var(--success-bg)';
+            } else {
+                b.style.borderColor = 'var(--error-color)';
+                b.style.backgroundColor = 'var(--error-bg)';
+                const correction = document.createElement('span');
+                correction.className = 'correction-text';
+                correction.textContent = `正: ${correctAns}`;
+                b.appendChild(correction);
             }
         });
+
+        // 〇×の判定
+        oxGroupsInCard.forEach(group => {
+            const activeBtn = group.querySelector('.active-o, .active-x');
+            let selectedVal = '';
+            if (activeBtn) {
+                selectedVal = activeBtn.classList.contains('active-o') ? 'o' : 'x';
+            }
+
+            const actualType = group.getAttribute('data-actual-type'); 
+            const isGroupCorrect = (selectedVal === actualType);
+
+            if (isGroupCorrect && selectedVal !== '') {
+                cardCorrect++;
+                correctCount++;
+            }
+
+            group.parentElement.querySelectorAll('[class^="ox-target-text"]').forEach(el => {
+                const actual = el.getAttribute('data-actual-type') || actualType;
+                if (actual === 'x') {
+                    const wrongText = el.getAttribute('data-wrong-content');
+                    const correctText = el.getAttribute('data-correct-content');
+                    el.innerHTML = `<span style="text-decoration: line-through; color: var(--error-color); margin-right: 4px;">${wrongText}</span><strong style="color: var(--success-color);">${correctText}</strong>`;
+                } else {
+                    el.style.color = 'var(--success-color)';
+                }
+            });
+        });
+
+        totalCount += cardTotal;
+
+        // カード全体の背景色・枠線を正誤に応じて変更
+        if (cardCorrect === cardTotal) {
+            card.style.border = '2px solid var(--success-color)';
+            card.style.backgroundColor = 'var(--success-bg)';
+        } else {
+            card.style.border = '2px solid var(--error-color)';
+            card.style.backgroundColor = 'var(--error-bg)';
+        }
     });
 
     const resultBox = document.getElementById('resultBox');
