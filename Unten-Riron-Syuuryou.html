@@ -86,6 +86,30 @@ h1 {
     touch-action: manipulation;
 }
 
+/* 記述問題ボタンのスタイル */
+.btn-kijyutsu {
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    -webkit-appearance: none;
+    touch-action: manipulation;
+    text-decoration: none;
+    display: block;
+    box-sizing: border-box;
+    margin-top: 8px;
+    font-weight: bold;
+}
+
+.btn-kijyutsu:hover {
+    background-color: #137333;
+}
+
 .formula-summary {
     background: #f8f9fa;
     border: 1px solid #dadce0;
@@ -741,6 +765,8 @@ h1 {
             </div>
         </div>
         <button class="btn" id="generateBtn">練習を開始する</button>
+        <!-- 記述問題ボタンの追加 -->
+        <a href="Unten-Riron-Kijyustu-Syuuryou.html" class="btn-kijyutsu">記述問題</a>
     </div>
 
     <div class="question-box" id="questionText" style="display: none;">
