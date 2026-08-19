@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>安全の基本</title>
+<style>
+:root {
+    --primary-color: #1a73e8;
+    --success-color: #34a853;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-color: #202124;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.back-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 999;
+    background-color: #ffffff;
+    color: #1a73e8;
+    border: 2px solid #1a73e8;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.back-btn:hover {
+    background-color: #e8f0fe;
+}
+
+.all-toggle-btn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 999;
+    background-color: #ffffff;
+    color: #1a73e8;
+    border: 2px solid #1a73e8;
+    padding: 6px 16px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.all-toggle-btn:hover {
+    background-color: #e8f0fe;
+}
+
+.container {
+    width: 100%;
+    max-width: 1100px;
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    margin-bottom: 30px;
+    margin-top: 15px;
+}
+
+.header-row {
+    border-bottom: 2px solid #1a73e8;
+    padding-bottom: 8px;
+    margin-bottom: 5px;
+}
+
+h1 {
+    font-size: 1.4rem;
+    color: #202124;
+    margin: 0;
+    text-align: center;
+}
+
+.question-section {
+    margin-top: 15px;
+    margin-bottom: 25px;
+    line-height: 2.2;
+    font-size: 1rem;
+}
+
+.q-title {
+    font-weight: bold;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+}
+
+.sub-q {
+    margin-left: 15px;
+    margin-bottom: 22px;
+}
+
+.handwrite-slot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
+    width: 110px;
+    height: 32px;
+    vertical-align: middle;
+    border: 2px dashed #1a73e8;
+    background: #fff;
+    border-radius: 4px;
+    margin: 0 4px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.handwrite-slot:hover {
+    background-color: #e8f0fe;
+}
+
+.slot-image-preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: none;
+    pointer-events: none;
+}
+
+.slot-answer-inline {
+    display: none;
+    font-size: 0.85rem;
+    color: #d93025;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    pointer-events: none;
+    position: absolute;
+    white-space: nowrap;
+}
+
+/* 枠組みをブロック・リスト形式に変更して文字がはみ出さないように改善 */
+.block-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.block-item {
+    display: flex;
+    flex-direction: column;
+    background: #f8f9fa;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 12px 15px;
+    gap: 8px;
+}
+
+.block-label {
+    font-weight: bold;
+    color: #1a73e8;
+    font-size: 0.95rem;
+}
+
+.block-slot {
+    width: 100%;
+    min-height: 52px;
+    border: 2px dashed #1a73e8;
+    background: #fff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    box-sizing: border-box;
+    padding: 6px 10px;
+}
+
+.block-slot:hover {
+    background-color: #e8f0fe;
+}
+
+.block-slot .slot-answer-inline {
+    font-size: 0.95rem;
+    color: #d93025;
+    font-weight: bold;
+    text-align: left;
+    position: static;
+    white-space: normal;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    width: 95%;
+    max-width: 800px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+}
+
+.modal-header {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #1a73e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-canvas-scroll-container {
+    width: 100%;
+    height: 200px;
+    border: 2px solid #1a73e8;
+    border-radius: 8px;
+    background: #fafafa;
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-canvas-box {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    touch-action: none;
+}
+
+.modal-canvas-box canvas {
+    height: 100%;
+    display: block;
+    cursor: crosshair;
+}
+
+.modal-scroll-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    background: #f1f3f4;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.modal-scroll-control label {
+    font-size: 0.85rem;
+    color: #3c4043;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.modal-scroll-control input[type="range"] {
+    flex: 1;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background-color: #f1f3f4;
+    color: #3c4043;
+    border: 1px solid #dadce0;
+}
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-btn">&larr; 戻る</a>
+<button type="button" class="all-toggle-btn" id="allToggleBtn" onclick="toggleAllAnswers()">表示</button>
+
+<div class="container">
+    <div class="header-row">
+        <h1>安全の基本</h1>
+    </div>
+
+    <div class="question-section">
+        <div class="q-title">問1. 運転の安全の確保に関する規程に定める綱領を書きなさい。</div>
+        <div class="sub-q">
+            (1) <span class="handwrite-slot" style="width: 320px;" id="slot_q1_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q1_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q1_1">安全の確保は、輸送の生命である。</span></span><br>
+            (2) <span class="handwrite-slot" style="width: 320px;" id="slot_q1_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q1_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q1_2">規程の遵守は、安全の基礎である。</span></span><br>
+            (3) <span class="handwrite-slot" style="width: 320px;" id="slot_q1_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q1_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q1_3">執務の厳正は、安全の要件である。</span></span>
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問2. 運転の安全の確保に関する規程に定める一般準則を書きなさい。</div>
+        <div class="sub-q">
+            <div class="block-list">
+                <div class="block-item"><div class="block-label">規程の携帯</div><div class="block-slot" id="slot_q2_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q2_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q2_1">係員は、常にこの規程及び運転の取扱に関する規程を携帯しなければならない。</span></div></div>
+                <div class="block-item"><div class="block-label">規定の理解</div><div class="block-slot" id="slot_q2_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q2_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q2_2">係員は、運転の取扱に関する規定をよく理解していなければならない。</span></div></div>
+                <div class="block-item"><div class="block-label">規定の遵守</div><div class="block-slot" id="slot_q2_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q2_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q2_3">係員は、運転の取扱に関する規定を忠実、且つ、正確に守らなければならない。</span></div></div>
+                <div class="block-item"><div class="block-label">作業の確実</div><div class="block-slot" id="slot_q2_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_q2_4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q2_4">係員は、運転又は関係業務の取扱に習熟するように努め、その取扱に疑いのあるときは最も安全と思われる方法により作業をしなければならない。</span></div></div>
+                <div class="block-item"><div class="block-label">連絡の徹底</div><div class="block-slot" id="slot_q2_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_q2_5" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q2_5">係員は、作業にあたり関係者との連絡を緊密にし、打合せを正確に行い、且つ、互いに協力しなければならない。作業に変更のあったときは特に注意しなければならない。</span></div></div>
+                <div class="block-item"><div class="block-label">確認の励行</div><div class="block-slot" id="slot_q2_6" data-has-input="false"><img class="slot-image-preview" id="img_slot_q2_6" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q2_6">係員は、作業にあたり必要な確認を励行し、おく測による作業をしてはならない。</span></div></div>
+                <div class="block-item"><div class="block-label">運転状況の熟知</div><div class="block-slot" id="slot_q2_7" data-has-input="false"><img class="slot-image-preview" id="img_slot_q2_7" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q2_7">係員は、自己の作業に関係のある列車又は車両の運転時刻を知っていなければならない。</span></div></div>
+                <div class="block-item"><div class="block-label">設備の安全</div><div class="block-slot" id="slot_q2_8" data-has-input="false"><img class="slot-image-preview" id="img_slot_q2_8" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q2_8">係員は、列車、車両、軌道、電車線路、道路、信号保安装置等を常に安全な状態に保持しなければならない。危険な箇所を発見した時は、速やかに整備の手配をしなければならない。</span></div></div>
+                <div class="block-item"><div class="block-label">時計の整正</div><div class="block-slot" id="slot_q2_9" data-has-input="false"><img class="slot-image-preview" id="img_slot_q2_9" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q2_9">係員は、職務上使用する時計を常に正確に合わせておかなければならない。</span></div></div>
+                <div class="block-item"><div class="block-label">事故の防止</div><div class="block-slot" id="slot_q2_10" data-has-input="false"><img class="slot-image-preview" id="img_slot_q2_10" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q2_10">係員は、協力一致して事故の防止に努め、乗客及び公衆に傷害を与えないように最害を尽さなけれはならない。</span></div></div>
+                <div class="block-item"><div class="block-label">事故の処置</div><div class="block-slot" id="slot_q2_11" data-has-input="false"><img class="slot-image-preview" id="img_slot_q2_11" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q2_11">係員は、事故が発生した場合は、その状況を冷静に判断し、速やかに安全適切な処置をとり、特に人命に危険の生じたときは全力を尽してその救助に努めなければならない、この場合事故の現場に、いあわせた係員は、職責のいかんを問わず全力をあげて協力しなければならない。</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問3. 安全に係る行動規範を書きなさい。</div>
+        <div class="sub-q">
+            <div class="block-list">
+                <div class="block-item"><div class="block-label">1</div><div class="block-slot" id="slot_q3_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q3_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q3_1">一致協力して輸送の安全の確保に努める。</span></div></div>
+                <div class="block-item"><div class="block-label">2</div><div class="block-slot" id="slot_q3_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q3_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q3_2">輸送の安全に関する法令及び関連する規程をよく理解するとともにこれを遵守し、厳正、忠実に職務を遂行する。</span></div></div>
+                <div class="block-item"><div class="block-label">3</div><div class="block-slot" id="slot_q3_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q3_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q3_3">常に輸送の安全に関する状況を理解するよう努める。</span></div></div>
+                <div class="block-item"><div class="block-label">4</div><div class="block-slot" id="slot_q3_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_q3_4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q3_4">職務の実施に当たり、推測に頼らず確認の励行に努め、疑義のある時は最も安全と思われる取扱いをする。</span></div></div>
+                <div class="block-item"><div class="block-label">5</div><div class="block-slot" id="slot_q3_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_q3_5" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q3_5">事故・災害等が発生したときは、人命救助を最優先に行動し、すみやかに安全適切な処置をとる。</span></div></div>
+                <div class="block-item"><div class="block-label">6</div><div class="block-slot" id="slot_q3_6" data-has-input="false"><img class="slot-image-preview" id="img_slot_q3_6" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q3_6">情報は漏れなく迅速、正確に伝え、透明性を確保する。</span></div></div>
+                <div class="block-item"><div class="block-label">7</div><div class="block-slot" id="slot_q3_7" data-has-input="false"><img class="slot-image-preview" id="img_slot_q3_7" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q3_7">常に問題意識を持ち、必要な変革に果敢に挑戦する。</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問4. 交通機関に欠くことのできない構成要素は3つあります。その構成要素3つを解答欄に記入しなさい。</div>
+        <div class="sub-q">
+            (
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q4_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q4_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q4_1">通路</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q4_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q4_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q4_2">運搬容器</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q4_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q4_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q4_3">動力</span></span>
+            )
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問5. 交通機関の最も重要な性能要件3つを解答欄に記入しなさい。</div>
+        <div class="sub-q">
+            (
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q5_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q5_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q5_1">安全性</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q5_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q5_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q5_2">正確性</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q5_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q5_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q5_3">迅速性</span></span>
+            )
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問6. 次の文章は交通機関の性能について述べたものである。空欄に適切な語句を解答欄に記入しなさい。</div>
+        <div class="sub-q">
+            交通は、貴重な生命および財産を託されるという他の産業に例を見ない 
+            <span class="handwrite-slot" style="width: 130px;" id="slot_q6_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q6_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q6_1">重大責任</span></span>
+            を負わされている。<br>
+            従ってこれを安全に場所移動させることは、絶対に欠くことのできない
+            <span class="handwrite-slot" style="width: 130px;" id="slot_q6_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q6_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q6_2">必須条件</span></span>
+            である。安全性を欠き、生命財産に損傷を与えるときは、交通は無価値なものとなるばかりか、かえって害悪を社会に及ぼすことになる。安全の確保が輸送の 
+            <span class="handwrite-slot" style="width: 130px;" id="slot_q6_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q6_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q6_3">最大使命</span></span>
+            とされる理由がここにある。
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問7. 次の文章は交通機関の性能には3つあるが、さらに備えるべき要件を6つ答えなさい。</div>
+        <div class="sub-q">
+            (
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q7_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q7_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q7_1">低廉性</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q7_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q7_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q7_2">大量輸送性</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 140px;" id="slot_q7_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q7_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q7_3">広地域到達性</span></span>
+            )<br>
+            (
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q7_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_q7_4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q7_4">快適性</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q7_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_q7_5" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q7_5">軽便性</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q7_6" data-has-input="false"><img class="slot-image-preview" id="img_slot_q7_6" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q7_6">頻回性</span></span>
+            )
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問8. 鉄道関係法規の適用区分を解答欄に記入しなさい。</div>
+        <div class="sub-q">
+            ①(
+            <span class="handwrite-slot" style="width: 250px;" id="slot_q8_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q8_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q8_1">鉄道の利用関係に関する法規</span></span>
+            ) 
+            ②(
+            <span class="handwrite-slot" style="width: 250px;" id="slot_q8_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q8_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q8_2">鉄道事業者に関する法規</span></span>
+            )<br>
+            ③(
+            <span class="handwrite-slot" style="width: 250px;" id="slot_q8_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q8_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q8_3">鉄道運送に関する法規</span></span>
+            )
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問9. 国鉄の分割民営化による法規の改正について、空欄に入る適切な言葉を解答欄に記入しなさい。</div>
+        <div class="sub-q">
+            昭和62年の国鉄の分割民営化に伴い、従来国鉄では (①<span class="handwrite-slot" style="width: 160px;" id="slot_q9_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q9_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q9_1">日本国有鉄道法</span></span>) により、民営鉄道では(②<span class="handwrite-slot" style="width: 120px;" id="slot_q9_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q9_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q9_2">地方鉄道法</span></span>) によりそれぞれ規制監督が行われていたのを全面的に改め、分割民営会社及び民営鉄道会社等を含めた一元的な法規制を整備するため (①<span class="handwrite-slot" style="width: 160px;" id="slot_q9_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q9_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q9_3">日本国有鉄道法</span></span>) (②<span class="handwrite-slot" style="width: 120px;" id="slot_q9_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_q9_4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q9_4">地方鉄道法</span></span>) を廃止し (③<span class="handwrite-slot" style="width: 120px;" id="slot_q9_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_q9_5" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q9_5">鉄道事業法</span></span>) が制定された。
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問10. 鉄道事業法の対象事業3つを解答欄に記入しなさい。</div>
+        <div class="sub-q">
+            (
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q10_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q10_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q10_1">鉄道事業</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q10_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q10_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q10_2">索道事業</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q10_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q10_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q10_3">専用鉄道</span></span>
+            )
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問11. 次の文章は鉄道事業法の一部である。空欄に適切な語句を解答欄に記入しなさい。</div>
+        <div class="sub-q">
+            第1条<br>
+            この法律は、(①<span class="handwrite-slot" style="width: 130px;" id="slot_q11_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q11_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q11_1">鉄道事業等</span></span>) の運営を適正かつ合理的なものとすることにより、輸送の安全を確保し、鉄道等の利用者の (②<span class="handwrite-slot" style="width: 90px;" id="slot_q11_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q11_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q11_2">利益</span></span>) を保護するとともに、(①<span class="handwrite-slot" style="width: 130px;" id="slot_q11_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q11_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q11_3">鉄道事業等</span></span>) の健全な発達を図り、もって (③<span class="handwrite-slot" style="width: 130px;" id="slot_q11_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_q11_4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q11_4">公共の福祉</span></span>) を増進することを目的とする。<br><br>
+            第3条<br>
+            鉄道事業を経営しようとする者は、(④<span class="handwrite-slot" style="width: 140px;" id="slot_q11_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_q11_5" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q11_5">国土交通大臣</span></span>) の許可を受けなければならない。<br><br>
+            第18条の2<br>
+            鉄道事業者は、(⑤<span class="handwrite-slot" style="width: 150px;" id="slot_q11_6" data-has-input="false"><img class="slot-image-preview" id="img_slot_q11_6" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q11_6">輸送の安全の確保</span></span>) が最も重要であることを自覚し、絶えず (⑥<span class="handwrite-slot" style="width: 140px;" id="slot_q11_7" data-has-input="false"><img class="slot-image-preview" id="img_slot_q11_7" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q11_7">輸送の安全性</span></span>) の向上に努めなければならない。<br><br>
+            第18条の3<br>
+            鉄道事業者は、(⑦<span class="handwrite-slot" style="width: 130px;" id="slot_q11_8" data-has-input="false"><img class="slot-image-preview" id="img_slot_q11_8" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q11_8">安全管理規程</span></span>) を定め、(⑧<span class="handwrite-slot" style="width: 140px;" id="slot_q11_9" data-has-input="false"><img class="slot-image-preview" id="img_slot_q11_9" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q11_9">国土交通省令</span></span>) で定めるところにより、(④<span class="handwrite-slot" style="width: 140px;" id="slot_q11_10" data-has-input="false"><img class="slot-image-preview" id="img_slot_q11_10" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q11_10">国土交通大臣</span></span>) に届けなければならない。これを変更しようとするときも、同様とする。
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問12. 鉄道事業法に基づく省令等の名称を答えなさい。</div>
+        <div class="sub-q">
+            ①(
+            <span class="handwrite-slot" style="width: 180px;" id="slot_q12_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q12_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q12_1">鉄道事業法施行規則</span></span>
+            ) 
+            ②(
+            <span class="handwrite-slot" style="width: 180px;" id="slot_q12_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q12_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q12_2">鉄道事業会計規則</span></span>
+            ) 
+            ③(
+            <span class="handwrite-slot" style="width: 180px;" id="slot_q12_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q12_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q12_3">鉄道事故等報告規則</span></span>
+            )<br>
+            ④(
+            <span class="handwrite-slot" style="width: 180px;" id="slot_q12_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_q12_4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q12_4">鉄道事業等報告規則</span></span>
+            ) 
+            ⑤(
+            <span class="handwrite-slot" style="width: 180px;" id="slot_q12_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_q12_5" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q12_5">鉄道施設等検査規則</span></span>
+            ) 
+            ⑥(
+            <span class="handwrite-slot" style="width: 180px;" id="slot_q12_6" data-has-input="false"><img class="slot-image-preview" id="img_slot_q12_6" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q12_6">鉄道事業等監査規則</span></span>
+            )<br>
+            ⑦(
+            <span class="handwrite-slot" style="width: 270px;" id="slot_q12_7" data-has-input="false"><img class="slot-image-preview" id="img_slot_q12_7" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q12_7">鉄道事業動力車操縦者資質管理報告規則</span></span>
+            )
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問13. 鉄道に関する技術上の基準を定める省令第2条(定義)に定めされた用語の意義を記入しなさい。</div>
+        <div class="sub-q">
+            <div class="block-list">
+                <div class="block-item"><div class="block-label">本線</div><div class="block-slot" id="slot_q13_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q13_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q13_1">列車の運転に常用される線路をいう。</span></div></div>
+                <div class="block-item"><div class="block-label">側線</div><div class="block-slot" id="slot_q13_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q13_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q13_2">本線でない線路をいう。</span></div></div>
+                <div class="block-item"><div class="block-label">停車場</div><div class="block-slot" id="slot_q13_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q13_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q13_3">駅、信号場及び操車場をいう。</span></div></div>
+                <div class="block-item"><div class="block-label">動力車</div><div class="block-slot" id="slot_q13_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_q13_4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q13_4">動力発生装置を有する車両をいう。</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問14. 鉄道の技術上の基準を定める省令は運転や構造等の性能規定を定めています。また、鉄道事業者に対しては遵守事項を定めていますが、その内容を説明しなさい。</div>
+        <div class="sub-q">
+            <div class="block-list">
+                <div class="block-item"><div class="block-slot" id="slot_q14_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q14_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q14_1">鉄道事業者は、この省令の実施に関する基準を定め、これを遵守しなければならない。</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問15. 次の文章は鉄道に関する技術上の基準を定める省令の一部である。空欄に適切な語句を記入しなさい。</div>
+        <div class="sub-q">
+            第15条<br>
+            円曲線には、車両が受ける遠心力、風の影響等を考慮し、車両の転覆の危険が生じないよう、(①<span class="handwrite-slot" style="width: 90px;" id="slot_q15_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q15_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q15_1">軌間</span></span>)、(②<span class="handwrite-slot" style="width: 100px;" id="slot_q15_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q15_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q15_2">曲線半径</span></span>)、(③<span class="handwrite-slot" style="width: 100px;" id="slot_q15_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q15_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q15_3">運転速度</span></span>) 等に応じたカントを付けなければならない。ただし、(④<span class="handwrite-slot" style="width: 110px;" id="slot_q15_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_q15_4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q15_4">分岐内曲線</span></span>)、その前後の曲線、側線その他のカントを付けることが困難な箇所であって運転速度の制限その他の車両の転覆の危険が生じるおそれのない措置を講じた場合は、この限りでない。<br><br>
+            第16条<br>
+            円曲線には、(⑤<span class="handwrite-slot" style="width: 100px;" id="slot_q15_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_q15_5" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q15_5">曲線半径</span></span>)、車両の (⑥<span class="handwrite-slot" style="width: 100px;" id="slot_q15_6" data-has-input="false"><img class="slot-image-preview" id="img_slot_q15_6" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q15_6">固定軸距</span></span>) 等を考慮し、軌道への過大な横圧を防止することができる (⑦<span class="handwrite-slot" style="width: 100px;" id="slot_q15_7" data-has-input="false"><img class="slot-image-preview" id="img_slot_q15_7" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q15_7">スラック</span></span>) を付けなければならない。ただし、(⑤<span class="handwrite-slot" style="width: 100px;" id="slot_q15_8" data-has-input="false"><img class="slot-image-preview" id="img_slot_q15_8" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q15_8">曲線半径</span></span>) が大きい場合、車両の (⑥<span class="handwrite-slot" style="width: 100px;" id="slot_q15_9" data-has-input="false"><img class="slot-image-preview" id="img_slot_q15_9" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q15_9">固定軸距</span></span>) が短い場合その他の軌道への過大な横圧が生じるおそれのない場合は、この限りでない。<br><br>
+            第54条<br>
+            閉そくを確保する装置は、進路上の閉そく区間の (⑧<span class="handwrite-slot" style="width: 140px;" id="slot_q15_10" data-has-input="false"><img class="slot-image-preview" id="img_slot_q15_10" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q15_10">条件に応じた信号</span></span>) を現示し、又は (⑨<span class="handwrite-slot" style="width: 120px;" id="slot_q15_11" data-has-input="false"><img class="slot-image-preview" id="img_slot_q15_11" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q15_11">閉そくの保証</span></span>) を行うことができるものでなければならない。<br>
+            2 列車間の間隔を確保する装置は、列車と進路上の他の列車等との間隔及び線路の条件に応じ、連続して制御を行うことにより、(⑩<span class="handwrite-slot" style="width: 90px;" id="slot_q15_12" data-has-input="false"><img class="slot-image-preview" id="img_slot_q15_12" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q15_12">自動的</span></span>) に当該列車を (⑪<span class="handwrite-slot" style="width: 100px;" id="slot_q15_13" data-has-input="false"><img class="slot-image-preview" id="img_slot_q15_13" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q15_13">減速させ</span></span>) 、又は (⑫<span class="handwrite-slot" style="width: 100px;" id="slot_q15_14" data-has-input="false"><img class="slot-image-preview" id="img_slot_q15_14" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q15_14">停止させる</span></span>) ことができるものでなければならない。
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問16. 次の文章は鉄道に関する技術上の基準を定める省令の一部である。空欄に適切な語句を解答欄に記入しなさい。</div>
+        <div class="sub-q">
+            一 車両を確実に (①<span class="handwrite-slot" style="width: 90px;" id="slot_q16_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q16_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q16_1">減速</span></span>) し、又は (②<span class="handwrite-slot" style="width: 90px;" id="slot_q16_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q16_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q16_2">停止</span></span>) させることができること。<br>
+            二 組成した車両に乗務員室からの操作により (③<span class="handwrite-slot" style="width: 100px;" id="slot_q16_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q16_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q16_3">連動して</span></span>) 作用すること。<br>
+            三 (④<span class="handwrite-slot" style="width: 110px;" id="slot_q16_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_q16_4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q16_4">振動、衝撃</span></span>) 等によりその作用に支障を及ぼすおそれのないこと。<br>
+            四 (⑤<span class="handwrite-slot" style="width: 100px;" id="slot_q16_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_q16_5" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q16_5">制動力</span></span>) を連続して作用させることができること。<br>
+            五 組成した車両が分離したときに (⑥<span class="handwrite-slot" style="width: 90px;" id="slot_q16_6" data-has-input="false"><img class="slot-image-preview" id="img_slot_q16_6" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q16_6">自動的</span></span>) に作用すること。<br>
+            六 車両を (⑦<span class="handwrite-slot" style="width: 90px;" id="slot_q16_7" data-has-input="false"><img class="slot-image-preview" id="img_slot_q16_7" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q16_7">急速</span></span>) に停止させることができること。<br>
+            七 制動力の (⑧<span class="handwrite-slot" style="width: 100px;" id="slot_q16_8" data-has-input="false"><img class="slot-image-preview" id="img_slot_q16_8" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q16_8">供給源</span></span>) を確保することができないことにより、その作用に支障を及ぼすおそれのある場合は、発車することができないこと。
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問17. 鉄道に関する技術上の基準を定める省令第74条に定められた旅客用乗降口の構造の適合基準を書きなさい。</div>
+        <div class="sub-q">
+            <div class="block-list">
+                <div class="block-item"><div class="block-label">1</div><div class="block-slot" id="slot_q17_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q17_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q17_1">同時に開閉することができること。</span></div></div>
+                <div class="block-item"><div class="block-label">2</div><div class="block-slot" id="slot_q17_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q17_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q17_2">乗務員が開閉状態の確認をすることができるものであること。</span></div></div>
+                <div class="block-item"><div class="block-label">3</div><div class="block-slot" id="slot_q17_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q17_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q17_3">扉が閉じた後でなければ発車することができないものであること。ただし、客車であって係員が扉を閉じたことを直接に確認できる場合は、この限りでない。</span></div></div>
+                <div class="block-item"><div class="block-label">4</div><div class="block-slot" id="slot_q17_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_q17_4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q17_4">非常の際に手動により開くことができるものであること。ただし、サードレール式の電車線の区間等を走る車両は、この限りでない。</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問18. 動力車操縦者運転免許に関する省令について答えなさい。</div>
+        <div class="sub-q">
+            1. 第4条の運転免許の種類で甲種の免許の名称を答えなさい。<br>
+            ①(
+            <span class="handwrite-slot" style="width: 180px;" id="slot_q18_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q18_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q18_1">甲種蒸気機関車運転免許</span></span>
+            ) 
+            ②(
+            <span class="handwrite-slot" style="width: 170px;" id="slot_q18_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q18_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q18_2">甲種電気車運転免許</span></span>
+            ) 
+            ③(
+            <span class="handwrite-slot" style="width: 180px;" id="slot_q18_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q18_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q18_3">甲種内燃車運転免許</span></span>
+            )<br><br>
+            2. 第8条の5に規定されている実技試験の項目を答えなさい。<br>
+            (
+            <span class="handwrite-slot" style="width: 110px;" id="slot_q18_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_q18_4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q18_4">速度観測</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 110px;" id="slot_q18_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_q18_5" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q18_5">距離目測</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q18_6" data-has-input="false"><img class="slot-image-preview" id="img_slot_q18_6" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q18_6">制動機の操作</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 150px;" id="slot_q18_7" data-has-input="false"><img class="slot-image-preview" id="img_slot_q18_7" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q18_7">制動機以外の機器の取扱</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 100px;" id="slot_q18_8" data-has-input="false"><img class="slot-image-preview" id="img_slot_q18_8" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q18_8">定時運転</span></span>
+            )(
+            <span class="handwrite-slot" style="width: 120px;" id="slot_q18_9" data-has-input="false"><img class="slot-image-preview" id="img_slot_q18_9" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q18_9">非常の場合の措置</span></span>
+            )
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問19. 報告や指示を受けるときは復唱を行うことが、ヒューマンエラーの防止として有効です。( )の中に入る適切な語句を答えなさい。</div>
+        <div class="sub-q">
+            人間は自分の都合のいい方に思い込む特性がある。指示内容を正確に聞き取りそれを復唱することで、正しく (①<span class="handwrite-slot" style="width: 100px;" id="slot_q19_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q19_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q19_1">認識</span></span>) することができる。復唱することで、(②<span class="handwrite-slot" style="width: 100px;" id="slot_q19_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q19_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q19_2">自分の耳</span></span>) で再度聞き取り、ダブルチェックとなる。また、万が一勘違いしていたとしても、復唱内容により、運転指令が認識間違いに気付き、 (③<span class="handwrite-slot" style="width: 100px;" id="slot_q19_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q19_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q19_3">修正</span></span>) が可能となる。
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問20. 操縦者の心構えについての問題です。( )中に入る適切な言葉を答えなさい。</div>
+        <div class="sub-q">
+            鉄道事業にあっては (①<span class="handwrite-slot" style="width: 120px;" id="slot_q20_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q20_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q20_1">安全の確保</span></span>) が第一要件である。安全なくしては、正確、迅速、快適な輸送はありえない。特に直接運転に携わる列車乗務員や旅客と接する職員には、多数の旅客の (②<span class="handwrite-slot" style="width: 80px;" id="slot_q20_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q20_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q20_2">生命</span></span>) と (③<span class="handwrite-slot" style="width: 80px;" id="slot_q20_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q20_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q20_3">財産</span></span>) 、そして旅客の (④<span class="handwrite-slot" style="width: 120px;" id="slot_q20_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_q20_4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q20_4">家族の運命</span></span>) まで託されていることを考え、その職責の重大さを自覚するとともに安全輸送にあらゆる努力をしなければならない。
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問21. JR西日本福知山線列車脱線事故の文章について、( ) 中に入る適切な言葉を答えなさい。</div>
+        <div class="sub-q">
+            西日本旅客鉄道株式会社の宝塚駅発同志社前行きの上り快速電第5418M列車(7両編成)は、伊丹駅を平成 (①<span class="handwrite-slot" style="width: 140px;" id="slot_q21_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q21_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q21_1">17年4月25日</span></span>) (月) 9時16分10秒ごろ出発し、猪名寺駅を通過した後、塚口駅を9時18分22秒ごろ通過した。その後、同列車は、名神高速道路の南にある半径 (②<span class="handwrite-slot" style="width: 80px;" id="slot_q21_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q21_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q21_2">304m</span></span>) の (③<span class="handwrite-slot" style="width: 90px;" id="slot_q21_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_q21_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q21_3">右曲線</span></span>) を走行中、1両目が9時18分54秒ごろ (④<span class="handwrite-slot" style="width: 70px;" id="slot_q21_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_q21_4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q21_4">左</span></span>) へ転倒するように脱線し、続いて2~5両目が脱線し、最後部7両目が9時19分04秒ごろ停止した。本事故による死亡者数は乗客 (⑤<span class="handwrite-slot" style="width: 70px;" id="slot_q21_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_q21_5" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q21_5">106</span></span>) 名・運転士1名、負傷者は乗客 (⑥<span class="handwrite-slot" style="width: 70px;" id="slot_q21_6" data-has-input="false"><img class="slot-image-preview" id="img_slot_q21_6" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q21_6">562</span></span>) 名である。
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問22. 昭和37年5月3日国鉄常磐線三河島駅構内における列車衝突事故の事故後の対策を答えなさい。</div>
+        <div class="sub-q">
+            <div class="block-list">
+                <div class="block-item"><div class="block-label">1</div><div class="block-slot" id="slot_q22_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q22_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q22_1">速やかな列車防護対策として、信号炎管の整備、軌道短絡器の採用がとられた。</span></div></div>
+                <div class="block-item"><div class="block-label">2</div><div class="block-slot" id="slot_q22_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q22_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q22_2">昭和37年11月に国鉄全線にATSの設置を決定した。</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問23. 平成元年4月13日JR東海飯田線北殿駅構内における列車衝突事故の事故後の対策を答えなさい。</div>
+        <div class="sub-q">
+            <div class="block-list">
+                <div class="block-item"><div class="block-label">1</div><div class="block-slot" id="slot_q23_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q23_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q23_1">乗務員総合訓練装置の整備</span></div></div>
+                <div class="block-item"><div class="block-label">2</div><div class="block-slot" id="slot_q23_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q23_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q23_2">絶対信号機の停止現示に対し、確認扱いを要せずにその直下の位置において、警報と同時に非常ブレーキが作用するようATSを改良。</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問24. 平成4年6月27日関東鉄道常総線取手駅構内における列車脱線事故時の運転士が執るべき対応を答えなさい。</div>
+        <div class="sub-q">
+            <div class="block-list">
+                <div class="block-item"><div class="block-label">1</div><div class="block-slot" id="slot_q24_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q24_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q24_1">ブレーキ故障時における適切な故障処置。</span></div></div>
+                <div class="block-item"><div class="block-label">2</div><div class="block-slot" id="slot_q24_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_q24_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q24_2">ブレーキ故障時に措置を行った際のブレーキ試験の実施。</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問25. 平成9年10月12日JR東日本中央線大月駅構内列車衝突事故の事故後の対策を答えなさい。</div>
+        <div class="sub-q">
+            <div class="block-list">
+                <div class="block-item"><div class="block-label">1</div><div class="block-slot" id="slot_q25_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q25_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q25_1">本線に係る運転士にはATS電源スイッチの入切をさせない設備条件を整えることにした。</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問26. 平成10年6月11日土佐くろしお鉄道中村線西大方~古津賀駅間における列車衝突事故の事故後の対策を答えなさい。</div>
+        <div class="sub-q">
+            <div class="block-list">
+                <div class="block-item"><div class="block-label">1</div><div class="block-slot" id="slot_q26_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q26_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q26_1">伝令法施行時における故障列車の運転士の列車防護等</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">問27. 平成14年2月22日JR九州鹿児島線海老津~教育大前駅間列車衝突事故の事故後の対策を答えなさい。</div>
+        <div class="sub-q">
+            <div class="block-list">
+                <div class="block-item"><div class="block-label">1</div><div class="block-slot" id="slot_q27_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_q27_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q27_1">閉そく信号機の停止信号を越えて運転を再開する場合は、指令の指示を受けることとした。</span></div></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal-overlay" id="handwriteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>手書き記入</span>
+            <button type="button" class="btn btn-secondary" style="padding:2px 8px; font-size:0.8rem;" onclick="clearModalCanvas()">全消去</button>
+        </div>
+        <div class="modal-canvas-scroll-container" id="scrollContainer">
+            <div class="modal-canvas-box" id="canvasBox">
+                <canvas id="modalCanvas"></canvas>
+            </div>
+        </div>
+        <div class="modal-scroll-control" id="scrollControlArea">
+            <label>スクロール:</label>
+            <input type="range" id="canvasRange" min="0" max="100" value="0" step="1">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+            <button type="button" class="btn" onclick="confirmModal()">決定</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentActiveSlotId = null;
+const modalCanvas = document.getElementById('modalCanvas');
+const modalCtx = modalCanvas.getContext('2d');
+const canvasBox = document.getElementById('canvasBox');
+const scrollContainer = document.getElementById('scrollContainer');
+const canvasRange = document.getElementById('canvasRange');
+const scrollControlArea = document.getElementById('scrollControlArea');
+
+let isDrawing = false;
+let isAllAnswersShown = false;
+
+const virtualWidthMultiplier = 4.0; 
+let currentVirtualWidth = 0;
+let currentDisplayWidth = 0;
+
+// 全スロットIDの自動収集
+const slotIds = [];
+document.querySelectorAll('.handwrite-slot, .block-slot').forEach(el => {
+    if (el.id) slotIds.push(el.id);
+});
+
+function initModalCanvasSize(isLongText) {
+    const rect = scrollContainer.getBoundingClientRect();
+    currentDisplayWidth = rect.width;
+    
+    if (isLongText) {
+        currentVirtualWidth = currentDisplayWidth * virtualWidthMultiplier;
+        scrollControlArea.style.display = 'flex';
+    } else {
+        currentVirtualWidth = currentDisplayWidth;
+        scrollControlArea.style.display = 'none';
+    }
+
+    canvasBox.style.width = currentVirtualWidth + 'px';
+    modalCanvas.style.width = currentVirtualWidth + 'px';
+    modalCanvas.style.height = rect.height + 'px';
+
+    modalCanvas.width = currentVirtualWidth * window.devicePixelRatio;
+    modalCanvas.height = rect.height * window.devicePixelRatio;
+    
+    modalCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    modalCtx.strokeStyle = '#202124';
+    modalCtx.lineWidth = 3.0;
+    modalCtx.lineCap = 'round';
+    modalCtx.lineJoin = 'round';
+
+    canvasRange.value = 0;
+    scrollContainer.scrollLeft = 0;
+}
+
+function openModal(slotId) {
+    currentActiveSlotId = slotId;
+    document.getElementById('handwriteModal').style.display = 'flex';
+    
+    // 長文の項目は横スクロールを有効化
+    const isLongText = slotId.startsWith('slot_q2_') || slotId.startsWith('slot_q3_') || slotId.startsWith('slot_q13_') || slotId.startsWith('slot_q14_') || slotId.startsWith('slot_q17_') || slotId.startsWith('slot_q22_') || slotId.startsWith('slot_q23_') || slotId.startsWith('slot_q24_') || slotId.startsWith('slot_q25_') || slotId.startsWith('slot_q26_') || slotId.startsWith('slot_q27_');
+
+    setTimeout(() => {
+        initModalCanvasSize(isLongText);
+        modalCtx.clearRect(0, 0, modalCanvas.width, modalCanvas.height);
+    }, 50);
+}
+
+function closeModal() {
+    document.getElementById('handwriteModal').style.display = 'none';
+    currentActiveSlotId = null;
+}
+
+function clearModalCanvas() {
+    modalCtx.clearRect(0, 0, modalCanvas.width, modalCanvas.height);
+}
+
+canvasRange.addEventListener('input', (e) => {
+    const val = e.target.value;
+    const maxScroll = currentVirtualWidth - currentDisplayWidth;
+    scrollContainer.scrollLeft = (val / 100) * maxScroll;
+});
+
+scrollContainer.addEventListener('scroll', () => {
+    const maxScroll = currentVirtualWidth - currentDisplayWidth;
+    if (maxScroll > 0) {
+        canvasRange.value = (scrollContainer.scrollLeft / maxScroll) * 100;
+    }
+});
+
+function getModalPos(e) {
+    const rect = modalCanvas.getBoundingClientRect();
+    let clientX = e.clientX;
+    let clientY = e.clientY;
+    if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    }
+    return { x: clientX - rect.left, y: clientY - rect.top };
+}
+
+modalCanvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    const pos = getModalPos(e);
+    modalCtx.beginPath();
+    modalCtx.moveTo(pos.x, pos.y);
+});
+
+modalCanvas.addEventListener('mousemove', (e) => {
+    if (!isDrawing) return;
+    const pos = getModalPos(e);
+    modalCtx.lineTo(pos.x, pos.y);
+    modalCtx.stroke();
+});
+
+window.addEventListener('mouseup', () => { isDrawing = false; });
+
+modalCanvas.addEventListener('touchstart', (e) => {
+    isDrawing = true;
+    const pos = getModalPos(e);
+    modalCtx.beginPath();
+    modalCtx.moveTo(pos.x, pos.y);
+}, { passive: true });
+
+modalCanvas.addEventListener('touchmove', (e) => {
+    if (!isDrawing) return;
+    const pos = getModalPos(e);
+    modalCtx.lineTo(pos.x, pos.y);
+    modalCtx.stroke();
+}, { passive: true });
+
+modalCanvas.addEventListener('touchend', () => { isDrawing = false; });
+
+slotIds.forEach(id => {
+    const slot = document.getElementById(id);
+    if (!slot) return;
+
+    slot.addEventListener('click', () => {
+        openModal(id);
+    });
+
+    slot.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+    });
+});
+
+function confirmModal() {
+    if (!currentActiveSlotId) return;
+    
+    const dataUrl = modalCanvas.toDataURL('image/png');
+    const slot = document.getElementById(currentActiveSlotId);
+    if (!slot) return;
+
+    const imgPreview = slot.querySelector('.slot-image-preview');
+
+    if (imgPreview) {
+        imgPreview.src = dataUrl;
+        if (!isAllAnswersShown) {
+            imgPreview.style.display = 'block';
+        }
+    }
+    
+    slot.setAttribute('data-has-input', 'true');
+    closeModal();
+}
+
+function toggleAllAnswers() {
+    const btn = document.getElementById('allToggleBtn');
+    isAllAnswersShown = !isAllAnswersShown;
+
+    slotIds.forEach(id => {
+        const slot = document.getElementById(id);
+        if (!slot) return;
+        const imgPreview = slot.querySelector('.slot-image-preview');
+        const answerInline = slot.querySelector('.slot-answer-inline');
+        const hasInput = slot.getAttribute('data-has-input') === 'true';
+
+        if (isAllAnswersShown) {
+            if (imgPreview) imgPreview.style.display = 'none';
+            if (answerInline) answerInline.style.display = 'block';
+        } else {
+            if (answerInline) answerInline.style.display = 'none';
+            
+            if (hasInput) {
+                if (imgPreview) imgPreview.style.display = 'block';
+            } else {
+                if (imgPreview) imgPreview.style.display = 'none';
+            }
+        }
+    });
+
+    if (isAllAnswersShown) {
+        btn.textContent = '非表示';
+    } else {
+        btn.textContent = '表示';
+    }
+}
+</script>
+
+</body>
+</html>
