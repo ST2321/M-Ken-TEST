@@ -51,7 +51,7 @@ body {
     background-color: #e8f0fe;
 }
 
-/* 画面右上のボタン群エリア */
+/* 画面右上のボタン群エリア（表示・非表示ボタン） */
 .top-right-buttons {
     position: fixed;
     top: 15px;
@@ -59,6 +59,15 @@ body {
     z-index: 999;
     display: flex;
     gap: 8px;
+}
+
+/* 画面右下の配電盤ボタンエリア */
+.bottom-right-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+    display: none; /* 初期状態は非表示 */
 }
 
 /* フローティング形式のボタン共通 */
@@ -94,6 +103,7 @@ body {
     border-bottom: 2px solid #1a73e8;
     padding-bottom: 8px;
     margin-bottom: 20px;
+    text-align: center; /* タイトルを中央揃え */
 }
 
 h1 {
@@ -415,9 +425,13 @@ h2 {
 <!-- 常に画面左上に追従する戻るボタン -->
 <a href="index.html" class="back-btn">&larr; 戻る</a>
 
-<!-- 画面右上のボタン群（表示・非表示ボタン ＆ 配電盤ボタン） -->
+<!-- 画面右上のボタン群（表示・非表示ボタン） -->
 <div class="top-right-buttons">
     <button type="button" class="floating-action-btn" id="allToggleBtn" onclick="toggleAllAnswers()">表示</button>
+</div>
+
+<!-- 画面右下に配置した配電盤ボタン（画面内の問題文ブロックに「配電盤」が含まれる時のみ表示） -->
+<div class="bottom-right-button" id="boardBtnContainer">
     <button type="button" class="floating-action-btn" onclick="openBoardModal()">配電盤</button>
 </div>
 
@@ -426,11 +440,12 @@ h2 {
         <h1>検査修繕</h1>
     </div>
 
-    <div class="question-section">
+    <!-- 問題文セクション全体 -->
+    <div class="question-section" id="questionSection">
         
-        <!-- 元の問題：技術基準に関する省令 -->
+        <!-- 元の問題：技術基準に関する省令 (「配電盤」の文字を含まない部分) -->
         <h2>1. 鉄道に関する技術上の基準を定める省令について</h2>
-        <div class="sub-q">
+        <div class="sub-q" data-has-board="false">
             鉄道営業法第1条に｢鉄道の建設、車両器具の構造及び運転は、国土交通 省令を以って定める規程に依るべし。」と定めてあり 「鉄道に関する技術上の 基準を定める省令」はこれに従って制定されている。<br><br>
             この省令は、第1条の目的 「この省令は、
             <span class="handwrite-slot" style="width: 110px;" id="slot_1" data-has-input="false">
@@ -447,7 +462,7 @@ h2 {
                 <img class="slot-image-preview" id="img_slot_3" alt="手書き解答">
                 <span class="slot-answer-inline" id="ans_slot_3">技術上の基準</span>
             </span>
-            を定めることにより、安全な輸送及び安定的な輸送の確保を図り、もって公共の福祉の増進に資す。 ることを目的とする。」の主旨により、鉄道を建設する場合の
+            を定めることにより、安全な輸送及び安定的な輸送の確保を図り、もって公共の福祉の増進に資することを目的とする。」の主旨により、鉄道を建設する場合の
             <span class="handwrite-slot" style="width: 60px;" id="slot_4" data-has-input="false">
                 <img class="slot-image-preview" id="img_slot_4" alt="手書き解答">
                 <span class="slot-answer-inline" id="ans_slot_4">線路</span>
@@ -569,11 +584,10 @@ h2 {
             )をそれぞれ定めている。
         </div>
 
-        <!-- 追加した問題：故障の処置 -->
         <h2>2. 故障の処置</h2>
 
-        <!-- EB異常(3006) -->
-        <div class="trouble-block">
+        <!-- EB異常(3006) (「配電盤」を含む) -->
+        <div class="trouble-block" data-has-board="true">
             <div class="trouble-title">EB異常(3006)</div>
             非常ブレーキ不正動作、
             <span class="handwrite-slot" style="width: 100px;" id="slot_27" data-has-input="false"><img class="slot-image-preview" id="img_slot_27" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_27">マスコンキー</span></span>、
@@ -588,7 +602,7 @@ h2 {
         </div>
 
         <!-- 駐車ブレーキ動作中(6412) -->
-        <div class="trouble-block">
+        <div class="trouble-block" data-has-board="true">
             <div class="trouble-title">駐車ブレーキ動作中(6412)</div>
             <span class="handwrite-slot" style="width: 80px;" id="slot_35" data-has-input="false"><img class="slot-image-preview" id="img_slot_35" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_35">即時停車</span></span>、ブレーキハンドル｢
             <span class="handwrite-slot" style="width: 50px;" id="slot_36" data-has-input="false"><img class="slot-image-preview" id="img_slot_36" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_36">非常</span></span>｣、
@@ -599,7 +613,7 @@ h2 {
         </div>
 
         <!-- TIMS重故障(中央ユニット)(4001) -->
-        <div class="trouble-block">
+        <div class="trouble-block" data-has-board="true">
             <div class="trouble-title">TIMS重故障(中央ユニット)(4001)</div>
             運転不可、リセットは
             <span class="handwrite-slot" style="width: 40px;" id="slot_41" data-has-input="false"><img class="slot-image-preview" id="img_slot_41" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_41">B</span></span>配電盤
@@ -612,7 +626,7 @@ h2 {
         </div>
 
         <!-- TIMS重故障(伝送ユニット)(4002) -->
-        <div class="trouble-block">
+        <div class="trouble-block" data-has-board="true">
             <div class="trouble-title">TIMS重故障(伝送ユニット)(4002)</div>
             当該車伝送不能。
             <span class="handwrite-slot" style="width: 110px;" id="slot_48" data-has-input="false"><img class="slot-image-preview" id="img_slot_48" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_48">常用ブレーキ不作用</span></span>、
@@ -623,14 +637,14 @@ h2 {
         </div>
 
         <!-- ATC装置片系故障(2003.2004) -->
-        <div class="trouble-block">
+        <div class="trouble-block" data-has-board="false">
             <div class="trouble-title">ATC装置片系故障(2003.2004)</div>
             <span class="handwrite-slot" style="width: 80px;" id="slot_53" data-has-input="false"><img class="slot-image-preview" id="img_slot_53" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_53">代替制御</span></span>にて
             <span class="handwrite-slot" style="width: 90px;" id="slot_54" data-has-input="false"><img class="slot-image-preview" id="img_slot_54" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_54">機能支障なし</span></span>。レバーサ切、マスコンキー又入でリセット成立の場合あり。
         </div>
 
         <!-- ATC装置両系故障(2001) -->
-        <div class="trouble-block">
+        <div class="trouble-block" data-has-board="true">
             <div class="trouble-title">ATC装置両系故障(2001)</div>
             <span class="handwrite-slot" style="width: 100px;" id="slot_55" data-has-input="false"><img class="slot-image-preview" id="img_slot_55" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_55">車内信号受信</span></span>不能。
             <span class="handwrite-slot" style="width: 40px;" id="slot_56" data-has-input="false"><img class="slot-image-preview" id="img_slot_56" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_56">B</span></span>配電盤
@@ -638,7 +652,7 @@ h2 {
         </div>
 
         <!-- ATO装置両系故障(2201) -->
-        <div class="trouble-block">
+        <div class="trouble-block" data-has-board="true">
             <div class="trouble-title">ATO装置両系故障(2201)</div>
             <span class="handwrite-slot" style="width: 80px;" id="slot_58" data-has-input="false"><img class="slot-image-preview" id="img_slot_58" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_58">ATO運転</span></span>不能。リセットは
             <span class="handwrite-slot" style="width: 50px;" id="slot_59" data-has-input="false"><img class="slot-image-preview" id="img_slot_59" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_59">6100</span></span>車
@@ -647,7 +661,7 @@ h2 {
         </div>
 
         <!-- 戸挟制御器電源異常(1101) -->
-        <div class="trouble-block">
+        <div class="trouble-block" data-has-board="true">
             <div class="trouble-title">戸挟制御器電源異常(1101)</div>
             先頭車
             <span class="handwrite-slot" style="width: 40px;" id="slot_62" data-has-input="false"><img class="slot-image-preview" id="img_slot_62" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_62">B</span></span>配電盤、中間車
@@ -656,7 +670,7 @@ h2 {
         </div>
 
         <!-- 1パンタ(6281) -->
-        <div class="trouble-block">
+        <div class="trouble-block" data-has-board="true">
             <div class="trouble-title">1パンタ(6281)</div>
             <span class="handwrite-slot" style="width: 40px;" id="slot_65" data-has-input="false"><img class="slot-image-preview" id="img_slot_65" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_65">C</span></span>配電盤
             <span class="handwrite-slot" style="width: 140px;" id="slot_66" data-has-input="false"><img class="slot-image-preview" id="img_slot_66" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_66">パンタグラフ操作短絡</span></span>NFB入、
@@ -664,7 +678,7 @@ h2 {
         </div>
 
         <!-- 片側3扉開閉不能 -->
-        <div class="trouble-block">
+        <div class="trouble-block" data-has-board="true">
             <div class="trouble-title">片側3扉開閉不能</div>
             当該車の
             <span class="handwrite-slot" style="width: 40px;" id="slot_68" data-has-input="false"><img class="slot-image-preview" id="img_slot_68" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_68">A</span></span>配電盤(先頭車)、
@@ -673,7 +687,7 @@ h2 {
         </div>
 
         <!-- 全車扉開閉不能 -->
-        <div class="trouble-block">
+        <div class="trouble-block" data-has-board="true">
             <div class="trouble-title">全車扉開閉不能</div>
             <span class="handwrite-slot" style="width: 90px;" id="slot_71" data-has-input="false"><img class="slot-image-preview" id="img_slot_71" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_71">市交ワンマン</span></span>表示灯点灯確認。
             <span class="handwrite-slot" style="width: 50px;" id="slot_72" data-has-input="false"><img class="slot-image-preview" id="img_slot_72" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_72">後部</span></span>乗務員室
@@ -717,7 +731,7 @@ h2 {
 <div class="modal-overlay" id="boardModal">
     <div class="modal-content board-modal-content">
         <div class="modal-header" style="color:#fff;">
-            <span>配電盤</span>
+            <span id="boardModalHeaderTitle">配電盤</span>
             <button type="button" class="btn btn-secondary" style="padding:2px 8px; font-size:0.8rem;" onclick="closeBoardModal()">閉じる</button>
         </div>
         
@@ -737,9 +751,7 @@ h2 {
         <div class="schematic-board-title" id="boardTitle">6100(1寄) - A配電盤</div>
         <div class="nameplates-row" id="nameplateGrid"></div>
 
-        <div class="modal-footer" style="justify-content: flex-end; margin-top: 15px;">
- 
-        </div>
+        <div class="modal-footer" style="justify-content: flex-end; margin-top: 15px;"></div>
     </div>
 </div>
 
@@ -763,6 +775,48 @@ const slotIds = [];
 for (let i = 1; i <= 78; i++) {
     slotIds.push('slot_' + i);
 }
+
+// 画面内（ビューポート内）の各ブロックを監視し、「配電盤」を含むブロックが画面内にある時のみボタンを表示する制御
+document.addEventListener("DOMContentLoaded", () => {
+    const boardBtnContainer = document.getElementById('boardBtnContainer');
+    const troubleBlocks = document.querySelectorAll('.trouble-block');
+
+    if (troubleBlocks.length > 0 && boardBtnContainer) {
+        // 各ブロックの画面内での表示状態を管理するマップ
+        const visibilityMap = new Map();
+
+        const updateButtonVisibility = () => {
+            let shouldShow = false;
+            for (let isVisible of visibilityMap.values()) {
+                if (isVisible) {
+                    shouldShow = true;
+                    break;
+                }
+            }
+            boardBtnContainer.style.display = shouldShow ? 'block' : 'none';
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const hasBoard = entry.target.getAttribute('data-has-board') === 'true';
+                if (hasBoard) {
+                    visibilityMap.set(entry.target, entry.isIntersecting);
+                }
+            });
+            updateButtonVisibility();
+        }, {
+            root: null,
+            threshold: 0.1 // 10%以上画面に入ったら判定
+        });
+
+        troubleBlocks.forEach(block => {
+            if (block.getAttribute('data-has-board') === 'true') {
+                visibilityMap.set(block, false);
+                observer.observe(block);
+            }
+        });
+    }
+});
 
 function initModalCanvasSize(isLongText) {
     const rect = scrollContainer.getBoundingClientRect();
@@ -797,7 +851,6 @@ function openModal(slotId) {
     currentActiveSlotId = slotId;
     document.getElementById('handwriteModal').style.display = 'flex';
     
-    // 長めの文字列の可能性があるスロットは横スクロールを有効にする
     const longTextSlots = [
         'slot_3', 'slot_8', 'slot_13', 'slot_23', 'slot_24',
         'slot_30', 'slot_32', 'slot_42', 'slot_48', 'slot_57', 'slot_66', 'slot_70', 'slot_78'
