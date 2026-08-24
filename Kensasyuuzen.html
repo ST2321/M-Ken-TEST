@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>検査修繕</title>
+<title>検査修繕 - 問題集</title>
 <style>
 :root {
     --primary-color: #1a73e8;
@@ -87,14 +87,22 @@ body {
 .header-row {
     border-bottom: 2px solid #1a73e8;
     padding-bottom: 8px;
-    margin-bottom: 5px;
-    text-align: center; /* タイトル部分を中央揃えに */
+    margin-bottom: 20px;
 }
 
 h1 {
     font-size: 1.2rem;
     color: #202124;
     margin: 0;
+}
+
+h2 {
+    font-size: 1.1rem;
+    color: #1a73e8;
+    border-bottom: 1px solid #dcdcdc;
+    padding-bottom: 6px;
+    margin-top: 30px;
+    margin-bottom: 15px;
 }
 
 .question-section {
@@ -104,29 +112,40 @@ h1 {
     font-size: 1rem;
 }
 
-.q-title {
-    font-weight: bold;
-    margin-bottom: 12px;
-    font-size: 1.05rem;
-}
-
 .sub-q {
     margin-left: 10px;
     margin-bottom: 22px;
+}
+
+.trouble-block {
+    background: #fdfdfd;
+    border: 1px solid #e0e0e0;
+    border-left: 4px solid #1a73e8;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    line-height: 2.5;
+}
+
+.trouble-title {
+    font-weight: bold;
+    color: #1a73e8;
+    margin-bottom: 8px;
+    font-size: 1.05rem;
 }
 
 .handwrite-slot {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 80px;
-    width: 100px;
+    min-width: 60px;
+    width: 80px;
     height: 28px;
     vertical-align: middle;
     border: 2px dashed #1a73e8;
     background: #fff;
     border-radius: 4px;
-    margin: 0 4px;
+    margin: 0 3px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
@@ -264,8 +283,8 @@ h1 {
 </head>
 <body>
 
-<!-- 常に画面左上に追従する戻るボタン（index.htmlへ遷移） -->
-<a href="index.html" class="back-btn">&larr; 戻る</a>
+<!-- 常に画面左上に追従する戻るボタン -->
+<a href="#" class="back-btn">&larr; 戻る</a>
 
 <!-- 常に画面右上に追従する表示・非表示ボタン -->
 <button type="button" class="all-toggle-btn" id="allToggleBtn" onclick="toggleAllAnswers()">表示</button>
@@ -276,6 +295,9 @@ h1 {
     </div>
 
     <div class="question-section">
+        
+        <!-- 元の問題：技術基準に関する省令 -->
+        <h2>1. 鉄道に関する技術上の基準を定める省令について</h2>
         <div class="sub-q">
             鉄道営業法第1条に｢鉄道の建設、車両器具の構造及び運転は、国土交通 省令を以って定める規程に依るべし。」と定めてあり 「鉄道に関する技術上の 基準を定める省令」はこれに従って制定されている。<br><br>
             この省令は、第1条の目的 「この省令は、
@@ -414,6 +436,123 @@ h1 {
             </span>
             )をそれぞれ定めている。
         </div>
+
+        <!-- 追加した問題：故障の処置 -->
+        <h2>2. 故障の処置</h2>
+
+        <!-- EB異常(3006) -->
+        <div class="trouble-block">
+            <div class="trouble-title">EB異常(3006)</div>
+            非常ブレーキ不正動作、
+            <span class="handwrite-slot" style="width: 100px;" id="slot_27" data-has-input="false"><img class="slot-image-preview" id="img_slot_27" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_27">マスコンキー</span></span>、
+            <span class="handwrite-slot" style="width: 40px;" id="slot_28" data-has-input="false"><img class="slot-image-preview" id="img_slot_28" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_28">B</span></span>配電盤
+            <span class="handwrite-slot" style="width: 90px;" id="slot_29" data-has-input="false"><img class="slot-image-preview" id="img_slot_29" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_29">ブレーキ電源</span></span>NFB、
+            <span class="handwrite-slot" style="width: 120px;" id="slot_30" data-has-input="false"><img class="slot-image-preview" id="img_slot_30" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_30">非常ブレーキスイッチ</span></span>又入。復旧しない場合は
+            <span class="handwrite-slot" style="width: 40px;" id="slot_31" data-has-input="false"><img class="slot-image-preview" id="img_slot_31" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_31">C</span></span>配電盤
+            <span class="handwrite-slot" style="width: 150px;" id="slot_32" data-has-input="false"><img class="slot-image-preview" id="img_slot_32" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_32">非常ブレーキ異常短絡</span></span>NFB投入<br>
+            ⇒以降、MR圧低下でも
+            <span class="handwrite-slot" style="width: 100px;" id="slot_33" data-has-input="false"><img class="slot-image-preview" id="img_slot_33" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_33">非常ブレーキ</span></span>作動しない。(
+            <span class="handwrite-slot" style="width: 120px;" id="slot_34" data-has-input="false"><img class="slot-image-preview" id="img_slot_34" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_34">非常ブレーキスイッチ</span></span>も作用しない)
+        </div>
+
+        <!-- 駐車ブレーキ動作中(6412) -->
+        <div class="trouble-block">
+            <div class="trouble-title">駐車ブレーキ動作中(6412)</div>
+            <span class="handwrite-slot" style="width: 80px;" id="slot_35" data-has-input="false"><img class="slot-image-preview" id="img_slot_35" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_35">即時停車</span></span>、ブレーキハンドル｢
+            <span class="handwrite-slot" style="width: 50px;" id="slot_36" data-has-input="false"><img class="slot-image-preview" id="img_slot_36" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_36">非常</span></span>｣、
+            <span class="handwrite-slot" style="width: 40px;" id="slot_37" data-has-input="false"><img class="slot-image-preview" id="img_slot_37" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_37">B</span></span>配電盤
+            <span class="handwrite-slot" style="width: 100px;" id="slot_38" data-has-input="false"><img class="slot-image-preview" id="img_slot_38" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_38">駐車ブレーキ</span></span>NFB入、表示灯消灯後
+            <span class="handwrite-slot" style="width: 50px;" id="slot_39" data-has-input="false"><img class="slot-image-preview" id="img_slot_39" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_39">非常</span></span>位置
+            <span class="handwrite-slot" style="width: 40px;" id="slot_40" data-has-input="false"><img class="slot-image-preview" id="img_slot_40" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_40">15</span></span>秒保持で緩解
+        </div>
+
+        <!-- TIMS重故障(中央ユニット)(4001) -->
+        <div class="trouble-block">
+            <div class="trouble-title">TIMS重故障(中央ユニット)(4001)</div>
+            運転不可、リセットは
+            <span class="handwrite-slot" style="width: 40px;" id="slot_41" data-has-input="false"><img class="slot-image-preview" id="img_slot_41" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_41">B</span></span>配電盤
+            <span class="handwrite-slot" style="width: 120px;" id="slot_42" data-has-input="false"><img class="slot-image-preview" id="img_slot_42" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_42">TIMS中央1系2系</span></span>両NFB又入。復旧不能時は
+            <span class="handwrite-slot" style="width: 40px;" id="slot_43" data-has-input="false"><img class="slot-image-preview" id="img_slot_43" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_43">C</span></span>配電盤
+            <span class="handwrite-slot" style="width: 90px;" id="slot_44" data-has-input="false"><img class="slot-image-preview" id="img_slot_44" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_44">伝送直入</span></span>NFB入、力行
+            <span class="handwrite-slot" style="width: 70px;" id="slot_45" data-has-input="false"><img class="slot-image-preview" id="img_slot_45" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_45">4ノッチ</span></span>、制動
+            <span class="handwrite-slot" style="width: 70px;" id="slot_46" data-has-input="false"><img class="slot-image-preview" id="img_slot_46" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_46">5ステップ</span></span>、
+            <span class="handwrite-slot" style="width: 100px;" id="slot_47" data-has-input="false"><img class="slot-image-preview" id="img_slot_47" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_47">非常ブレーキ</span></span>のみ使用可。
+        </div>
+
+        <!-- TIMS重故障(伝送ユニット)(4002) -->
+        <div class="trouble-block">
+            <div class="trouble-title">TIMS重故障(伝送ユニット)(4002)</div>
+            当該車伝送不能。
+            <span class="handwrite-slot" style="width: 110px;" id="slot_48" data-has-input="false"><img class="slot-image-preview" id="img_slot_48" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_48">常用ブレーキ不作用</span></span>、
+            <span class="handwrite-slot" style="width: 60px;" id="slot_49" data-has-input="false"><img class="slot-image-preview" id="img_slot_49" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_49">力行</span></span>
+            <span class="handwrite-slot" style="width: 60px;" id="slot_50" data-has-input="false"><img class="slot-image-preview" id="img_slot_50" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_50">回生</span></span>不能。リセットは当該車
+            <span class="handwrite-slot" style="width: 40px;" id="slot_51" data-has-input="false"><img class="slot-image-preview" id="img_slot_51" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_51">B</span></span>配電盤
+            <span class="handwrite-slot" style="width: 130px;" id="slot_52" data-has-input="false"><img class="slot-image-preview" id="img_slot_52" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_52">TIMS伝送1系2系</span></span>両NFB又入。
+        </div>
+
+        <!-- ATC装置片系故障(2003.2004) -->
+        <div class="trouble-block">
+            <div class="trouble-title">ATC装置片系故障(2003.2004)</div>
+            <span class="handwrite-slot" style="width: 80px;" id="slot_53" data-has-input="false"><img class="slot-image-preview" id="img_slot_53" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_53">代替制御</span></span>にて
+            <span class="handwrite-slot" style="width: 90px;" id="slot_54" data-has-input="false"><img class="slot-image-preview" id="img_slot_54" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_54">機能支障なし</span></span>。レバーサ切、マスコンキー又入でリセット成立の場合あり。
+        </div>
+
+        <!-- ATC装置両系故障(2001) -->
+        <div class="trouble-block">
+            <div class="trouble-title">ATC装置両系故障(2001)</div>
+            <span class="handwrite-slot" style="width: 100px;" id="slot_55" data-has-input="false"><img class="slot-image-preview" id="img_slot_55" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_55">車内信号受信</span></span>不能。
+            <span class="handwrite-slot" style="width: 40px;" id="slot_56" data-has-input="false"><img class="slot-image-preview" id="img_slot_56" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_56">B</span></span>配電盤
+            <span class="handwrite-slot" style="width: 110px;" id="slot_57" data-has-input="false"><img class="slot-image-preview" id="img_slot_57" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_57">ATC受信制御部</span></span>NFB点検又入。
+        </div>
+
+        <!-- ATO装置両系故障(2201) -->
+        <div class="trouble-block">
+            <div class="trouble-title">ATO装置両系故障(2201)</div>
+            <span class="handwrite-slot" style="width: 80px;" id="slot_58" data-has-input="false"><img class="slot-image-preview" id="img_slot_58" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_58">ATO運転</span></span>不能。リセットは
+            <span class="handwrite-slot" style="width: 50px;" id="slot_59" data-has-input="false"><img class="slot-image-preview" id="img_slot_59" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_59">6100</span></span>車
+            <span class="handwrite-slot" style="width: 40px;" id="slot_60" data-has-input="false"><img class="slot-image-preview" id="img_slot_60" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_60">B</span></span>配電盤
+            <span class="handwrite-slot" style="width: 90px;" id="slot_61" data-has-input="false"><img class="slot-image-preview" id="img_slot_61" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_61">ATO制御部</span></span>NFB又入。
+        </div>
+
+        <!-- 戸挟制御器電源異常(1101) -->
+        <div class="trouble-block">
+            <div class="trouble-title">戸挟制御器電源異常(1101)</div>
+            先頭車
+            <span class="handwrite-slot" style="width: 40px;" id="slot_62" data-has-input="false"><img class="slot-image-preview" id="img_slot_62" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_62">B</span></span>配電盤、中間車
+            <span class="handwrite-slot" style="width: 40px;" id="slot_63" data-has-input="false"><img class="slot-image-preview" id="img_slot_63" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_63">E</span></span>配電盤
+            <span class="handwrite-slot" style="width: 80px;" id="slot_64" data-has-input="false"><img class="slot-image-preview" id="img_slot_64" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_64">戸挟制御</span></span>NFB点検又入。
+        </div>
+
+        <!-- 1パンタ(6281) -->
+        <div class="trouble-block">
+            <div class="trouble-title">1パンタ(6281)</div>
+            <span class="handwrite-slot" style="width: 40px;" id="slot_65" data-has-input="false"><img class="slot-image-preview" id="img_slot_65" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_65">C</span></span>配電盤
+            <span class="handwrite-slot" style="width: 140px;" id="slot_66" data-has-input="false"><img class="slot-image-preview" id="img_slot_66" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_66">パンタグラフ操作短絡</span></span>NFB入、
+            <span class="handwrite-slot" style="width: 110px;" id="slot_67" data-has-input="false"><img class="slot-image-preview" id="img_slot_67" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_67">パンタ上げボタン</span></span>10秒押下。
+        </div>
+
+        <!-- 片側3扉開閉不能 -->
+        <div class="trouble-block">
+            <div class="trouble-title">片側3扉開閉不能</div>
+            当該車の
+            <span class="handwrite-slot" style="width: 40px;" id="slot_68" data-has-input="false"><img class="slot-image-preview" id="img_slot_68" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_68">A</span></span>配電盤(先頭車)、
+            <span class="handwrite-slot" style="width: 40px;" id="slot_69" data-has-input="false"><img class="slot-image-preview" id="img_slot_69" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_69">E</span></span>配電盤(中間車)
+            <span class="handwrite-slot" style="width: 110px;" id="slot_70" data-has-input="false"><img class="slot-image-preview" id="img_slot_70" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_70">戸閉開放1側2側</span></span>NFB点検又入。
+        </div>
+
+        <!-- 全車扉開閉不能 -->
+        <div class="trouble-block">
+            <div class="trouble-title">全車扉開閉不能</div>
+            <span class="handwrite-slot" style="width: 90px;" id="slot_71" data-has-input="false"><img class="slot-image-preview" id="img_slot_71" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_71">市交ワンマン</span></span>表示灯点灯確認。
+            <span class="handwrite-slot" style="width: 50px;" id="slot_72" data-has-input="false"><img class="slot-image-preview" id="img_slot_72" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_72">後部</span></span>乗務員室
+            <span class="handwrite-slot" style="width: 40px;" id="slot_73" data-has-input="false"><img class="slot-image-preview" id="img_slot_73" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_73">A</span></span>配電盤
+            <span class="handwrite-slot" style="width: 50px;" id="slot_74" data-has-input="false"><img class="slot-image-preview" id="img_slot_74" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_74">戸閉</span></span>NFB又入、
+            <span class="handwrite-slot" style="width: 80px;" id="slot_75" data-has-input="false"><img class="slot-image-preview" id="img_slot_75" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_75">戸閉保安灯</span></span>点灯していれば
+            <span class="handwrite-slot" style="width: 30px;" id="slot_76" data-has-input="false"><img class="slot-image-preview" id="img_slot_76" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_76">C</span></span>、
+            <span class="handwrite-slot" style="width: 30px;" id="slot_77" data-has-input="false"><img class="slot-image-preview" id="img_slot_77" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_77">D</span></span>配電盤
+            <span class="handwrite-slot" style="width: 100px;" id="slot_78" data-has-input="false"><img class="slot-image-preview" id="img_slot_78" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_78">戸閉保安短絡</span></span>NFB入。
+        </div>
+
     </div>
 </div>
 
@@ -459,7 +598,7 @@ let currentVirtualWidth = 0;
 let currentDisplayWidth = 0;
 
 const slotIds = [];
-for (let i = 1; i <= 26; i++) {
+for (let i = 1; i <= 78; i++) {
     slotIds.push('slot_' + i);
 }
 
@@ -497,7 +636,11 @@ function openModal(slotId) {
     document.getElementById('handwriteModal').style.display = 'flex';
     
     // 長めの文字列の可能性があるスロットは横スクロールを有効にする
-    const isLongText = ['slot_3', 'slot_8', 'slot_13', 'slot_23', 'slot_24'].includes(slotId);
+    const longTextSlots = [
+        'slot_3', 'slot_8', 'slot_13', 'slot_23', 'slot_24',
+        'slot_30', 'slot_32', 'slot_42', 'slot_48', 'slot_57', 'slot_66', 'slot_70', 'slot_78'
+    ];
+    const isLongText = longTextSlots.includes(slotId);
 
     setTimeout(() => {
         initModalCanvasSize(isLongText);
