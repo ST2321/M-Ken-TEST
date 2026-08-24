@@ -51,12 +51,18 @@ body {
     background-color: #e8f0fe;
 }
 
-/* フローティング形式の表示・非表示ボタン（画面右上） */
-.all-toggle-btn {
+/* 画面右上のボタン群エリア */
+.top-right-buttons {
     position: fixed;
     top: 15px;
     right: 15px;
     z-index: 999;
+    display: flex;
+    gap: 8px;
+}
+
+/* フローティング形式のボタン共通 */
+.floating-action-btn {
     background-color: #ffffff;
     color: #1a73e8;
     border: 2px solid #1a73e8;
@@ -68,7 +74,7 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-.all-toggle-btn:hover {
+.floating-action-btn:hover {
     background-color: #e8f0fe;
 }
 
@@ -178,7 +184,7 @@ h2 {
     white-space: nowrap;
 }
 
-/* モーダル */
+/* モーダル共通 */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -279,6 +285,129 @@ h2 {
     color: #3c4043;
     border: 1px solid #dadce0;
 }
+
+/* --- 配電盤モーダル用スタイル --- */
+.board-modal-content {
+    max-width: 950px;
+    background: #2d323b;
+    color: #fff;
+    border: 2px solid #4a5568;
+}
+
+.main-tab-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.main-tab-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #111827;
+    color: #9ca3af;
+    border: 2px solid #4b5563;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.main-tab-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.sub-tab-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #4a5568;
+    padding-bottom: 12px;
+}
+.sub-tab-btn {
+    padding: 8px 18px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    background-color: #1a202c;
+    color: #a0aec0;
+    border: 1px solid #4a5568;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.sub-tab-btn.active {
+    background-color: var(--success-color);
+    color: white;
+    border-color: var(--success-color);
+}
+
+.schematic-board-title {
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: #e2e8f0;
+    margin-bottom: 15px;
+}
+
+.nameplates-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px 5px 20px 5px;
+    background: #374151;
+    border-radius: 8px;
+    align-items: center;
+}
+.nameplates-row::-webkit-scrollbar { height: 8px; }
+.nameplates-row::-webkit-scrollbar-track { background: #1f2937; border-radius: 4px; }
+.nameplates-row::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+
+.nameplate {
+    flex: 0 0 60px;
+    width: 60px;
+    height: 165px;
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 1px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    position: relative;
+    user-select: none;
+}
+.nameplate::before, .nameplate::after {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+}
+.nameplate::before { top: 5px; left: 50%; transform: translateX(-50%); }
+.nameplate::after { bottom: 5px; left: 50%; transform: translateX(-50%); }
+
+.plate-text {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-family: 'Hiragino Sans', 'Meiryo', 'Osaka', sans-serif;
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-align: center;
+    line-height: 1.15;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nameplate.red { background-color: #b91c1c; color: #ffffff; border: 1px solid #991b1b; }
+.nameplate.red::before, .nameplate.red::after { background: #fca5a5; }
+
+.nameplate.black { background-color: #111111; color: #ffffff; border: 1px solid #333; }
+.nameplate.black::before, .nameplate.black::after { background: #9ca3af; }
+
+.nameplate.white { background-color: #f3f4f6; color: #1f2937; border: 1px solid #d1d5db; }
+.nameplate.white::before, .nameplate.white::after { background: #6b7280; }
 </style>
 </head>
 <body>
@@ -286,8 +415,11 @@ h2 {
 <!-- 常に画面左上に追従する戻るボタン -->
 <a href="#" class="back-btn">&larr; 戻る</a>
 
-<!-- 常に画面右上に追従する表示・非表示ボタン -->
-<button type="button" class="all-toggle-btn" id="allToggleBtn" onclick="toggleAllAnswers()">表示</button>
+<!-- 画面右上のボタン群（表示・非表示ボタン ＆ 配電盤ボタン） -->
+<div class="top-right-buttons">
+    <button type="button" class="floating-action-btn" id="allToggleBtn" onclick="toggleAllAnswers()">表示</button>
+    <button type="button" class="floating-action-btn" onclick="openBoardModal()">配電盤</button>
+</div>
 
 <div class="container">
     <div class="header-row">
@@ -581,6 +713,36 @@ h2 {
     </div>
 </div>
 
+<!-- 配電盤表示用モーダル (6100 / 6600 切替機能付き) -->
+<div class="modal-overlay" id="boardModal">
+    <div class="modal-content board-modal-content">
+        <div class="modal-header" style="color:#fff;">
+            <span>配電盤</span>
+            <button type="button" class="btn btn-secondary" style="padding:2px 8px; font-size:0.8rem;" onclick="closeBoardModal()">閉じる</button>
+        </div>
+        
+        <div class="main-tab-container">
+            <button type="button" class="main-tab-btn active" id="mainTab6100" onclick="switchCarSeries('6100')">6100(1寄)</button>
+            <button type="button" class="main-tab-btn" id="mainTab6600" onclick="switchCarSeries('6600')">6600(2寄)</button>
+        </div>
+
+        <div class="sub-tab-container" id="subTabContainer">
+            <button type="button" class="sub-tab-btn active" id="subTab_A" onclick="switchBoard('A')">A配電盤</button>
+            <button type="button" class="sub-tab-btn" id="subTab_B" onclick="switchBoard('B')">B配電盤</button>
+            <button type="button" class="sub-tab-btn" id="subTab_B_prime" onclick="switchBoard('B_prime')">B'配電盤</button>
+            <button type="button" class="sub-tab-btn" id="subTab_C" onclick="switchBoard('C')">C配電盤</button>
+            <button type="button" class="sub-tab-btn" id="subTab_D" onclick="switchBoard('D')">D配電盤</button>
+        </div>
+
+        <div class="schematic-board-title" id="boardTitle">6100(1寄) - A配電盤</div>
+        <div class="nameplates-row" id="nameplateGrid"></div>
+
+        <div class="modal-footer" style="justify-content: flex-end; margin-top: 15px;">
+            <button type="button" class="btn" onclick="closeBoardModal()">閉じる</button>
+        </div>
+    </div>
+</div>
+
 <script>
 let currentActiveSlotId = null;
 const modalCanvas = document.getElementById('modalCanvas');
@@ -777,6 +939,241 @@ function toggleAllAnswers() {
     } else {
         btn.textContent = '表示';
     }
+}
+
+/* --- 配電盤データ定義と表示ロジック --- */
+const dataStore = {
+    '6100': {
+        'A': [
+            { text: '調圧器切放', type: 'red' },
+            { text: 'コンプ同期', type: 'red' },
+            { text: 'コンプ元', type: 'red' },
+            { text: '', type: 'white' },
+            { text: 'ブレ　┃キ<br>受量器電源', type: 'red' },
+            { text: '戸　　閉', type: 'red' },
+            { text: '戸閉表示灯', type: 'red' },
+            { text: '戸閉開放<br>2側 ←', type: 'red' },
+            { text: '戸閉開放<br>1側 →', type: 'red' },
+            { text: '放　　送', type: 'red' },
+            { text: '自動放送', type: 'red' },
+            { text: '', type: 'white' },
+            { text: '列車無線 SR', type: 'red' },
+            { text: '非常通報', type: 'red' },
+            { text: '合図ベル', type: 'red' },
+            { text: '', type: 'white' }
+        ],
+        'B': [
+            { text: 'バッテリ制御', type: 'red' },
+            { text: 'バッテリ切放', type: 'red' },
+            { text: 'SIV<br>強制起動', type: 'black' },
+            { text: 'パンタグラフ', type: 'red' },
+            { text: 'ブレ　┃キ電源', type: 'red' },
+            { text: '駐車ブレ　┃キ', type: 'red' },
+            { text: '防犯カメラ<br>予備灯', type: 'red' },
+            { text: '電灯制御', type: 'red' },
+            { text: '窓拭機', type: 'red' },
+            { text: 'TIMS<br>中央　1系', type: 'red' },
+            { text: 'TIMS<br>中央　2系', type: 'red' },
+            { text: 'TIMS<br>伝送　1系', type: 'red' },
+            { text: 'TIMS<br>伝送　2系', type: 'red' },
+            { text: 'TIMS<br>保全ユニット', type: 'red' },
+            { text: 'ATC<br>受信制御部', type: 'red' },
+            { text: 'ATC<br>検査記録部', type: 'red' },
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '戸挟制御', type: 'red' },
+            { text: '', type: 'white' }
+        ],
+        'B_prime': [
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '電連制御電源', type: 'black' },
+            { text: '電連<br>操作<br>連　⇵解', type: 'black' }
+        ],
+        'C': [
+            { text: '乗務員室ファン', type: 'white' },
+            { text: '戸閉保安短絡', type: 'black' },
+            { text: '非常ブレ　┃キ<br>異常短絡', type: 'black' },
+            { text: 'ブレ　┃キ<br>不緩解開放', type: 'black' },
+            { text: '戸閉連動短絡', type: 'black' },
+            { text: '乗務員室灯', type: 'white' },
+            { text: '前照灯', type: 'red' },
+            { text: '尾　灯', type: 'red' },
+            { text: '後方防護', type: 'black' },
+            { text: '前照灯直入', type: 'black' },
+            { text: '尾灯直入', type: 'black' },
+            { text: '制御電源', type: 'red' },
+            { text: '計器灯', type: 'red' },
+            { text: '防曇ガラス電源', type: 'white' },
+            { text: '乗務員室暖房', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '扉インタ　┃<br>ロック解除', type: 'black' },
+            { text: 'パンタグラフ<br>操作短絡', type: 'black' },
+            { text: '伝送直入', type: 'black' },
+            { text: '', type: 'white' }
+        ],
+        'D': [
+            { text: '客室ファン', type: 'red' },
+            { text: '電気笛電源', type: 'red' },
+            { text: '交流電灯', type: 'red' },
+            { text: '車内案内制御', type: 'red' },
+            { text: '車内表示器', type: 'red' },
+            { text: '行先表示設定器', type: 'red' },
+            { text: '行先表示器', type: 'red' },
+            { text: '戸開閉案内', type: 'red' },
+            { text: '仕切開戸制御', type: 'red' },
+            { text: 'コンプヒ　┃タ', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '戸閉保安短絡', type: 'black' }
+        ]
+    },
+    '6600': {
+        'A': [
+            { text: '調圧器切放', type: 'red' },
+            { text: 'コンプ同期', type: 'red' },
+            { text: 'コンプ元', type: 'red' },
+            { text: 'ブレ　┃キ<br>継電器電源', type: 'red' },
+            { text: 'ブレ　┃キ<br>受量器電源', type: 'red' },
+            { text: '戸　　閉', type: 'red' },
+            { text: '戸閉表示灯', type: 'red' },
+            { text: '戸閉開放<br>1側 ←', type: 'red' },
+            { text: '戸閉開放<br>2側 →', type: 'red' },
+            { text: '放　　送', type: 'red' },
+            { text: '試運転<br>非常ブレ　┃キ', type: 'black' },
+            { text: '', type: 'white' },
+            { text: '列車無線　SR', type: 'red' },
+            { text: '非常通報', type: 'red' },
+            { text: '合図ベル', type: 'red' },
+            { text: '', type: 'white' }
+        ],
+        'B': [
+            { text: 'バッテリ制御', type: 'red' },
+            { text: 'バッテリ切放', type: 'red' },
+            { text: 'SIV強制起動', type: 'black' },
+            { text: 'パンタグラフ', type: 'black' },
+            { text: 'ブレ　┃キ電源', type: 'red' },
+            { text: '駐車ブレ　┃キ', type: 'black' },
+            { text: '防犯カメラ<br>予備灯', type: 'red' },
+            { text: '電灯制御', type: 'red' },
+            { text: '窓拭機', type: 'red' },
+            { text: 'TIMS<br>中央　1系', type: 'red' },
+            { text: 'TIMS<br>中央　2系', type: 'red' },
+            { text: 'TIMS<br>伝送　1系', type: 'red' },
+            { text: 'TIMS<br>伝送　2系', type: 'red' },
+            { text: 'TIMS<br>保全ユニット', type: 'red' },
+            { text: 'ATC<br>受信制御部', type: 'red' },
+            { text: 'ATC<br>検査記録部', type: 'red' },
+            { text: 'ATO制御部', type: 'red' },
+            { text: 'DCU送受信部', type: 'red' },
+            { text: '戸挟制御', type: 'red' },
+            { text: '', type: 'white' }
+        ],
+        'B_prime': [
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '電連制御電源', type: 'black' },
+            { text: '電連<br>操作<br>連　⇵解', type: 'black' }
+        ],
+        'C': [
+            { text: '乗務員室ファン', type: 'white' },
+            { text: '戸閉保安短絡', type: 'black' },
+            { text: '非常ブレ　┃キ<br>異常短絡', type: 'black' },
+            { text: 'ブレ　┃キ<br>不緩解開放', type: 'black' },
+            { text: '戸閉連動短絡', type: 'black' },
+            { text: '乗務員室灯', type: 'white' },
+            { text: '前照灯', type: 'red' },
+            { text: '尾　灯', type: 'red' },
+            { text: '後方防護', type: 'black' },
+            { text: '前照灯直入', type: 'black' },
+            { text: '尾灯直入', type: 'black' },
+            { text: '制御電源', type: 'red' },
+            { text: '計器灯', type: 'red' },
+            { text: '防曇ガラス電源', type: 'white' },
+            { text: '乗務員室暖房', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '扉インタ　┃<br>ロック解除', type: 'black' },
+            { text: 'パンタグラフ<br>操作短絡', type: 'black' },
+            { text: '伝送直入', type: 'black' },
+            { text: '', type: 'white' }
+        ],
+        'D': [
+            { text: '客室ファン', type: 'red' },
+            { text: '電気笛電源', type: 'red' },
+            { text: '交流電灯', type: 'red' },
+            { text: '', type: 'white' },
+            { text: '車内表示器', type: 'red' },
+            { text: '行先表示設定器', type: 'red' },
+            { text: '行先表示器', type: 'red' },
+            { text: '戸開閉案内', type: 'red' },
+            { text: '仕切開戸制御', type: 'red' },
+            { text: 'コンプヒ　┃タ', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '', type: 'white' },
+            { text: '戸閉保安短絡', type: 'black' }
+        ]
+    }
+};
+
+let currentSeries = '6100';
+let currentBoardKey = 'A';
+
+function openBoardModal() {
+    document.getElementById('boardModal').style.display = 'flex';
+    renderBoard();
+}
+
+function closeBoardModal() {
+    document.getElementById('boardModal').style.display = 'none';
+}
+
+function switchCarSeries(series) {
+    currentSeries = series;
+    document.getElementById('mainTab6100').classList.toggle('active', series === '6100');
+    document.getElementById('mainTab6600').classList.toggle('active', series === '6600');
+    renderBoard();
+}
+
+function switchBoard(boardKey) {
+    currentBoardKey = boardKey;
+    renderBoard();
+}
+
+function renderBoard() {
+    document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtnId = currentBoardKey === 'B_prime' ? 'subTab_B_prime' : `subTab_${currentBoardKey}`;
+    const targetBtn = document.getElementById(activeBtnId);
+    if (targetBtn) targetBtn.classList.add('active');
+
+    const titleEl = document.getElementById('boardTitle');
+    const seriesName = currentSeries === '6100' ? '6100(1寄)' : '6600(2寄)';
+    titleEl.textContent = `${seriesName} - ${currentBoardKey.replace('_prime', "'")}配電盤`;
+
+    const gridEl = document.getElementById('nameplateGrid');
+    gridEl.innerHTML = '';
+
+    const items = dataStore[currentSeries][currentBoardKey] || [];
+    items.forEach(item => {
+        const plateDiv = document.createElement('div');
+        plateDiv.className = `nameplate ${item.type}`;
+
+        const textSpan = document.createElement('span');
+        textSpan.className = 'plate-text';
+        textSpan.innerHTML = item.text;
+
+        plateDiv.appendChild(textSpan);
+        gridEl.appendChild(plateDiv);
+    });
 }
 </script>
 
