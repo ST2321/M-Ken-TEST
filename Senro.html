@@ -122,7 +122,6 @@ h1 {
     align-items: center;
     justify-content: center;
     min-width: 80px;
-    width: 90px;
     height: 28px;
     vertical-align: middle;
     border: 2px dashed #1a73e8;
@@ -135,6 +134,7 @@ h1 {
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
+    transition: width 0.2s ease;
 }
 
 .handwrite-slot:hover {
@@ -303,13 +303,13 @@ h1 {
         
         <div class="sub-q">
             <strong>1.停車場</strong><br>
-            ★停車場は｢
-            <span class="handwrite-slot" id="slot_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_1"><span class="slot-answer-inline" id="ans_slot_1">駅</span></span>
+            停車場は｢
+            ★<span class="handwrite-slot" id="slot_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_1"><span class="slot-answer-inline" id="ans_slot_1">駅</span></span>
             ｣、｢
-            <span class="handwrite-slot" id="slot_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_2"><span class="slot-answer-inline" id="ans_slot_2">信号場</span></span>
+            ★<span class="handwrite-slot" id="slot_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_2"><span class="slot-answer-inline" id="ans_slot_2">信号場</span></span>
             ｣および｢
-            <span class="handwrite-slot" id="slot_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_3"><span class="slot-answer-inline" id="ans_slot_3">操車場</span></span>
-            ｣をいう。★
+            ★<span class="handwrite-slot" id="slot_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_3"><span class="slot-answer-inline" id="ans_slot_3">操車場</span></span>
+            ｣をいう。
         </div>
 
         <!-- ホームの形式 -->
@@ -318,7 +318,7 @@ h1 {
                 <!-- 1. 島式 -->
                 <div class="platform-item">
                     <div style="margin-bottom: 5px;">
-                        <span class="handwrite-slot" style="width:75px;height:24px;" id="slot_p1_1" data-has-input="false">
+                        <span class="handwrite-slot" style="height:24px;" id="slot_p1_1" data-has-input="false">
                             <img class="slot-image-preview" id="img_slot_p1_1">
                             <span class="slot-answer-inline" id="ans_slot_p1_1" style="font-size:0.75rem;">島式</span>
                         </span>
@@ -334,7 +334,7 @@ h1 {
                 <!-- 2. 相対式 -->
                 <div class="platform-item">
                     <div style="margin-bottom: 5px;">
-                        <span class="handwrite-slot" style="width:75px;height:24px;" id="slot_p1_2" data-has-input="false">
+                        <span class="handwrite-slot" style="height:24px;" id="slot_p1_2" data-has-input="false">
                             <img class="slot-image-preview" id="img_slot_p1_2">
                             <span class="slot-answer-inline" id="ans_slot_p1_2" style="font-size:0.75rem;">相対式</span>
                         </span>
@@ -351,7 +351,7 @@ h1 {
                 <!-- 3. 単式 -->
                 <div class="platform-item">
                     <div style="margin-bottom: 5px;">
-                        <span class="handwrite-slot" style="width:75px;height:24px;" id="slot_p1_3" data-has-input="false">
+                        <span class="handwrite-slot" style="height:24px;" id="slot_p1_3" data-has-input="false">
                             <img class="slot-image-preview" id="img_slot_p1_3">
                             <span class="slot-answer-inline" id="ans_slot_p1_3" style="font-size:0.75rem;">単式</span>
                         </span>
@@ -366,7 +366,7 @@ h1 {
                 <!-- 4. くし形式 -->
                 <div class="platform-item">
                     <div style="margin-bottom: 5px;">
-                        <span class="handwrite-slot" style="width:75px;height:24px;" id="slot_p1_4" data-has-input="false">
+                        <span class="handwrite-slot" style="height:24px;" id="slot_p1_4" data-has-input="false">
                             <img class="slot-image-preview" id="img_slot_p1_4">
                             <span class="slot-answer-inline" id="ans_slot_p1_4" style="font-size:0.75rem;">くし形式</span>
                         </span>
@@ -383,11 +383,11 @@ h1 {
         </div>
 
         <div class="sub-q">
-            ★列車の行き違い又は待ち合わせを行うために使用される場所を｢
-            <span class="handwrite-slot" id="slot_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_4"><span class="slot-answer-inline" id="ans_slot_4">信号場</span></span>
+            列車の行き違い又は待ち合わせを行うために使用される場所を｢
+            ★<span class="handwrite-slot" id="slot_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_4"><span class="slot-answer-inline" id="ans_slot_4">信号場</span></span>
             ｣、車両の入れ換えや列車の組成を行うために使用される場所を｢
-            <span class="handwrite-slot" id="slot_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_5"><span class="slot-answer-inline" id="ans_slot_5">操車場</span></span>
-            ｣という。★
+            ★<span class="handwrite-slot" id="slot_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_5"><span class="slot-answer-inline" id="ans_slot_5">操車場</span></span>
+            ｣という。
         </div>
 
         <div class="sub-q" style="margin-top:20px;">
@@ -565,7 +565,7 @@ h1 {
             という。渦電流が流れやすく磁束を通し易い材質が必要であるが、単体で両方満足する金属がないため、渦電流が流れやすい良導体として
             ★<span class="handwrite-slot" id="slot_64" data-has-input="false"><img class="slot-image-preview" id="img_slot_64"><span class="slot-answer-inline" id="ans_slot_64">アルミ</span></span>
             と磁束を通し易い鉄板(鉄心)との複合体を用いている。長さは曲線半径≧800mの場合は
-            <span class="handwrite-slot" id="slot_65" data-has-input="false"><img class="slot-image-preview" id="img_slot_65"><span class="slot-answer-inline" id="ans_slot_65">7.5m</span></span>
+            ★<span class="handwrite-slot" id="slot_65" data-has-input="false"><img class="slot-image-preview" id="img_slot_65"><span class="slot-answer-inline" id="ans_slot_65">7.5m</span></span>
             である。
         </div>
     </div>
@@ -640,6 +640,26 @@ let currentDisplayWidth = 0;
 const slotIds = [];
 for (let i = 1; i <= 67; i++) slotIds.push('slot_' + i);
 slotIds.push('slot_p1_1', 'slot_p1_2', 'slot_p1_3', 'slot_p1_4');
+
+// 各スロットの初期幅をテキストの長さに合わせて自動調整する関数
+function adjustSlotWidths() {
+    slotIds.forEach(id => {
+        const slot = document.getElementById(id);
+        if (!slot) return;
+        const answerInline = slot.querySelector('.slot-answer-inline');
+        if (answerInline) {
+            const textLength = answerInline.textContent.length;
+            // 1文字あたり約14px（フォントサイズ0.8rem分）＋余白分（最低80px）を計算
+            const calculatedWidth = Math.max(80, textLength * 14 + 16);
+            slot.style.width = calculatedWidth + 'px';
+        }
+    });
+}
+
+// ページ読み込み時に幅を自動調整
+window.addEventListener('DOMContentLoaded', () => {
+    adjustSlotWidths();
+});
 
 function initModalCanvasSize(isLongText) {
     const rect = scrollContainer.getBoundingClientRect();
@@ -797,6 +817,7 @@ function toggleAllAnswers() {
             if (hasInput) {
                 if (imgPreview) imgPreview.style.display = 'block';
             } else {
+                if (imgPreview) imgPlatePreview = false;
                 if (imgPreview) imgPreview.style.display = 'none';
             }
         }
