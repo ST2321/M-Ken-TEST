@@ -539,7 +539,53 @@ h1 {
             :線路用地の境界を明示するため建植されるもの。<br>
             <span class="handwrite-slot" id="slot_56" data-has-input="false"><img class="slot-image-preview" id="img_slot_56"><span class="slot-answer-inline" id="ans_slot_56">車両接触限界標識</span></span>
             :軌道の分岐または交差する箇所で、軌道上にある車両が他線を支障しない限界を示す。<br><br>
-            軌道変位は、
+   
+        </div>
+    </div>
+
+    <!-- 第五章 -->
+    <div class="question-section">
+        <div class="q-title">第5章　分岐器</div>
+        <div class="sub-q">
+            <strong>渡り線付交差</strong><br>
+            ひし形交差において、交わっている軌道の相互間に列車または車両を移動させることができるようにした装置で、片側だけに渡り線を装置した
+           ★ <span class="handwrite-slot" id="slot_61" data-has-input="false"><img class="slot-image-preview" id="img_slot_61"><span class="slot-answer-inline" id="ans_slot_61">シングルスリップスイッチ</span></span>
+            と、両側に渡り線を装置した
+           ★ <span class="handwrite-slot" id="slot_62" data-has-input="false"><img class="slot-image-preview" id="img_slot_62"><span class="slot-answer-inline" id="ans_slot_62">ダブルスリップスイッチ</span></span>
+            がある。
+        </div>
+    </div>
+
+    <!-- 第7章 -->
+    <div class="question-section">
+        <div class="q-title">第7章　リアクションプレート</div>
+        <div class="sub-q">
+            海岸線に採用している車両のリニアモーターは、交流式回転型モーターを一次側と2次側に分割し平板上に展開した構造である。その2次側として地上に設置する平板を
+            ★<span class="handwrite-slot" id="slot_63" data-has-input="false"><img class="slot-image-preview" id="img_slot_63"><span class="slot-answer-inline" id="ans_slot_63">リアクションプレート</span></span>
+            という。渦電流が流れやすく磁束を通し易い材質が必要であるが、単体で両方満足する金属がないため、渦電流が流れやすい良導体として
+            ★<span class="handwrite-slot" id="slot_64" data-has-input="false"><img class="slot-image-preview" id="img_slot_64"><span class="slot-answer-inline" id="ans_slot_64">アルミ</span></span>
+            と磁束を通し易い鉄板(鉄心)との複合体を用いている。長さは曲線半径≧800mの場合は
+            <span class="handwrite-slot" id="slot_65" data-has-input="false"><img class="slot-image-preview" id="img_slot_65"><span class="slot-answer-inline" id="ans_slot_65">7.5m</span></span>
+            である。
+        </div>
+    </div>
+
+    <!-- 第8章 -->
+    <div class="question-section">
+        <div class="q-title">第8章　軌道の保守</div>
+        <div class="sub-q">
+            <strong>軌道の検査</strong><br>
+            (1)巡回検査<br>
+            巡回は主として緊急整備箇所、障害物の発見や作業後のチェックなどの目的で行うが、さらに今後の作業計画をたてるうえでも重要である。巡回は法的にも、義務付けられており、1週で1 巡するよう巡回している。また、巡回検査は
+            ★ <span class="handwrite-slot" id="slot_66" data-has-input="false"><img class="slot-image-preview" id="img_slot_66"><span class="slot-answer-inline" id="ans_slot_66">徒歩巡視</span></span>
+            に加えて、列車搭乗による列車巡視を毎日行っている。<br><br>
+            (2)
+            ★<span class="handwrite-slot" id="slot_67" data-has-input="false"><img class="slot-image-preview" id="img_slot_67"><span class="slot-answer-inline" id="ans_slot_67">軌道保守検査</span></span>
+            <br>
+            軌道の保守状態を検査するもので、軌道変位の4項目のほかにレールの継目遊間やレールの継目落など整備状態によって変化する項目について行う。<br>
+            軌道変位の状態は測定結果に基づき、直接的には個々の点の検討により作業計画に用いるが、 間接的には軌道変位指数Pによって表わす。軌道変位指数Pとは、ある軌道変位の許容限界値をとり、その倍以上の変位が存在する割合で表わしたものをいう。またこの検査は本線路では年に 2回以上行なっている。
+            <br>
+           <br>軌道変位は、
             <span class="handwrite-slot" id="slot_57" data-has-input="false"><img class="slot-image-preview" id="img_slot_57"><span class="slot-answer-inline" id="ans_slot_57">軌間</span></span>
             、
             <span class="handwrite-slot" id="slot_58" data-has-input="false"><img class="slot-image-preview" id="img_slot_58"><span class="slot-answer-inline" id="ans_slot_58">水準</span></span>
@@ -592,7 +638,7 @@ let currentVirtualWidth = 0;
 let currentDisplayWidth = 0;
 
 const slotIds = [];
-for (let i = 1; i <= 60; i++) slotIds.push('slot_' + i);
+for (let i = 1; i <= 67; i++) slotIds.push('slot_' + i);
 slotIds.push('slot_p1_1', 'slot_p1_2', 'slot_p1_3', 'slot_p1_4');
 
 function initModalCanvasSize(isLongText) {
