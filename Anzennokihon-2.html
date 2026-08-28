@@ -147,69 +147,20 @@ h1 {
 
 .slot-answer-inline {
     display: none;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: #d93025;
     font-weight: bold;
     text-align: center;
     width: 100%;
-    pointer-events: none;
-    position: absolute;
-    white-space: nowrap;
-}
-
-.block-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 10px;
-}
-
-.block-item {
-    display: flex;
-    flex-direction: column;
-    background: #f8f9fa;
-    border: 1px solid #dadce0;
-    border-radius: 8px;
-    padding: 12px 15px;
-    gap: 8px;
-}
-
-.block-label {
-    font-weight: bold;
-    color: #1a73e8;
-    font-size: 0.95rem;
-}
-
-.block-slot {
-    width: 100%;
-    min-height: 52px;
-    border: 2px dashed #1a73e8;
-    background: #fff;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
+    padding: 0 2px;
     box-sizing: border-box;
-    padding: 6px 10px;
-}
-
-.block-slot:hover {
-    background-color: #e8f0fe;
-}
-
-.block-slot .slot-answer-inline {
-    font-size: 0.95rem;
-    color: #d93025;
-    font-weight: bold;
-    text-align: left;
-    position: static;
-    white-space: normal;
+    line-height: 1.2;
+    word-break: break-all;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
 }
 
 .modal-overlay {
@@ -314,7 +265,7 @@ h1 {
 </head>
 <body>
 
-
+<a href="index.html" class="back-btn">&larr; 戻る</a>
 <button type="button" class="all-toggle-btn" id="allToggleBtn" onclick="toggleAllAnswers()">表示</button>
 
 <div class="container">
@@ -323,6 +274,23 @@ h1 {
     </div>
 
     <div class="question-section">
+        <div class="q-title">一般準則</div>
+        <div class="sub-q">
+            <strong>規程の携帯</strong><br>
+            <span class="handwrite-slot" style="width: 100%; height: 50px;" id="slot_add_1" data-has-input="false"><img class="slot-image-preview" id="img_slot_add_1" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_add_1">係員は、常にこの規程及び運転の取扱に関する規程を携帯しなければならない。</span></span><br><br>
+            <strong>設備の安全</strong><br>
+            <span class="handwrite-slot" style="width: 100%; height: 75px;" id="slot_add_2" data-has-input="false"><img class="slot-image-preview" id="img_slot_add_2" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_add_2">係員は、列車、車両、軌道、電車線路、道路、信号保安装置等を常に安全な状態に保持しなければならない。危険な箇所を発見した時は、速やかに整備の手配をしなければならない。</span></span>
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
+        <div class="q-title">行動規範</div>
+        <div class="sub-q">
+            <span class="handwrite-slot" style="width: 100%; height: 50px;" id="slot_add_3" data-has-input="false"><img class="slot-image-preview" id="img_slot_add_3" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_add_3">(5) 事故・災害等が発生したときは、人命救助を最優先に行動し、すみやかに安全適切な処置をとる。</span></span>
+        </div>
+    </div>
+
+    <div class="question-section" style="margin-top: 30px;">
         <div class="q-title">(交通行為の分類)</div>
         <div class="sub-q">
             交通は、有体物と無体物の場所的移動であり、有体物(人及び物)の移動を
@@ -395,7 +363,7 @@ h1 {
             に異常が無いこと。<br>
             ③
             <span class="handwrite-slot" style="width: 100px;" id="slot_q5_4" data-has-input="false"><img class="slot-image-preview" id="img_slot_q5_4" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q5_4">視野</span></span>
-            の異常が無いことこと。<br>
+            の異常が無いこと。<br>
             ④
             <span class="handwrite-slot" style="width: 100px;" id="slot_q5_5" data-has-input="false"><img class="slot-image-preview" id="img_slot_q5_5" alt="手書き解答"><span class="slot-answer-inline" id="ans_slot_q5_5">色覚</span></span>
             の異常が無いこと。<br>
@@ -464,7 +432,7 @@ let currentVirtualWidth = 0;
 let currentDisplayWidth = 0;
 
 const slotIds = [];
-document.querySelectorAll('.handwrite-slot, .block-slot').forEach(el => {
+document.querySelectorAll('.handwrite-slot').forEach(el => {
     if (el.id) slotIds.push(el.id);
 });
 
@@ -501,7 +469,7 @@ function openModal(slotId) {
     currentActiveSlotId = slotId;
     document.getElementById('handwriteModal').style.display = 'flex';
     
-    const isLongText = slotId.startsWith('slot_q2_');
+    const isLongText = slotId.startsWith('slot_q2_') || slotId === 'slot_add_1' || slotId === 'slot_add_2' || slotId === 'slot_add_3';
 
     setTimeout(() => {
         initModalCanvasSize(isLongText);
